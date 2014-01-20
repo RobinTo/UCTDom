@@ -1,3 +1,5 @@
+#include "card.h"
+
 #ifndef CARDSTACK_H
 #define CARDSTACK_H
 

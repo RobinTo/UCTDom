@@ -1,9 +1,10 @@
-#ifndef GAME_H
-#define GAME_H
+
 #include <string>
 #include "player.h"
 #include "cardstack.h"
 
+#ifndef GAME_H
+#define GAME_H
 class game
 {
 public:

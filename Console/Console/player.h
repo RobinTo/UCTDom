@@ -1,8 +1,9 @@
-#ifndef __PLAYER_H__
-#define __PLAYER_H__
 
 #include <list>
 #include "card.h"
+
+#ifndef __PLAYER_H__
+#define __PLAYER_H__
 
 class player{
 public:
@@ -12,7 +13,6 @@ public:
 	std::list<card*> inPlay;
 
 	void playTurn();
-
 };
 
 #endif
