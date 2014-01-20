@@ -64,7 +64,11 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="card.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="treasureCard.h" />
+    <ClInclude Include="victoryCard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
