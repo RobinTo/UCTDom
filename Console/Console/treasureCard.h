@@ -6,6 +6,6 @@
 class treasureCard : public card{
 public:
 	int value;
-}
+};
 
 #endif

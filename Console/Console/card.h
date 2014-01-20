@@ -8,6 +8,6 @@ class card
 public:
 	int cost;
 	std::string name;
-}
+};
 
 #endif

@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include <list>
+#include "card.h"
 
 class player{
 public:
@@ -12,6 +13,6 @@ public:
 
 	void playTurn();
 
-}
+};
 
 #endif

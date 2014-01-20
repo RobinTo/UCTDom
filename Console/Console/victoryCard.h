@@ -6,6 +6,6 @@
 class victoryCard : public card{
 public:
 	int vp;
-}
+};
 
 #endif

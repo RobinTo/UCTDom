@@ -2,6 +2,8 @@
 #define CARDSTACK_H
 
 
+#include "card.h"
+
 class cardstack
 {
 public:
@@ -10,7 +12,7 @@ public:
 	card cardType;
 	int cardsLeft;
 	int maximumCards;
-}
+};
 
 
 
