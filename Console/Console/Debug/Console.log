@@ -1,22 +1,28 @@
-﻿Build started 20.01.2014 16:03:45.
-     1>Project "C:\Users\Robin\Github\UCTDom\Console\Console\Console.vcxproj" on node 2 (build target(s)).
-     1>PrepareForBuild:
-         Creating directory "C:\Users\Robin\Github\UCTDom\Console\Debug\".
-       InitializeBuildStatus:
-         Creating "Debug\Console.unsuccessfulbuild" because "AlwaysCreate" was specified.
+﻿Build started 20.01.2014 17:19:41.
+     1>Project "D:\Github\UCTDom\Console\Console\Console.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Touching "Debug\Console.unsuccessfulbuild".
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
-         main.cpp
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Robin\Github\UCTDom\Console\Debug\Console.exe" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\Console.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Robin\Github\UCTDom\Console\Debug\Console.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Robin\Github\UCTDom\Console\Debug\Console.lib" /MACHINE:X86 Debug\main.obj
-         Console.vcxproj -> C:\Users\Robin\Github\UCTDom\Console\Debug\Console.exe
-       Manifest:
-         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Users\Robin\Github\UCTDom\Console\Debug\Console.exe;#1" /manifest Debug\Console.exe.intermediate.manifest
-       FinalizeBuildStatus:
-         Deleting file "Debug\Console.unsuccessfulbuild".
-         Touching "Debug\Console.lastbuildstate".
-     1>Done Building Project "C:\Users\Robin\Github\UCTDom\Console\Console\Console.vcxproj" (build target(s)).
+         d:\Programmer\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt game.cpp
+         game.cpp
+     1>d:\github\uctdom\console\console\game.h(9): error C2146: syntax error : missing ';' before identifier 'players'
+     1>d:\github\uctdom\console\console\game.h(9): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.h(9): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.h(10): error C2146: syntax error : missing ';' before identifier 'cardstacks'
+     1>d:\github\uctdom\console\console\game.h(10): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.h(10): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.h(11): error C2146: syntax error : missing ';' before identifier 'play_game'
+     1>d:\github\uctdom\console\console\game.h(11): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.h(11): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.h(11): warning C4183: 'play_game': missing return type; assumed to be a member function returning 'int'
+     1>d:\programmer\microsoft visual studio 10.0\vc\include\iostream(10): error C2143: syntax error : missing ';' before 'namespace'
+     1>d:\github\uctdom\console\console\game.cpp(6): error C2143: syntax error : missing ';' before 'game::play_game'
+     1>d:\github\uctdom\console\console\game.cpp(6): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.cpp(7): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>d:\github\uctdom\console\console\game.cpp(8): error C2761: 'int game::playerTurn' : member function redeclaration not allowed
+     1>d:\github\uctdom\console\console\game.cpp(8): fatal error C1903: unable to recover from previous error(s); stopping compilation
+     1>Done Building Project "D:\Github\UCTDom\Console\Console\Console.vcxproj" (build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:00.96
+Time Elapsed 00:00:00.53
