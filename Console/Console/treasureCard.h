@@ -5,10 +5,11 @@
 
 class treasureCard : public card{
 public:
+	treasureCard();
 	treasureCard(int v)
 	{
 		value = v;
-	}
+	};
 	int value;
 };
 

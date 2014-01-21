@@ -2,9 +2,11 @@
 #include <list>
 #include <math.h>
 #include <stdlib.h>
+#include "treasureCard.h"
 
-UCTMonteCarlo::UCTMonteCarlo()
+UCTMonteCarlo::UCTMonteCarlo(game g)
 {
+	g = g;
 	treeNode newNode;
 	tree t(newNode);
 }
@@ -15,11 +17,53 @@ void UCTMonteCarlo::rollout()
 	{
 		treeNode n = selectBestLeaf(t);
 
-		//Random playthrough
+		//for each in get options()
+
+		int currentMoney = 3;
+		std::list<card*> hand = g.players[g.playerTurn].hand;
+		std::list<card*>::const_iterator iterator;
+		//for (iterator = hand.begin(); iterator != hand.end(); ++iterator)
+		//{
+		//	if (((*iterator))->name == "Copper" || ((*iterator))->name == "Silver" || ((*iterator))->name == "Gold")
+		//	{
+				//treasureCard tc = *iterator;
+
+				//card* c_ptr = *iterator;
+				//card c = *c_ptr;
+				//treasureCard tc = dynamic_cast<treasureCard>(c);
+
+
+
+				//card* c_ptr = &cat;
+				//treasureCard* t_ptr = dynamic_cast<treasureCard*>(c_ptr); 
+		//	}
+			
+		//}
+		std::list<card*> options = g.getOptions(currentMoney);
+		std::list<card*>::const_iterator iterator;
+		for (iterator = options.begin(); iterator != options.end(); ++iterator)
+		{
+			//Ad child
+			//Simulate
+
+		}
+
+
 
 		propagate();
 	}
 }
+
+double simulate()
+{
+	//While game not finished
+		//Buy Random
+		//Endturn
+		//Draw Cards
+		
+	//return hHeuristicValue
+}
+
 
 treeNode UCTMonteCarlo::selectBestLeaf(tree t)
 {
