@@ -9,7 +9,7 @@
 class cardstack
 {
 public:
-	cardstack::cardstack(card cardType);
+	cardstack::cardstack(card cardType, int numberOfCards);
 	cardstack::~cardstack();
 	card cardType;
 	int cardsLeft;
