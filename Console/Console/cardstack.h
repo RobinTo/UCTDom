@@ -9,6 +9,7 @@
 class cardstack
 {
 public:
+	cardstack();
 	cardstack(card cardType, int numberOfCards);
 	~cardstack();
 	card cardType;

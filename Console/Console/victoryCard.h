@@ -5,7 +5,10 @@
 
 class victoryCard : public card{
 public:
-	victoryCard(int vp);
+	victoryCard(int v)
+	{
+		vp = v;
+	}
 	int vp;
 };
 

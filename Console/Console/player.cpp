@@ -33,6 +33,11 @@ void player::endTurn()
 	drawCard(5);
 }
 
+void player::receiveCard(card* c)
+{
+	discard.push_back(c);
+}
+
 void player::shuffle()
 {
 	// Shuffle!
