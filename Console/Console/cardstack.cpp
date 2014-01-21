@@ -1,6 +1,11 @@
 #include "cardstack.h"
 #include "card.h"
 
+cardstack::cardstack()
+{
+
+}
+
 cardstack::cardstack(card cardType, int numberOfCards)
 {
 	cardType = cardType;

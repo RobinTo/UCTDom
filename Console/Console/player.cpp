@@ -1,6 +1,10 @@
 #include "player.h"
 #include "card.h"
 
+player::player()
+{
+
+}
 
 void player::playTurn()
 {

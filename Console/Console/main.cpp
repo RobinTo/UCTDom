@@ -6,5 +6,8 @@ int main()
 	
 	game g;
 
+
+	int t;
+	std::cin >> t;
 	return 0;
 }
