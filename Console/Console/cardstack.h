@@ -9,8 +9,8 @@
 class cardstack
 {
 public:
-	cardstack::cardstack(card cardType, int numberOfCards);
-	cardstack::~cardstack();
+	cardstack(card cardType, int numberOfCards);
+	~cardstack();
 	card cardType;
 	int cardsLeft;
 	int maximumCards;

@@ -8,6 +8,7 @@
 class game
 {
 public:
+	game();
 	int playerTurn;
 	player players[1];
 	cardstack cardstacks[6];

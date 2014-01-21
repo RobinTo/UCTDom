@@ -1,6 +1,10 @@
 #include "game.h"
 #include <iostream>
 
+game::game()
+{
+
+}
 
 int game::play_game()
 {

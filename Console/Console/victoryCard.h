@@ -5,6 +5,7 @@
 
 class victoryCard : public card{
 public:
+	victoryCard(int vp);
 	int vp;
 };
 
