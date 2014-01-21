@@ -13,6 +13,7 @@ public:
 	std::list<card*> inPlay;
 
 	void playTurn();
+	void drawCard();
 };
 
 #endif
