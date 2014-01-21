@@ -64,6 +64,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="treeNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h" />
@@ -71,6 +72,9 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="treasureCard.h" />
+    <ClInclude Include="tree.h" />
+    <ClInclude Include="treeNode.h" />
+    <ClInclude Include="UTCMonteCarlo.h" />
     <ClInclude Include="victoryCard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

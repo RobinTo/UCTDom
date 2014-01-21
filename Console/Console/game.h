@@ -2,6 +2,7 @@
 #include <string>
 #include "player.h"
 #include "cardstack.h"
+#include "card.h"
 
 #ifndef GAME_H
 #define GAME_H
@@ -14,7 +15,7 @@ public:
 	cardstack cardstacks[6];
 	int play_game();
 
-
+	std::list<card*> getOptions(int cash);
 
 };
 

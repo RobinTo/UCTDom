@@ -21,6 +21,13 @@ game::game()
 	cardstacks[4].cardType.name = "Silver";
 	cardstacks[5].cardType.name = "Gold";
 
+	cardstacks[0].cardType.cost = 2;
+	cardstacks[1].cardType.cost = 5;
+	cardstacks[2].cardType.cost = 8;
+	cardstacks[3].cardType.cost = 0;
+	cardstacks[4].cardType.cost = 3;
+	cardstacks[5].cardType.cost = 6;
+
 	player p;
 	// Hand 1
 	p.receiveCard(&cardstacks[0].cardType);
@@ -57,4 +64,18 @@ int game::play_game()
 {
 	playerTurn = 0;
 	return 0;
+}
+
+std::list<card*> game::getOptions(int cash)
+{
+	std::list<card*> cards;
+	for(int i = 0; i < 6; i++)
+	{
+		if (cash > cardstacks[i].cardType.cost)
+		{
+			cards.push_back(&cardstacks[i].cardType);
+		}
+	}
+
+	return cards;
 }
