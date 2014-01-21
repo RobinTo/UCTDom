@@ -30,6 +30,12 @@
     <ClCompile Include="treeNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="UCTMonteCarlo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -53,10 +59,10 @@
     <ClInclude Include="tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UTCMonteCarlo.h">
+    <ClInclude Include="treeNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="treeNode.h">
+    <ClInclude Include="UCTMonteCarlo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

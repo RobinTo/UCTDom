@@ -4,6 +4,8 @@
 #include "cardstack.h"
 #include "treasureCard.h"
 #include "player.h"
+#include "tree.h"
+#include "UCTMonteCarlo.h"
 
 game::game()
 {
@@ -52,12 +54,37 @@ game::game()
 
 	p.endTurn(); // Draw the initial 5 cards.
 
+	UCTMonteCarlo mc;
+
+	createTreeNode(false, &cardstacks[0].cardType, 0, &mc.t.initial);
+	createTreeNode(false, &cardstacks[1].cardType, 0, &mc.t.initial);
+	createTreeNode(false, &cardstacks[2].cardType, 0, &mc.t.initial);
+	createTreeNode(false, &cardstacks[3].cardType, 0, &mc.t.initial);
+	createTreeNode(false, &cardstacks[4].cardType, 0, &mc.t.initial);
+	createTreeNode(false, &cardstacks[5].cardType, 0, &mc.t.initial);
+
+	treeNode bestLeaf = mc.selectBestLeaf(mc.t);
+	std::cout << bestLeaf.c->name << std::endl;
+	std::cout << "Starting game." << std::endl;
 	int turn = 0;
 	while (turn < 3)
 	{
 		p.playTurn();
 		turn++;
 	}
+}
+
+void game::createTreeNode(bool state, card* card, int cash, treeNode* parent)
+{
+	treeNode t;
+	t.state = false;
+	t.c = card;
+	t.value = 1;
+	t.visited = 0;
+	t.cash = 0;
+	t.parentNode = parent;
+
+	parent->appendChild(t);
 }
 
 int game::play_game()

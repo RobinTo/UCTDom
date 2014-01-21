@@ -12,6 +12,7 @@ public:
 	tree t;
 	void select();
 	void propagate();
+	treeNode selectBestLeaf(tree t);
 
 	treeNode* bestResult();
 };

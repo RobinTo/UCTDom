@@ -3,6 +3,8 @@
 #include "player.h"
 #include "cardstack.h"
 #include "card.h"
+#include "treeNode.h"
+
 
 #ifndef GAME_H
 #define GAME_H
@@ -16,6 +18,7 @@ public:
 	int play_game();
 
 	std::list<card*> getOptions(int cash);
+	void createTreeNode(bool state, card* card, int cash, treeNode* p);
 
 };
 

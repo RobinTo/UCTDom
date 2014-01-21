@@ -6,11 +6,9 @@
 class tree
 {
 public:
-	tree()
-	{
-
-	}
-	tree(treeNode* initialNode);
+	tree();
+	tree(treeNode initialNode);
+	treeNode initial;
 };
 
 #endif
