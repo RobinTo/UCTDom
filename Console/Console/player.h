@@ -7,13 +7,16 @@
 
 class player{
 public:
+	player();
 	std::list<card*> deck;
 	std::list<card*> hand;
 	std::list<card*> discard;
 	std::list<card*> inPlay;
 
 	void playTurn();
-	void drawCard();
+	void drawCard(int n);
+	void endTurn();
+	void shuffle();
 };
 
 #endif

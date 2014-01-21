@@ -5,6 +5,7 @@
 
 class treasureCard : public card{
 public:
+	treasureCard(int value);
 	int value;
 };
 
