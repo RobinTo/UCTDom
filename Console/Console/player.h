@@ -18,6 +18,7 @@ public:
 	void endTurn();
 	void shuffle();
 	void receiveCard(card* c);
+	void playCard(card* c);
 };
 
 #endif

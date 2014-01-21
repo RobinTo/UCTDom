@@ -1,5 +1,6 @@
 #include "player.h"
 #include "card.h"
+#include <iostream>
 
 player::player()
 {
@@ -8,7 +9,14 @@ player::player()
 
 void player::playTurn()
 {
+	while(!hand.empty())
+	{
+		playCard(hand.front());
+		hand.pop_front();
+	}
+	endTurn();
 
+	std::cout << "Ended turn." << std::endl;
 }
 
 void player::drawCard(int n)
@@ -17,8 +25,11 @@ void player::drawCard(int n)
 	{
 		if(deck.empty())
 			shuffle();
-		hand.push_back(deck.front());
-		deck.pop_front();
+		if(!deck.empty())
+		{
+			hand.push_back(deck.front());
+			deck.pop_front();
+		}
 	}
 }
 
@@ -39,10 +50,21 @@ void player::endTurn()
 
 void player::receiveCard(card* c)
 {
-	discard.push_back(c);
+	deck.push_back(c);
 }
 
 void player::shuffle()
 {
-	// Shuffle!
+	// For now just push all from discard into deck
+	while(!discard.empty())
+	{
+		deck.push_back(discard.front());
+		discard.pop_front();
+	}
+}
+
+void player::playCard(card* c)
+{
+	std::cout << c->name << std::endl;
+	inPlay.push_back(c);
 }

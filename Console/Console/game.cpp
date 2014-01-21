@@ -14,6 +14,13 @@ game::game()
 	cardstacks[4] = cardstack(treasureCard(2), 12);
 	cardstacks[5] = cardstack(treasureCard(3), 12);
 
+	cardstacks[0].cardType.name = "Estate";
+	cardstacks[1].cardType.name = "Duchy";
+	cardstacks[2].cardType.name = "Province";
+	cardstacks[3].cardType.name = "Copper";
+	cardstacks[4].cardType.name = "Silver";
+	cardstacks[5].cardType.name = "Gold";
+
 	player p;
 	// Hand 1
 	p.receiveCard(&cardstacks[0].cardType);
@@ -35,6 +42,15 @@ game::game()
 	p.receiveCard(&cardstacks[3].cardType);
 	p.receiveCard(&cardstacks[3].cardType);
 	p.receiveCard(&cardstacks[3].cardType);
+
+	p.endTurn(); // Draw the initial 5 cards.
+
+	int turn = 0;
+	while (turn < 3)
+	{
+		p.playTurn();
+		turn++;
+	}
 }
 
 int game::play_game()
