@@ -63,7 +63,7 @@ game::game()
 	createTreeNode(false, &cardstacks[4].cardType, 0, &mc.t.initial);
 	createTreeNode(false, &cardstacks[5].cardType, 0, &mc.t.initial);
 
-	treeNode bestLeaf = mc.selectBestLeaf(mc.t);
+	treeNode bestLeaf = mc.selectBestLeaf(mc.t.initial);
 	std::cout << bestLeaf.c->name << std::endl;
 	std::cout << "Starting game." << std::endl;
 	int turn = 0;

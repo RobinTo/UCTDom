@@ -15,7 +15,7 @@ void UCTMonteCarlo::rollout()
 {
 	for (int i = 0; i < 500; i++)
 	{
-		treeNode n = selectBestLeaf(t);
+		treeNode n = selectBestLeaf(t.initial);
 
 		//for each in get options()
 
@@ -65,10 +65,9 @@ double simulate()
 }
 
 
-treeNode UCTMonteCarlo::selectBestLeaf(tree t)
+treeNode UCTMonteCarlo::selectBestLeaf(treeNode ofNode)
 {
-	treeNode initialNode = t.initial;
-	std::list<treeNode> childs = initialNode.childNodes;
+	std::list<treeNode> childs = ofNode.childNodes;
 	
 	std::list<treeNode>::const_iterator iterator;
 	double bestValue = 0.0;
@@ -83,8 +82,15 @@ treeNode UCTMonteCarlo::selectBestLeaf(tree t)
 			bestNode = (*iterator);
 		}
 	}
-	return bestNode;
 
+	if(bestNode.childNodes.size() > 0)
+	{
+		return selectBestLeaf(bestNode);
+	}
+	else
+	{
+		return bestNode;
+	}
 }
 
 void UCTMonteCarlo::propagate()

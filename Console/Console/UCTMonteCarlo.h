@@ -14,7 +14,7 @@ public:
 	game g;
 	void select();
 	void propagate();
-	treeNode selectBestLeaf(tree t);
+	treeNode selectBestLeaf(treeNode node);
 
 	treeNode* bestResult();
 };
