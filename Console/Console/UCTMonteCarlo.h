@@ -1,5 +1,4 @@
 #include "treeNode.h"
-#include "tree.h"
 #include "game.h"
 
 #ifndef __UCTMONTECARLO_H__
@@ -8,14 +7,13 @@
 class UCTMonteCarlo
 {
 public:
-	UCTMonteCarlo(game g);
-	void rollout();
-	tree t;
-	game g;
+	treeNode* rootNodePtr;
+	UCTMonteCarlo(treeNode* rootNodePtr);
+	void rollout(game g);
 	void select();
-	void propagate();
-	treeNode selectBestLeaf(treeNode node);
-
+	double simulate(treeNode* node, game g);
+	void propagate(double heuristicValue, treeNode* node);
+	treeNode* selectBestLeaf(treeNode* node);
 	treeNode* bestResult();
 };
 

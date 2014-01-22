@@ -2,24 +2,24 @@
 
 treeNode::treeNode()
 {
-
+	isRoot = false;
 }
 
-treeNode::treeNode(treeNode* pNode)
+
+treeNode::treeNode(bool isRoot2, treeNode* pNodePtr)
 {
-	parentNode = pNode;
+	if (isRoot2)
+	{
+		isRoot = true;
+		parentNodePtr = pNodePtr;
+	}
+	else
+	{
+		parentNodePtr = NULL;
+	}
 }
 
-void treeNode::appendChild(treeNode node)
+void treeNode::appendChild(treeNode* childNodePtr)
 {
-	childNodes.push_back(node);
-}
-
-void treeNode::addChild(bool state, card* c, int cash)
-{
-	treeNode n;
-	n.cash = cash;
-	n.state = state;
-	n.c = c;
-	childNodes.push_back(n);
+	childNodePtrs.push_back(childNodePtr);
 }

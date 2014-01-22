@@ -33,9 +33,6 @@
     <ClCompile Include="UCTMonteCarlo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="game.h">
@@ -54,9 +51,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cardstack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="treeNode.h">

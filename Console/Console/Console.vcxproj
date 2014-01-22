@@ -64,7 +64,6 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="tree.cpp" />
     <ClCompile Include="treeNode.cpp" />
     <ClCompile Include="UCTMonteCarlo.cpp" />
   </ItemGroup>
@@ -74,7 +73,6 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="treasureCard.h" />
-    <ClInclude Include="tree.h" />
     <ClInclude Include="treeNode.h" />
     <ClInclude Include="UCTMonteCarlo.h" />
     <ClInclude Include="victoryCard.h" />

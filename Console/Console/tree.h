@@ -7,8 +7,8 @@ class tree
 {
 public:
 	tree();
-	tree(treeNode initialNode);
-	treeNode initial;
+	tree(treeNode* initialNode);
+	treeNode initial = new treeNode();
 };
 
 #endif

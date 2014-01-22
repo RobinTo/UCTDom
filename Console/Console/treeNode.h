@@ -8,17 +8,16 @@ class treeNode
 {
 public:
 	treeNode();
-	treeNode(treeNode* pNode);
+	treeNode(bool isRoot2, treeNode* pNodePtr);
 	bool state;
+	bool isRoot;
 	card* c;
 	int cash;
 	int visited;
 	double value;
-	std::list<treeNode> childNodes;
-	treeNode* parentNode;
-
-	void addChild(bool state, card* c, int cash);
-	void appendChild(treeNode child);
+	std::list<treeNode*> childNodePtrs;
+	treeNode* parentNodePtr;
+	void appendChild(treeNode* child);
 private:
 
 };

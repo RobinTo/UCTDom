@@ -4,7 +4,6 @@
 #include "cardstack.h"
 #include "treasureCard.h"
 #include "player.h"
-#include "tree.h"
 #include "UCTMonteCarlo.h"
 
 game::game()
@@ -29,62 +28,67 @@ game::game()
 	cardstacks[3].cardType.cost = 0;
 	cardstacks[4].cardType.cost = 3;
 	cardstacks[5].cardType.cost = 6;
-
+	
 	player p;
+	players[0] = p;
 	// Hand 1
-	p.receiveCard(&cardstacks[0].cardType);
-	p.receiveCard(&cardstacks[0].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[0].cardType);
+	players[0].receiveCard(&cardstacks[0].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
 
 	// Hand 2
-	p.receiveCard(&cardstacks[0].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[0].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
 
 	// Hand 3
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
-	p.receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
+	players[0].receiveCard(&cardstacks[3].cardType);
 
-	p.endTurn(); // Draw the initial 5 cards.
+	players[0].endTurn(); // Draw the initial 5 cards.
 
-	UCTMonteCarlo mc;
 
-	createTreeNode(false, &cardstacks[0].cardType, 0, &mc.t.initial);
-	createTreeNode(false, &cardstacks[1].cardType, 0, &mc.t.initial);
-	createTreeNode(false, &cardstacks[2].cardType, 0, &mc.t.initial);
-	createTreeNode(false, &cardstacks[3].cardType, 0, &mc.t.initial);
-	createTreeNode(false, &cardstacks[4].cardType, 0, &mc.t.initial);
-	createTreeNode(false, &cardstacks[5].cardType, 0, &mc.t.initial);
+	
+	UCTMonteCarlo mc(createTreeNode(true, true, NULL, 5, NULL));
 
-	treeNode bestLeaf = mc.selectBestLeaf(mc.t.initial);
-	std::cout << bestLeaf.c->name << std::endl;
+	createTreeNode(false, false, &cardstacks[0].cardType, 0, mc.rootNodePtr);
+	createTreeNode(false, false, &cardstacks[1].cardType, 0, mc.rootNodePtr);
+//	createTreeNode(false, &cardstacks[2].cardType, 0, &mc.t.initial);
+	createTreeNode(false, false, &cardstacks[3].cardType, 0, mc.rootNodePtr);
+	createTreeNode(false, false, &cardstacks[4].cardType, 0, mc.rootNodePtr);
+//	createTreeNode(false, &cardstacks[5].cardType, 0, &mc.t.initial);
+	
+	mc.rollout(*this);
+	
 	std::cout << "Starting game." << std::endl;
 	int turn = 0;
 	while (turn < 3)
 	{
-		p.playTurn();
+		players[0].playTurn();
 		turn++;
 	}
 }
 
-void game::createTreeNode(bool state, card* card, int cash, treeNode* parent)
+treeNode* game::createTreeNode(bool state, bool isRoot, card* card, int cash, treeNode* parentPtr)
 {
-	treeNode t;
-	t.state = false;
-	t.c = card;
-	t.value = 1;
-	t.visited = 0;
-	t.cash = 0;
-	t.parentNode = parent;
+	treeNode* t = new treeNode(isRoot, parentPtr);
+	t->state = state;
+	t->c = card;
+	t->value = 1;
+	t->visited = 0;
+	t->cash = cash;
+	
 
-	parent->appendChild(t);
+	if (parentPtr != NULL)
+		parentPtr->appendChild(t);
+	return t;
 }
 
 int game::play_game()
@@ -98,7 +102,7 @@ std::list<card*> game::getOptions(int cash)
 	std::list<card*> cards;
 	for(int i = 0; i < 6; i++)
 	{
-		if (cash > cardstacks[i].cardType.cost)
+		if (cash >= cardstacks[i].cardType.cost)
 		{
 			cards.push_back(&cardstacks[i].cardType);
 		}

@@ -18,7 +18,7 @@ public:
 	int play_game();
 
 	std::list<card*> getOptions(int cash);
-	void createTreeNode(bool state, card* card, int cash, treeNode* p);
+	treeNode* createTreeNode(bool state, bool isRoot, card* card, int cash, treeNode* parentPtr);
 
 };
 

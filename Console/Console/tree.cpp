@@ -5,8 +5,9 @@ tree::tree()
 
 }
 
-tree::tree(treeNode initialNode)
+tree::tree(treeNode* initialNode)
 {
-	initial = initialNode;
-	initial.parentNode = NULL;
+	initial = *initialNode;
+	initial.isRoot = true;
+	initial.parentNodePtr = NULL;
 }
