@@ -11,11 +11,12 @@ treeNode::treeNode(bool isRoot2, treeNode* pNodePtr)
 	if (isRoot2)
 	{
 		isRoot = true;
-		parentNodePtr = pNodePtr;
+		parentNodePtr = NULL;
 	}
 	else
 	{
-		parentNodePtr = NULL;
+		isRoot = false;
+		parentNodePtr = pNodePtr;
 	}
 }
 
