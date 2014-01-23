@@ -44,6 +44,7 @@ p.endTurn()
 turns = 0
 
 while turns < 40:
+	print("Turn: " + str(turns))
 	print("Current hand:")
 	p.printHandString()
 	print("With " + str(calculateMoney(p)) + " coins, buy: ")
@@ -53,3 +54,46 @@ while turns < 40:
 	p.endTurn()
 
 	turns+=1
+
+endSum = 0
+estateCounter = 0
+duchyCounter = 0
+provinceCounter = 0
+for c in p.deck:
+	if c.name == "Estate":
+		estateCounter+=1
+	elif c.name == "Duchy":
+		duchyCounter+=1
+	elif c.name == "Province":
+		provinceCounter+=1
+	endSum += c.value
+for c in p.discard:
+	if c.name == "Estate":
+		estateCounter+=1
+	elif c.name == "Duchy":
+		duchyCounter+=1
+	elif c.name == "Province":
+		provinceCounter+=1
+	endSum += c.value
+for c in p.hand:
+	if c.name == "Estate":
+		estateCounter+=1
+	elif c.name == "Duchy":
+		duchyCounter+=1
+	elif c.name == "Province":
+		provinceCounter+=1
+	endSum += c.value
+for c in p.inPlay:
+	if c.name == "Estate":
+		estateCounter+=1
+	elif c.name == "Duchy":
+		duchyCounter+=1
+	elif c.name == "Province":
+		provinceCounter+=1
+	endSum += c.value
+
+print("Finished the game with: ")
+print(endSum)
+print(str(estateCounter) + " estates")
+print(str(duchyCounter) + " duchys")
+print(str(provinceCounter) + " provinces")

@@ -9,7 +9,7 @@ def getNextOption(p, currentNode, cards, turn):
 	playerCopy = copy.deepcopy(p)	# Don't want to change anythin on the real player.
 
 	options = getOptions(calculateMoney(playerCopy), cards)
-	for i in range(0, 2000*len(options)):
+	for i in range(0, 500*len(options)):
 		newCopy = copy.deepcopy(playerCopy)
 		rollout(newCopy, nodeCopy, cards, turn)
 
@@ -44,7 +44,7 @@ def rollout(playerCopy, nodeCopy, cards, turn):
 			propagate(value, newNode)
 	else:
 		editablePlayer = copy.deepcopy(playerCopy)
-		value = simulate(editablePlayer, nodeToExpand, cards)
+		value = simulate(editablePlayer, nodeToExpand, cards, turn)
 		propagate(value, nodeToExpand)
 
 
@@ -63,10 +63,10 @@ def getBestChild(nodeList):
 	bestValue = 0
 	bestNode = None
 	for n in nodeList:
-		if n.parent != None:
-			nodeValue = n.value + 1 * math.sqrt(math.log(n.parent.timesChosen)/n.timesChosen)
-		else:
-			nodeValue = n.value + 1 * math.sqrt(math.log(1)/n.timesChosen)
+		#if n.parent != None:
+		#	nodeValue = n.value + 1 * math.sqrt(math.log(n.parent.timesChosen)/n.timesChosen)
+		#else:
+		#	nodeValue = n.value + 1 * math.sqrt(math.log(1)/n.timesChosen)
 		nodeValue = -n.timesChosen # Just for testing, implement equation
 		if (nodeValue > bestValue or bestNode == None):
 			bestValue = nodeValue
@@ -78,7 +78,7 @@ def simulate(playerCopy, node, cards, turn):
 	playerCopy.endTurn()
 	#print(7-node.treeDepth)
 	for i in range(turn, 39-node.treeDepth):	# Simulate until game done. 6 turns in utcdom.py while loop
-		opts = getOptions(6, cards)
+		opts = getOptions(calculateMoney(playerCopy), cards)
 		cardChosen = opts[random.randint(0, len(opts)-1)]
 		playerCopy.buyCard(cardChosen)
 		playerCopy.endTurn();
@@ -97,6 +97,8 @@ def simulate(playerCopy, node, cards, turn):
 	return endSum
 
 def propagate(score, propagateNode):
+	#if score > propagateNode.value:
+	#	propagateNode.value = score
 	propagateNode.totalValue += score
 	propagateNode.timesPropagated += 1.0
 	propagateNode.value = propagateNode.totalValue/propagateNode.timesPropagated
