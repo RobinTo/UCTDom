@@ -68,34 +68,39 @@ card* UCTMonteCarlo::rollout(gameState* gameStatePtr)
 
 double UCTMonteCarlo::simulate(treeNode* node, gameState gameState2)
 {
-	//gameState* gameStateCopyPtr = new gameState();
-	//gameState gameStateCopy = *gameStateCopyPtr;
+	//gameState gameStateCopy;
 	//gameStateCopy.cardstacks[0] = gameState2.cardstacks[0];
 	//gameStateCopy.cardstacks[1] = gameState2.cardstacks[1];
 	//gameStateCopy.cardstacks[2] = gameState2.cardstacks[2];
 	//gameStateCopy.cardstacks[3] = gameState2.cardstacks[3];
 	//gameStateCopy.cardstacks[4] = gameState2.cardstacks[4];
 	//gameStateCopy.cardstacks[5] = gameState2.cardstacks[5];
-	//gameStateCopy.playerStatePtrs.push_back(gameState2.playerStatePtrs.front());
+	//playerState playerStateCopy;
+	//playerStateCopy.deck = gameState2.playerStatePtrs.front()->deck;
+	//playerStateCopy.discard = gameState2.playerStatePtrs.front()->discard;
+	//gameStateCopy.playerStatePtrs.push_back(&playerStateCopy);
+
+	gameState gameStateCopy = gameState(gameState2);
+
 	double heuristicScore = 0;
-	gameState2.playerStatePtrs.front()->receiveCard(node->c);
+	gameStateCopy.playerStatePtrs.front()->receiveCard(node->c);
 	heuristicScore += node->c->cost;
-	gameState2.playerStatePtrs.front()->endTurn();
+	gameStateCopy.playerStatePtrs.front()->endTurn();
 	
 	for (int counter = 0; counter < 2; counter++)
 	{
 		//Dynamically find current money available
 		int nextMoney = 5;
-		std::list<card*> options = gameState2.getOptions(nextMoney);
+		std::list<card*> options = gameStateCopy.getOptions(nextMoney);
 		
 		int randomValue = rand() % options.size();
 		for (int index = 0; index < randomValue; index++)
 		{
 			options.pop_front();
 		}
-		gameState2.playerStatePtrs.front()->receiveCard(options.front());
+		gameStateCopy.playerStatePtrs.front()->receiveCard(options.front());
 		heuristicScore += node->c->cost;
-		gameState2.playerStatePtrs.front()->endTurn();
+		gameStateCopy.playerStatePtrs.front()->endTurn();
 	}
 	std::cout << "Done Simulate" << std::endl;
 
@@ -163,3 +168,4 @@ treeNode* UCTMonteCarlo::createTreeNode(bool state, bool isRoot, card* card, int
 		parentPtr->appendChild(t);
 	return t;
 }
+

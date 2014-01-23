@@ -9,6 +9,8 @@
 class gameState
 {
 public:
+	gameState();
+	gameState(const gameState& original);
 
 	cardstack cardstacks[6];
 	std::list<playerState*> playerStatePtrs;
