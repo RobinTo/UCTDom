@@ -4,14 +4,14 @@ import copy
 import math
 import time
 
-def getNextOption(p, currentNode, cards):
+def getNextOption(p, currentNode, cards, turn):
 	nodeCopy = copy.deepcopy(currentNode)	# Somewhat irrelevant, could always make new empty node as parent
 	playerCopy = copy.deepcopy(p)	# Don't want to change anythin on the real player.
 
 	options = getOptions(calculateMoney(playerCopy), cards)
-	for i in range(0, 1000*len(options)):
+	for i in range(0, 2000*len(options)):
 		newCopy = copy.deepcopy(playerCopy)
-		rollout(newCopy, nodeCopy, cards)
+		rollout(newCopy, nodeCopy, cards, turn)
 
 	#nodeCopy.printTreeBelow(0)
 	#print(len(nodeCopy.childNodes))
@@ -20,14 +20,13 @@ def getNextOption(p, currentNode, cards):
 	bestValue = 0
 
 	for n in nodeCopy.childNodes:
-		print(n.timesChosen)
 		if n.value > bestValue or bestNode == None:
 			bestNode = n
 			bestValue = n.value
 
 	return bestNode.cardOption
 
-def rollout(playerCopy, nodeCopy, cards):
+def rollout(playerCopy, nodeCopy, cards, turn):
 	nodeToExpand = getBestLeaf(playerCopy, nodeCopy)
 	
 	# Here we have the base player, getBestLeaf buys cards when it goes down the tree
@@ -35,13 +34,13 @@ def rollout(playerCopy, nodeCopy, cards):
 	#if nodeToExpand.cardOption:
 	#	print(nodeToExpand.cardOption.name)
 	#time.sleep(.1)
-	if nodeToExpand.treeDepth < 7:
+	if nodeToExpand.treeDepth < 40-turn:
 		options = getOptions(calculateMoney(playerCopy), cards)
 		for o in options:
 			editablePlayer = copy.deepcopy(playerCopy) # Don't modify playercopy with simulations, base playercopy is state before option is chosen.
 			newNode = treeNode(nodeToExpand, o)
 			nodeToExpand.appendChild(newNode)
-			value = simulate(editablePlayer, newNode, cards)
+			value = simulate(editablePlayer, newNode, cards, turn)
 			propagate(value, newNode)
 	else:
 		editablePlayer = copy.deepcopy(playerCopy)
@@ -74,11 +73,11 @@ def getBestChild(nodeList):
 			bestNode = n
 	return bestNode
 
-def simulate(playerCopy, node, cards):
+def simulate(playerCopy, node, cards, turn):
 	playerCopy.buyCard(node.cardOption)
 	playerCopy.endTurn()
 	#print(7-node.treeDepth)
-	for i in range(0, 7-node.treeDepth):	# Simulate until game done. 6 turns in utcdom.py while loop
+	for i in range(turn, 39-node.treeDepth):	# Simulate until game done. 6 turns in utcdom.py while loop
 		opts = getOptions(6, cards)
 		cardChosen = opts[random.randint(0, len(opts)-1)]
 		playerCopy.buyCard(cardChosen)

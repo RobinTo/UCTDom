@@ -27,12 +27,12 @@ cardCounters = []
 # first and sometimes second round, then only victory cards.
 # This shows that the game thinks about the future. (?)
 addCard(card("Copper", 		0, 0), 12)
-addCard(card("Silver", 		30, 3), 12)
-addCard(card("Gold", 		50, 6), 12)
+addCard(card("Silver", 		0, 3), 12)
+addCard(card("Gold", 		0, 6), 12)
 
-addCard(card("Estate", 		100, 2), 12)
-addCard(card("Duchy", 		400, 5), 12)
-addCard(card("Province", 	800, 8), 12)
+addCard(card("Estate", 		1, 2), 12)
+addCard(card("Duchy", 		3, 5), 12)
+addCard(card("Province", 	6, 8), 12)
 
 for i in range(0,7):
 	p.discard.append(getCardByName("Copper"))
@@ -43,11 +43,11 @@ p.endTurn()
 
 turns = 0
 
-while turns < 6:
+while turns < 40:
 	print("Current hand:")
 	p.printHandString()
 	print("With " + str(calculateMoney(p)) + " coins, buy: ")
-	nextCard = getNextOption(p, initialNode, cards).name
+	nextCard = getNextOption(p, initialNode, cards, turns).name
 	p.buyCard(getCardByName(nextCard))
 	print(nextCard)
 	p.endTurn()
