@@ -5,39 +5,37 @@
 #include <iostream>
 #include "treasureCard.h"
 
-UCTMonteCarlo::UCTMonteCarlo(treeNode* rootNodePtr2)
+UCTMonteCarlo::UCTMonteCarlo()
 {
-	rootNodePtr = rootNodePtr2;
+	rootNodePtr = createTreeNode(true, true, NULL, 5, NULL);
 }
 
-void UCTMonteCarlo::rollout(game g)
+void UCTMonteCarlo::initialize(gameState* gameStatePtr)
 {
-	game originalGame = g;
-	for (int i = 0; i < 500; i++)
+	createTreeNode(false, false, &gameStatePtr->cardstacks[0].cardType, 0, rootNodePtr);
+	createTreeNode(false, false, &gameStatePtr->cardstacks[1].cardType, 0, rootNodePtr);
+	createTreeNode(false, false, &gameStatePtr->cardstacks[3].cardType, 0, rootNodePtr);
+	createTreeNode(false, false, &gameStatePtr->cardstacks[4].cardType, 0, rootNodePtr);
+}
+
+card* UCTMonteCarlo::next(bool* donePtr, gameState* gameStatePtr)
+{
+	card* bestCardPtr = rollout(gameStatePtr);
+	*donePtr = true;
+
+	return bestCardPtr;
+}
+
+card* UCTMonteCarlo::rollout(gameState* gameStatePtr)
+{
+	for (int i = 0; i < 20; i++)
 	{
 		treeNode* bestLeafPtr = selectBestLeaf(rootNodePtr);
 
+		// Dynamically find how much money the player has.
 		int currentMoney = 5;
-		std::list<card*> hand = g.players[0].hand;
-		//std::list<card*>::const_iterator iterator;
-		//for (iterator = hand.begin(); iterator != hand.end(); ++iterator)
-		//{
-		//	if (((*iterator))->name == "Copper" || ((*iterator))->name == "Silver" || ((*iterator))->name == "Gold")
-		//	{
-				//treasureCard tc = *iterator;
-
-				//card* c_ptr = *iterator;
-				//card c = *c_ptr;
-				//treasureCard tc = dynamic_cast<treasureCard>(c);
-
-
-
-				//card* c_ptr = &cat;
-				//treasureCard* t_ptr = dynamic_cast<treasureCard*>(c_ptr); 
-		//	}
-			
-		//}
-		std::list<card*> options = g.getOptions(currentMoney);
+		
+		std::list<card*> options = gameStatePtr->getOptions(currentMoney);
 		std::list<card*>::const_iterator iterator;
 		for (iterator = options.begin(); iterator != options.end(); ++iterator)
 		{
@@ -51,51 +49,77 @@ void UCTMonteCarlo::rollout(game g)
 			newNode->parentNodePtr = bestLeafPtr;
 			bestLeafPtr->appendChild(newNode);
 			
-			//Simulate
-			double heuristicValue = simulate(newNode, g);
+			//Simulate and Propagate
+			double heuristicValue = simulate(newNode, *gameStatePtr);
 			propagate(heuristicValue, newNode);
-			g = originalGame;
 		}
 	}
+	
+	// Find best card to buy
+	treeNode* bestNodePtr = rootNodePtr->childNodePtrs.front();
+	std::list<treeNode*>::const_iterator iterator;
+	for (iterator = rootNodePtr->childNodePtrs.begin(); iterator != rootNodePtr->childNodePtrs.end(); ++iterator)
+	{
+		if ((*iterator)->value > bestNodePtr->value)
+			bestNodePtr = *iterator;
+	}
+	return bestNodePtr->c;
 }
 
-double UCTMonteCarlo::simulate(treeNode* node, game g)
+double UCTMonteCarlo::simulate(treeNode* node, gameState gameState2)
 {
+	//gameState* gameStateCopyPtr = new gameState();
+	//gameState gameStateCopy = *gameStateCopyPtr;
+	//gameStateCopy.cardstacks[0] = gameState2.cardstacks[0];
+	//gameStateCopy.cardstacks[1] = gameState2.cardstacks[1];
+	//gameStateCopy.cardstacks[2] = gameState2.cardstacks[2];
+	//gameStateCopy.cardstacks[3] = gameState2.cardstacks[3];
+	//gameStateCopy.cardstacks[4] = gameState2.cardstacks[4];
+	//gameStateCopy.cardstacks[5] = gameState2.cardstacks[5];
+	//gameStateCopy.playerStatePtrs.push_back(gameState2.playerStatePtrs.front());
 	double heuristicScore = 0;
-	g.players[0].receiveCard(node->c);
+	gameState2.playerStatePtrs.front()->receiveCard(node->c);
 	heuristicScore += node->c->cost;
-	g.players[0].endTurn();
-
-	int counter = 0;
-	while (counter < 2)
+	gameState2.playerStatePtrs.front()->endTurn();
+	
+	for (int counter = 0; counter < 2; counter++)
 	{
+		//Dynamically find current money available
 		int nextMoney = 5;
-		std::list<card*> options = g.getOptions(nextMoney);
+		std::list<card*> options = gameState2.getOptions(nextMoney);
+		
 		int randomValue = rand() % options.size();
 		for (int index = 0; index < randomValue; index++)
 		{
 			options.pop_front();
 		}
-		g.players[0].receiveCard(options.front());
+		gameState2.playerStatePtrs.front()->receiveCard(options.front());
 		heuristicScore += node->c->cost;
-		g.players[0].endTurn();
-
-		counter++;
+		gameState2.playerStatePtrs.front()->endTurn();
 	}
 	std::cout << "Done Simulate" << std::endl;
+
 	return heuristicScore;
 }
 
 void UCTMonteCarlo::propagate(double heuristicValue, treeNode* nodePtr)
 {
-	treeNode* tempNodePtr = nodePtr;
+	nodePtr->value = heuristicValue;
+	treeNode* tempNodePtr = nodePtr->parentNodePtr;
 	while (!tempNodePtr->isRoot)
 	{
-		if (tempNodePtr->value < heuristicValue)
-			tempNodePtr->value = heuristicValue;
-		std::cout << tempNodePtr->value << std::endl;
-		tempNodePtr = tempNodePtr->parentNodePtr;
+		std::cout << "Starting propagate" << std::endl;
+		double childrenScore = 0.0;
+		std::list<treeNode*>::const_iterator iterator;
+		for (iterator = tempNodePtr->childNodePtrs.begin(); iterator != tempNodePtr->childNodePtrs.end(); ++iterator)
+		{
+			childrenScore += (*iterator)->value;
+			std::cout << "Child score: " << (*iterator)->value << std::endl;
+		}
 		
+		tempNodePtr->value = childrenScore/tempNodePtr->childNodePtrs.size();
+		std::cout << "Parent score: " << tempNodePtr->value << std::endl;
+		tempNodePtr = tempNodePtr->parentNodePtr;
 	}
 }
 
@@ -123,4 +147,19 @@ treeNode* UCTMonteCarlo::selectBestLeaf(treeNode* startNodePtr)
 	{
 		return bestNodePtr;
 	}
+}
+
+treeNode* UCTMonteCarlo::createTreeNode(bool state, bool isRoot, card* card, int cash, treeNode* parentPtr)
+{
+	treeNode* t = new treeNode(isRoot, parentPtr);
+	t->state = state;
+	t->c = card;
+	t->value = 1;
+	t->visited = 0;
+	t->cash = cash;
+	
+
+	if (parentPtr != NULL)
+		parentPtr->appendChild(t);
+	return t;
 }

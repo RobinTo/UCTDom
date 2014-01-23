@@ -62,8 +62,10 @@
   <ItemGroup>
     <ClCompile Include="cardstack.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gameState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
+    <ClCompile Include="playerState.cpp" />
     <ClCompile Include="treeNode.cpp" />
     <ClCompile Include="UCTMonteCarlo.cpp" />
   </ItemGroup>
@@ -71,7 +73,9 @@
     <ClInclude Include="card.h" />
     <ClInclude Include="cardstack.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameState.h" />
     <ClInclude Include="player.h" />
+    <ClInclude Include="playerState.h" />
     <ClInclude Include="treasureCard.h" />
     <ClInclude Include="treeNode.h" />
     <ClInclude Include="UCTMonteCarlo.h" />

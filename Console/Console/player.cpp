@@ -4,67 +4,32 @@
 
 player::player()
 {
-
+	
 }
 
-void player::playTurn()
+void player::initialize(gameState* gameStatePtr)
 {
-	while(!hand.empty())
-	{
-		playCard(hand.front());
-		hand.pop_front();
-	}
-	endTurn();
+	playerStatePtr = new playerState();
+	gameStatePtr->playerStatePtrs.push_back(playerStatePtr);
+	uctmc.initialize(gameStatePtr);
+}
 
+void player::playTurn(gameState* gameStatePtr)
+{
+	bool aiDone = false;
+	card* cardToBuy;
+
+	while (!aiDone)
+	{
+		cardToBuy = uctmc.next(&aiDone, gameStatePtr);
+	}
+	while(!playerStatePtr->hand.empty())
+	{
+		playerStatePtr->playCard(playerStatePtr->hand.front());
+		playerStatePtr->hand.pop_front();
+	}
+	playerStatePtr->endTurn();
+
+	std::cout << "Buy: " << cardToBuy->name << " costing " << cardToBuy->cost << std::endl;
 	std::cout << "Ended turn." << std::endl;
-}
-
-void player::drawCard(int n)
-{
-	for (int i = 0; i<n; i++)
-	{
-		if(deck.empty())
-			shuffle();
-		if(!deck.empty())
-		{
-			hand.push_back(deck.front());
-			deck.pop_front();
-		}
-	}
-}
-
-void player::endTurn()
-{
-	while(!inPlay.empty())
-	{
-		discard.push_back(inPlay.front());
-		inPlay.pop_front();
-	}
-	while(!hand.empty())
-	{
-		discard.push_back(hand.front());
-		hand.pop_front();
-	}
-	drawCard(5);
-}
-
-void player::receiveCard(card* c)
-{
-	deck.push_back(c);
-}
-
-void player::shuffle()
-{
-	// For now just push all from discard into deck
-	while(!discard.empty())
-	{
-		deck.push_back(discard.front());
-		discard.pop_front();
-	}
-}
-
-void player::playCard(card* c)
-{
-	std::cout << c->name << std::endl;
-	inPlay.push_back(c);
 }
