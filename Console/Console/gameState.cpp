@@ -5,18 +5,18 @@ gameState::gameState(){}
 gameState::gameState(const gameState& original)
 {
 	// Deep copies game and playerstate. Only for the first playerstate! Need more work if more than one player, but should be easy.
-	gameState.cardstacks[0] = original.cardstacks[0];
-	gameState.cardstacks[1] = original.cardstacks[1];
-	gameState.cardstacks[2] = original.cardstacks[2];
-	gameState.cardstacks[3] = original.cardstacks[3];
-	gameState.cardstacks[4] = original.cardstacks[4];
-	gameState.cardstacks[5] = original.cardstacks[5];
+	this->cardstacks[0] = original.cardstacks[0];
+	this->cardstacks[1] = original.cardstacks[1];
+	this->cardstacks[2] = original.cardstacks[2];
+	this->cardstacks[3] = original.cardstacks[3];
+	this->cardstacks[4] = original.cardstacks[4];
+	this->cardstacks[5] = original.cardstacks[5];
 	playerState playerStateCopy;
 	playerStateCopy.deck = original.playerStatePtrs.front()->deck;
 	playerStateCopy.discard = original.playerStatePtrs.front()->discard;
 	playerStateCopy.inPlay = original.playerStatePtrs.front()->inPlay;
 	playerStateCopy.hand = original.playerStatePtrs.front()->hand;
-	gameState.playerStatePtrs.push_back(&playerStateCopy);
+	this->playerStatePtrs.push_back(&playerStateCopy);
 }
 
 std::list<card*> gameState::getOptions(int cash)

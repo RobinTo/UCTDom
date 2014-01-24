@@ -50,7 +50,7 @@ card* UCTMonteCarlo::rollout(gameState* gameStatePtr)
 			bestLeafPtr->appendChild(newNode);
 			
 			//Simulate and Propagate
-			double heuristicValue = simulate(newNode, *gameStatePtr);
+			double heuristicValue = simulate(newNode, gameStatePtr);
 			propagate(heuristicValue, newNode);
 		}
 	}
@@ -66,21 +66,24 @@ card* UCTMonteCarlo::rollout(gameState* gameStatePtr)
 	return bestNodePtr->c;
 }
 
-double UCTMonteCarlo::simulate(treeNode* node, gameState gameState2)
+double UCTMonteCarlo::simulate(treeNode* node, gameState* gameStatePtr)
 {
-	//gameState gameStateCopy;
-	//gameStateCopy.cardstacks[0] = gameState2.cardstacks[0];
-	//gameStateCopy.cardstacks[1] = gameState2.cardstacks[1];
-	//gameStateCopy.cardstacks[2] = gameState2.cardstacks[2];
-	//gameStateCopy.cardstacks[3] = gameState2.cardstacks[3];
-	//gameStateCopy.cardstacks[4] = gameState2.cardstacks[4];
-	//gameStateCopy.cardstacks[5] = gameState2.cardstacks[5];
-	//playerState playerStateCopy;
-	//playerStateCopy.deck = gameState2.playerStatePtrs.front()->deck;
-	//playerStateCopy.discard = gameState2.playerStatePtrs.front()->discard;
-	//gameStateCopy.playerStatePtrs.push_back(&playerStateCopy);
+	
+	gameState gameStateCopy;
+	gameStateCopy.cardstacks[0] = gameStatePtr->cardstacks[0];
+	gameStateCopy.cardstacks[1] = gameStatePtr->cardstacks[1];
+	gameStateCopy.cardstacks[2] = gameStatePtr->cardstacks[2];
+	gameStateCopy.cardstacks[3] = gameStatePtr->cardstacks[3];
+	gameStateCopy.cardstacks[4] = gameStatePtr->cardstacks[4];
+	gameStateCopy.cardstacks[5] = gameStatePtr->cardstacks[5];
+	playerState playerStateCopy;
+	playerStateCopy.deck = gameStatePtr->playerStatePtrs.front()->deck;
+	playerStateCopy.discard = gameStatePtr->playerStatePtrs.front()->discard;
+	playerStateCopy.deck = gameStatePtr->playerStatePtrs.front()->hand;
+	playerStateCopy.discard = gameStatePtr->playerStatePtrs.front()->inPlay;
+	gameStateCopy.playerStatePtrs.push_back(&playerStateCopy);
 
-	gameState gameStateCopy = gameState(gameState2);
+	//gameState gameStateCopy = gameState(*gameStatePtr);
 
 	double heuristicScore = 0;
 	gameStateCopy.playerStatePtrs.front()->receiveCard(node->c);
@@ -102,7 +105,6 @@ double UCTMonteCarlo::simulate(treeNode* node, gameState gameState2)
 		heuristicScore += node->c->cost;
 		gameStateCopy.playerStatePtrs.front()->endTurn();
 	}
-	std::cout << "Done Simulate" << std::endl;
 
 	return heuristicScore;
 }
@@ -113,17 +115,14 @@ void UCTMonteCarlo::propagate(double heuristicValue, treeNode* nodePtr)
 	treeNode* tempNodePtr = nodePtr->parentNodePtr;
 	while (!tempNodePtr->isRoot)
 	{
-		std::cout << "Starting propagate" << std::endl;
 		double childrenScore = 0.0;
 		std::list<treeNode*>::const_iterator iterator;
 		for (iterator = tempNodePtr->childNodePtrs.begin(); iterator != tempNodePtr->childNodePtrs.end(); ++iterator)
 		{
 			childrenScore += (*iterator)->value;
-			std::cout << "Child score: " << (*iterator)->value << std::endl;
 		}
 		
 		tempNodePtr->value = childrenScore/tempNodePtr->childNodePtrs.size();
-		std::cout << "Parent score: " << tempNodePtr->value << std::endl;
 		tempNodePtr = tempNodePtr->parentNodePtr;
 	}
 }

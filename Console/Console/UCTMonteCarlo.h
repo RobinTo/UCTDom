@@ -15,7 +15,7 @@ public:
 	card* next(bool* donePtr, gameState* gameStatePtr);
 private:
 	card* rollout(gameState* gameStatePtr);
-	double simulate(treeNode* node, gameState gameState);
+	double simulate(treeNode* node, gameState* gameStatePtr);
 	void propagate(double heuristicValue, treeNode* node);
 	treeNode* selectBestLeaf(treeNode* node);
 	treeNode* bestResult();
