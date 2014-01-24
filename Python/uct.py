@@ -4,12 +4,12 @@ import copy
 import math
 import time
 
-def getNextOption(p, currentNode, cards, turn):
+def getNextOption(p, currentNode, cards, turn, simulationTurns):
 	nodeCopy = copy.deepcopy(currentNode)	# Somewhat irrelevant, could always make new empty node as parent
 	playerCopy = copy.deepcopy(p)	# Don't want to change anythin on the real player.
 
 	options = getOptions(calculateMoney(playerCopy), cards)
-	for i in range(0, 500*len(options)):
+	for i in range(0, simulationTurns*len(options)):
 		newCopy = copy.deepcopy(playerCopy)
 		rollout(newCopy, nodeCopy, cards, turn)
 
