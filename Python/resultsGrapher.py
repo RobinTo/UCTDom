@@ -1,84 +1,47 @@
 import matplotlib.pyplot as plt
 import string
 
-class game():
-	def __init__(self, sims, end, estate, duchy, province):
-		self.simulations = sims
-		self.endScore = end
-		self.estates = estate
-		self.duchys = duchy
-		self.provinces = province
+def readResults(fileName):
+	f = open(fileName, "r")
 
-games = []
+	resultsArrays = []
+	for line in f:
+		if "Turns" in line:
+			r = string.split(line, ":")
+			r.remove(r[0])
+			r.remove(r[len(r)-1])
+			resultsArrays.append(r)
 
-f = open('resultsFormatted.txt', 'r')
+	f.close()
+	return resultsArrays
 
-for line in f:
-	gameParts = string.split(line, ':')
-	g = game(gameParts[1], gameParts[2], gameParts[3], gameParts[4], gameParts[5])
-	games.append(g)
+def graphResults(resultsArrays):
+	for arr in resultsArrays:
+		plt.plot(range(0, len(arr)), arr)
 
-f.close()
+def graphAverage(resultsArrays):
+	averageArray = []
 
+	for i in range(0, len(resultsArrays[0])):
+		averageArray.append(0)
 
-f = open('ruleBasedResults.txt', 'r')
+	for arr in resultsArrays:
+		for i in range(0, len(arr)):
+			averageArray[i] += int(arr[i])
+	for i in range(0, len(averageArray)):
+		averageArray[i] = averageArray[i]/len(resultsArrays)
 
-for line in f:
-	line = line.replace('\r', '')
-	line = line.replace('\n', '')
-	print(line)
-	print("--")
-	gameParts = string.split(line, ':')
-	g = game(gameParts[1], gameParts[2], gameParts[3], gameParts[4], gameParts[5])
-	games.append(g)
+	print(averageArray)
+	plt.plot(range(0, len(averageArray)), averageArray)
 
-f.close()
-
-
-x = range(0, 10)
-yDict = dict()
-
-print(len(games))
-for g in games:
-	if not (g.simulations in yDict):
-		yDict[g.simulations] = []
-
-	yDict[g.simulations].append(g.endScore)
-	print("Appended game")
-
-lineDict = dict()
-
-blue = 'b'
-green = 'g'
-red = 'r'
-cyan = 'c'
-magenta = 'm'
-yellow = 'y'
-black = 'k'
-
-
-for k, a in yDict.iteritems():
-	print(len(a))
-	lineDict[k] = plt.plot(x, a)
-
-text = ""
-
-colors = []
-colors.append('b')
-colors.append('g')
-colors.append('r')
-colors.append('c')
-colors.append('m')
-colors.append('y')
-colors.append('k')
-
-counter = 0
-for l, a, in lineDict.iteritems():
-	text += str(l) + ": " + colors[counter] + "\n"
-	plt.setp(a, color=colors[counter], linewidth=2.0)
-	counter+=1
-
-plt.text(6, 90, text)
+graphAverage(readResults("resultsUCTgreedy.txt"))
+graphAverage(readResults("resultsRandomPlay.txt"))
+graphAverage(readResults("resultsRandomPlayoutPolicy.txt"))
+graphAverage(readResults("resultsRuleBased.txt"))
+#graphResults(readResults("resultsRandomPlay.txt"))
+#graphResults(readResults("resultsRandomPlayoutPolicy.txt"))
+#graphResults(readResults("resultsRuleBased.txt"))
+#graphResults(readResults("resultsUCTgreedy.txt"))
 
 plt.grid(True)
 plt.show()
