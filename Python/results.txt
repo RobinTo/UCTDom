@@ -1,303 +1,2 @@
-Game 10: 
-Score: 82
-Estates: 7
-Duchys: 17
-Provinces: 4
-Game 10: 
-Score: 81
-Estates: 9
-Duchys: 16
-Provinces: 4
-Game 10: 
-Score: 53
-Estates: 20
-Duchys: 11
-Provinces: 0
-Game 10: 
-Score: 71
-Estates: 11
-Duchys: 12
-Provinces: 4
-Game 10: 
-Score: 61
-Estates: 16
-Duchys: 11
-Provinces: 2
-Game 10: 
-Score: 80
-Estates: 11
-Duchys: 13
-Provinces: 5
-Game 10: 
-Score: 64
-Estates: 16
-Duchys: 12
-Provinces: 2
-Game 10: 
-Score: 76
-Estates: 10
-Duchys: 12
-Provinces: 5
-Game 10: 
-Score: 68
-Estates: 11
-Duchys: 11
-Provinces: 4
-Game 10: 
-Score: 64
-Estates: 10
-Duchys: 16
-Provinces: 1
-Game 5: 
-Score: 57
-Estates: 15
-Duchys: 10
-Provinces: 2
-Game 5: 
-Score: 52
-Estates: 13
-Duchys: 11
-Provinces: 1
-Game 5: 
-Score: 58
-Estates: 16
-Duchys: 8
-Provinces: 3
-Game 5: 
-Score: 54
-Estates: 12
-Duchys: 12
-Provinces: 1
-Game 5: 
-Score: 54
-Estates: 12
-Duchys: 12
-Provinces: 1
-Game 5: 
-Score: 49
-Estates: 13
-Duchys: 12
-Provinces: 0
-Game 5: 
-Score: 52
-Estates: 13
-Duchys: 13
-Provinces: 0
-Game 5: 
-Score: 63
-Estates: 12
-Duchys: 13
-Provinces: 2
-Game 5: 
-Score: 65
-Estates: 14
-Duchys: 11
-Provinces: 3
-Game 5: 
-Score: 70
-Estates: 13
-Duchys: 11
-Provinces: 4
-
-Game 50: 
-Score: 73
-Estates: 10
-Duchys: 17
-Provinces: 2
-Game 50: 
-Score: 64
-Estates: 16
-Duchys: 14
-Provinces: 1
-Game 50: 
-Score: 69
-Estates: 15
-Duchys: 12
-Provinces: 3
-Game 50: 
-Score: 72
-Estates: 12
-Duchys: 14
-Provinces: 3
-Game 50: 
-Score: 76
-Estates: 16
-Duchys: 14
-Provinces: 3
-Game 50: 
-Score: 71
-Estates: 14
-Duchys: 15
-Provinces: 2
-Game 50: 
-Score: 59
-Estates: 17
-Duchys: 14
-Provinces: 0
-Game 50: 
-Score: 74
-Estates: 11
-Duchys: 17
-Provinces: 2
-Game 50: 
-Score: 86
-Estates: 8
-Duchys: 14
-Provinces: 6
-Game 50: 
-Score: 70
-Estates: 13
-Duchys: 15
-Provinces: 2
-Game 100: 
-Score: 65
-Estates: 17
-Duchys: 12
-Provinces: 2
-Game 100: 
-Score: 73
-Estates: 13
-Duchys: 14
-Provinces: 3
-Game 100: 
-Score: 60
-Estates: 18
-Duchys: 12
-Provinces: 1
-Game 100: 
-Score: 77
-Estates: 14
-Duchys: 11
-Provinces: 5
-Game 100: 
-Score: 57
-Estates: 18
-Duchys: 13
-Provinces: 0
-Game 100: 
-Score: 85
-Estates: 10
-Duchys: 15
-Provinces: 5
-Game 100: 
-Score: 65
-Estates: 17
-Duchys: 14
-Provinces: 1
-Game 100: 
-Score: 78
-Estates: 12
-Duchys: 16
-Provinces: 3
-Game 100: 
-Score: 53
-Estates: 23
-Duchys: 10
-Provinces: 0
-Game 100: 
-Score: 63
-Estates: 15
-Duchys: 14
-Provinces: 1
-Game 500: 
-Score: 70
-Estates: 16
-Duchys: 10
-Provinces: 4
-Game 500: 
-Score: 77
-Estates: 14
-Duchys: 15
-Provinces: 3
-Game 500: 
-Score: 72
-Estates: 9
-Duchys: 17
-Provinces: 2
-Game 500: 
-Score: 64
-Estates: 22
-Duchys: 10
-Provinces: 2
-Game 500: 
-Score: 67
-Estates: 16
-Duchys: 11
-Provinces: 3
-Game 500: 
-Score: 59
-Estates: 20
-Duchys: 11
-Provinces: 1
-Game 500: 
-Score: 74
-Estates: 14
-Duchys: 14
-Provinces: 3
-Game 500: 
-Score: 72
-Estates: 9
-Duchys: 17
-Provinces: 2
-Game 500: 
-Score: 66
-Estates: 15
-Duchys: 15
-Provinces: 1
-Game 500: 
-Score: 66
-Estates: 12
-Duchys: 16
-Provinces: 1
-Game 1000: 
-Score: 57
-Estates: 18
-Duchys: 13
-Provinces: 0
-Game 1000: 
-Score: 79
-Estates: 13
-Duchys: 14
-Provinces: 4
-Game 1000: 
-Score: 70
-Estates: 16
-Duchys: 12
-Provinces: 3
-Game 1000: 
-Score: 62
-Estates: 14
-Duchys: 16
-Provinces: 0
-Game 1000: 
-Score: 64
-Estates: 16
-Duchys: 14
-Provinces: 1
-Game 1000: 
-Score: 73
-Estates: 19
-Duchys: 12
-Provinces: 3
-Game 1000: 
-Score: 68
-Estates: 14
-Duchys: 12
-Provinces: 3
-Game 1000: 
-Score: 62
-Estates: 17
-Duchys: 15
-Provinces: 0
-Game 1000: 
-Score: 87
-Estates: 12
-Duchys: 13
-Provinces: 6
-Game 1000: 
-Score: 63
-Estates: 18
-Duchys: 13
-Provinces: 1
-Turns:3:3:3:3:3:3:3:3:3:3:3:3:9:9:15:15:21:27:33:33:33:33:39:39:42:48:54:57:60:63:69:75:81:84:85:86:89:92:95:101:
-40:50:101:5:8:12
+Turns:3:3:3:3:3:3:3:3:3:3:3:3:9:9:15:15:21:27:33:33:33:33:39:39:42:48:54:57:60:63:69:75:81:84:85:86:89:92:95:101:40:50:101:5:8:12
+Turns:3:3:3:3:3:3:3:3:6:6:6:6:6:6:12:12:18:24:30:30:30:36:42:42:45:51:57:60:63:66:72:78:81:87:90:96:99:100:106:107:40:50:107:5:8:13Turns:3:3:3:3:3:3:3:3:3:3:3:9:9:9:15:15:15:21:27:33:39:45:51:51:54:54:54:57:58:64:70:73:79:82:88:89:95:98:99:102:40:50:102:6:6:13Turns:3:3:3:3:3:3:3:3:3:3:3:3:3:9:9:15:15:21:27:27:33:36:42:48:48:48:54:60:66:69:69:69:72:75:81:84:90:93:94:100:40:50:100:4:6:13Turns:3:3:3:3:3:3:3:3:3:3:3:3:3:9:9:9:15:15:21:27:27:33:39:39:45:51:51:52:58:61:64:67:73:76:79:80:86:87:90:96:40:50:96:6:6:12Turns:3:3:3:3:3:3:3:3:3:3:3:3:9:9:9:9:15:21:27:33:36:42:42:48:48:48:48:51:52:58:61:67:73:74:80:86:92:95:96:97:40:50:97:7:4:13Turns:3:3:3:3:3:3:3:3:3:3:3:3:3:3:9:9:9:9:15:21:27:27:33:33:33:39:45:51:57:58:64:70:73:74:80:86:87:90:93:99:40:50:99:6:3:14

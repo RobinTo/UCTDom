@@ -43,6 +43,29 @@ class player():
 		self.discard.append(card)
 		self.boughtCards.append(card)
 
+	def getTotalVP(self):
+		vp = 0
+		for c in self.deck:
+			vp += self.getCardPoints(c)
+		for c in self.discard:
+			vp += self.getCardPoints(c)
+		for c in self.hand:
+			vp += self.getCardPoints(c)
+		for c in self.inPlay:
+			vp += self.getCardPoints(c)
+		return vp
+
+	def getCardPoints(self, card):
+		if card.name == "Estate":
+			return 1
+		elif card.name == "Duchy":
+			return 3
+		elif card.name == "Province":
+			return 6
+		else:
+			return 0
+
+
 class card():
 	def __init__(self, name, value, cost):
 		self.name = name

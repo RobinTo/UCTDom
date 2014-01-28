@@ -1,8 +1,8 @@
 class treeNode:
 	def __init__(self, parent, cardOption):
-		self.value = 5.0
-		self.timesPropagated = 1.0
-		self.totalValue = 5.0
+		self.value = 0.0
+		self.timesPropagated = 0.0
+		self.totalValue = 0.0
 		self.cardOption = cardOption
 		self.timesChosen = 1
 		self.childNodes = []

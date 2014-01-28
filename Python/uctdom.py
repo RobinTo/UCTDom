@@ -13,11 +13,18 @@ def getCardByName(name):
 				return c
 	else:
 		return None
-
+"""
+nodePool = []
+print("Allocating memory.")
+while len(nodePool) < 100000:
+	nodePool.append(treeNode(None, None))
+print("Done allocating memory")
+"""
 plays = 0
-while plays < 10:
+while plays < 20:
 	plays+=1
-	simulationRounds = 1000
+	simulationRounds = 50
+	maxTurns = 40
 
 	p = player()
 	initialNode = treeNode(None, None)
@@ -46,18 +53,25 @@ while plays < 10:
 
 	turns = 0
 
-	while turns < 40:
+	
+	turnString = "Turns:"
+
+	while turns < maxTurns:
 		print("Turn: " + str(turns))
 		print("Current hand:")
 		p.printHandString()
 		print("With " + str(calculateMoney(p)) + " coins, buy: ")
-		nextCard = getNextOption(p, initialNode, cards, turns, simulationRounds)
+		nextCard = getNextOption(p, initialNode, cards, turns, simulationRounds, maxTurns)
 		p.buyCard(nextCard)
 		print(nextCard.name)
 		p.endTurn()
 
+		turnString += str(p.getTotalVP()) + ":"
+
 		turns+=1
 
+
+	#
 	endSum = 0
 	estateCounter = 0
 	duchyCounter = 0
@@ -98,10 +112,13 @@ while plays < 10:
 
 	f = open('results.txt', 'a+')
 
-	f.write("Game " + str(simulationRounds) + ": \n\r")
-	f.write("Score: " + str(endSum) + "\n\r")
-	f.write("Estates: " + str(estateCounter) + "\n\r")
-	f.write("Duchys: " + str(duchyCounter) + "\n\r")
-	f.write("Provinces: " + str(provinceCounter) + "\n\r")
-
+	gameString = str(maxTurns)
+	gameString += ":" + str(simulationRounds)
+	gameString += ":" + str(endSum)
+	gameString += ":" + str(estateCounter)
+	gameString += ":" + str(duchyCounter)
+	gameString += ":" + str(provinceCounter) + "\r\n"
+	print(gameString)
+	f.write(turnString + "\r\n")
+	f.write(gameString)
 	f.close()

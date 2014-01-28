@@ -4,14 +4,14 @@ import copy
 import math
 import time
 
-def getNextOption(p, currentNode, cards, turn, simulationTurns):
+def getNextOption(p, currentNode, cards, turn, simulationTurns, maxTurns):
 	nodeCopy = copy.deepcopy(currentNode)	# Somewhat irrelevant, could always make new empty node as parent
 	playerCopy = copy.deepcopy(p)	# Don't want to change anythin on the real player.
 
 	options = getOptions(calculateMoney(playerCopy), cards)
 	for i in range(0, simulationTurns*len(options)):
 		newCopy = copy.deepcopy(playerCopy)
-		rollout(newCopy, nodeCopy, cards, turn)
+		rollout(newCopy, nodeCopy, cards, turn, maxTurns)
 
 	#nodeCopy.printTreeBelow(0)
 	#print(len(nodeCopy.childNodes))
@@ -26,7 +26,7 @@ def getNextOption(p, currentNode, cards, turn, simulationTurns):
 
 	return bestNode.cardOption
 
-def rollout(playerCopy, nodeCopy, cards, turn):
+def rollout(playerCopy, nodeCopy, cards, turn, maxTurns):
 	nodeToExpand = getBestLeaf(playerCopy, nodeCopy)
 	
 	# Here we have the base player, getBestLeaf buys cards when it goes down the tree
@@ -34,18 +34,25 @@ def rollout(playerCopy, nodeCopy, cards, turn):
 	#if nodeToExpand.cardOption:
 	#	print(nodeToExpand.cardOption.name)
 	#time.sleep(.1)
-	if nodeToExpand.treeDepth < 40-turn:
+	if nodeToExpand.treeDepth < maxTurns-turn:
 		options = getOptions(calculateMoney(playerCopy), cards)
 		for o in options:
 			editablePlayer = copy.deepcopy(playerCopy) # Don't modify playercopy with simulations, base playercopy is state before option is chosen.
 			newNode = treeNode(nodeToExpand, o)
 			nodeToExpand.appendChild(newNode)
-			value = simulate(editablePlayer, newNode, cards, turn)
+			value = simulate(editablePlayer, newNode, cards, turn, maxTurns)
 			propagate(value, newNode)
+			#nodeCopy.printTreeBelow(0)
+			#print("---------------")
 	else:
 		editablePlayer = copy.deepcopy(playerCopy)
-		value = simulate(editablePlayer, nodeToExpand, cards, turn)
+		value = simulate(editablePlayer, nodeToExpand, cards, turn, maxTurns)
 		propagate(value, nodeToExpand)
+		
+		#nodeCopy.printTreeBelow(0)
+		#if nodeToExpand.cardOption:
+		#		print("Simulating on end node : " + nodeToExpand.cardOption.name)
+		#print("---------------")
 
 
 
@@ -73,13 +80,13 @@ def getBestChild(nodeList):
 			bestNode = n
 	return bestNode
 
-def simulate(playerCopy, node, cards, turn):
+def simulate(playerCopy, node, cards, turn, maxTurns):
 	playerCopy.buyCard(node.cardOption)
 	playerCopy.endTurn()
 	#print(7-node.treeDepth)
-	for i in range(turn, 39-node.treeDepth):	# Simulate until game done. 6 turns in utcdom.py while loop
+	for i in range(turn, maxTurns-node.treeDepth):	# Simulate until game done.
 		opts = getOptions(calculateMoney(playerCopy), cards)
-		cardChosen = opts[random.randint(0, len(opts)-1)]
+		cardChosen = rolloutPolicy(opts)
 		playerCopy.buyCard(cardChosen)
 		playerCopy.endTurn();
 
@@ -95,6 +102,16 @@ def simulate(playerCopy, node, cards, turn):
 		endSum += c.value
 
 	return endSum
+
+def rolloutPolicy(options):
+	# Greedy
+	c = None
+	for o in options:
+		if c == None or o.cost > c.cost:
+			c = o;
+	return c;
+	# Random policy
+	# return options[random.randint(0, len(options)-1)]
 
 def propagate(score, propagateNode):
 	#if score > propagateNode.value:
