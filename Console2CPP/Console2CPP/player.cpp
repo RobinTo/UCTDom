@@ -9,6 +9,7 @@ Player::Player(GameState* gameStatePtr2, std::vector<PlayerState*> otherStatePtr
 	gameStatePtr = gameStatePtr2;
 	otherStatePtrs = otherStatePtrs2;
 	selfStatePtr = selfStatePtr2;
+	uctai.initialize();
 }
 
 void Player::startUp(std::vector<Card*> startDeck)
@@ -23,14 +24,14 @@ void Player::playTurn()
 	selfStatePtr->actionsLeft = 1;
 	selfStatePtr->buysLeft = 1;
 	selfStatePtr->moneyLeft = 0;
+
 	// Heavy if else for now.
-	for (std::vector<Card*>::iterator iterator = selfStatePtr->hand.begin(); iterator != selfStatePtr->hand.end(); ++iterator)
-	//std::vector<Card*>::iterator iterator = selfStatePtr->hand.begin();
-	//while (iterator != selfStatePtr->hand.end()) 
-	{
+	std::vector<Card*>::iterator iterator = selfStatePtr->hand.begin();
+	while (iterator != selfStatePtr->hand.end()) 
+    {
 		if ((*iterator)->name == "Estate" || (*iterator)->name == "Duchy" || (*iterator)->name == "Province")
 		{
-			//Do nothing
+			++iterator;
 		}
 		else
 		{
@@ -46,13 +47,15 @@ void Player::playTurn()
 			{
 				selfStatePtr->moneyLeft += 3;
 			}
-			play(*iterator);
-			selfStatePtr->hand.erase(iterator);
-			iterator = selfStatePtr->hand.begin();
+			selfStatePtr->inPlay.push_back(*iterator);
+			iterator = selfStatePtr->hand.erase(iterator);
 		}
-	}
+
+    }
+
 
 	// DO AI
+	
 	std::cout << "Money: " << selfStatePtr->moneyLeft << std::endl;
 
 }
@@ -91,21 +94,9 @@ void Player::draw(int numberOfCards) // Needs a check on whether there are cards
 	}
 }
 
-void Player::discard(Card* cardPtr)
-{
-	//TODO: Implement discard. Depending on how the card to be discarded is found. Discard should use that information, so as to improve performance.
-	//(Don't need to search for the card again).
-}
-
 void Player::gain(Card* cardPtr)
 {
 	selfStatePtr->discard.push_back(cardPtr);
-}
-
-void Player::play(Card* cardPtr)
-{
-	selfStatePtr->inPlay.push_back(cardPtr);
-	//Delete card from hand.
 }
 
 void Player::shuffle()

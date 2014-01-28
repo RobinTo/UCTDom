@@ -3,6 +3,7 @@
 
 #include "playerstate.h"
 #include "gamestate.h"
+#include "uct_ai.h"
 
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
@@ -13,10 +14,9 @@ private:
 	GameState* gameStatePtr;
 	std::vector<PlayerState*> otherStatePtrs;
 	PlayerState* selfStatePtr;
+	Uct_Ai uctai;
 
 	void draw(int numberOfCards);
-	void discard(Card* cardPtr);
-	void play(Card* cardPtr);
 	void gain(Card* cardPtr);
 	void shuffle();
 public:

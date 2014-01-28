@@ -67,6 +67,8 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerstate.cpp" />
     <ClCompile Include="supplypile.cpp" />
+    <ClCompile Include="treenode.cpp" />
+    <ClCompile Include="uct_ai.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="card.h" />
@@ -75,6 +77,8 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="playerstate.h" />
     <ClInclude Include="supplypile.h" />
+    <ClInclude Include="treenode.h" />
+    <ClInclude Include="uct_ai.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
