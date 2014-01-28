@@ -39,7 +39,7 @@ def getNextOption(c):
 		return getCardByName("Copper")
 
 gameC = 0
-while gameC < 10:
+while gameC < 20:
 	gameC+=1
 	p = player()
 
@@ -67,6 +67,8 @@ while gameC < 10:
 
 	turns = 0
 
+	turnString = "Turns:"
+
 	while turns < 40:
 		print("Current hand:")
 		p.printHandString()
@@ -79,6 +81,8 @@ while gameC < 10:
 
 		print(nextCard.name)
 		p.endTurn()
+
+		turnString += str(p.getTotalVP()) + ":"
 
 		turns+=1
 
@@ -121,8 +125,18 @@ while gameC < 10:
 		endSum += c.value
 
 
-	f = open('ruleBasedResults.txt', 'a+')
 
-	outString = "Game:"+"rulebased2:"+str(endSum)+":"+str(estateCounter)+":"+str(duchyCounter)+":"+str(provinceCounter)+":"
-	f.write(outString + "\r\n")
+
+
+	f = open('resultsRuleBased.txt', 'a+')
+
+	gameString = str(40)
+	gameString += ":" + "rulebased"
+	gameString += ":" + str(endSum)
+	gameString += ":" + str(estateCounter)
+	gameString += ":" + str(duchyCounter)
+	gameString += ":" + str(provinceCounter) + "\r\n"
+	print(gameString)
+	f.write(turnString + "\r\n")
+	f.write(gameString)
 	f.close()

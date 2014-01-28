@@ -105,13 +105,13 @@ def simulate(playerCopy, node, cards, turn, maxTurns):
 
 def rolloutPolicy(options):
 	# Greedy
-	c = None
-	for o in options:
-		if c == None or o.cost > c.cost:
-			c = o;
-	return c;
+	#c = None
+	#for o in options:
+	#	if c == None or o.cost > c.cost:
+	#		c = o;
+	#return c;
 	# Random policy
-	# return options[random.randint(0, len(options)-1)]
+	return options[random.randint(0, len(options)-1)]
 
 def propagate(score, propagateNode):
 	#if score > propagateNode.value:

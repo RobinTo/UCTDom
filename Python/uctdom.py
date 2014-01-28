@@ -110,7 +110,7 @@ while plays < 20:
 		endSum += c.value
 
 
-	f = open('results.txt', 'a+')
+	f = open('results2.txt', 'a+')
 
 	gameString = str(maxTurns)
 	gameString += ":" + str(simulationRounds)
