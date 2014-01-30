@@ -20,6 +20,7 @@ def showSize(x, level=0):
 
 # Add card to available cards
 def addCard(card, counter, cards, cardCounters):
+
 	cards.append(card)
 	cardCounters.append(counter)
 
@@ -33,9 +34,11 @@ def getCardByName(name, cards):
 		return None
 
 
+
 # Plays games.
 def playGame(simulationsPerOption, maxTurns, writeToFile, verbose):
 	simulationRounds = simulationsPerOption
+
 
 	p = player()
 	initialNode = treeNode(None, None)
@@ -68,6 +71,7 @@ def playGame(simulationsPerOption, maxTurns, writeToFile, verbose):
 	turnString = "Turns:"
 
 	while turns < maxTurns:
+
 		nextCard = getNextOption(p, initialNode, cards, turns, simulationRounds, maxTurns)
 		p.buyCard(nextCard)
 		if verbose:
@@ -76,6 +80,7 @@ def playGame(simulationsPerOption, maxTurns, writeToFile, verbose):
 			p.printHandString()
 			print("With " + str(calculateMoney(p)) + " coins, buy: ")
 			print(nextCard.name)
+
 		p.endTurn()
 
 		turnString += str(p.getTotalVP()) + ":"
@@ -124,6 +129,7 @@ def playGame(simulationsPerOption, maxTurns, writeToFile, verbose):
 	gameString += ":" + str(duchyCounter)
 	gameString += ":" + str(provinceCounter)
 	print(gameString)
+
 
 	if writeToFile:
 		f = open('results'+str(simulationsPerOption)+'.txt', 'a+')

@@ -118,6 +118,7 @@ def getGreedy(coins, cards):
 def getRandom(options):
 	return options[random.randint(0, len(options)-1)]
 
+
 def propagate(score, propagateNode):
 	propagateNode.totalValue += score
 	propagateNode.timesPropagated += 1.0
