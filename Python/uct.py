@@ -24,8 +24,6 @@ def getNextOption(p, currentNode, cards, turn, simulationTurns, maxTurns):
 		newCopy = copyPlayer(playerCopy)
 		rollout(newCopy, nodeCopy, cards, turn, maxTurns)
 
-	#nodeCopy.printTreeBelow(0)
-	#print(len(nodeCopy.childNodes))
 
 	bestNode = None
 	bestValue = 0
@@ -40,11 +38,6 @@ def getNextOption(p, currentNode, cards, turn, simulationTurns, maxTurns):
 def rollout(playerCopy, nodeCopy, cards, turn, maxTurns):
 	nodeToExpand = getBestLeaf(playerCopy, nodeCopy)
 	
-	# Here we have the base player, getBestLeaf buys cards when it goes down the tree
-	# and thus the deck and discard is correct.
-	#if nodeToExpand.cardOption:
-	#	print(nodeToExpand.cardOption.name)
-	#time.sleep(.1)
 	if nodeToExpand.treeDepth < maxTurns-turn:
 		options = getOptions(calculateMoney(playerCopy), cards)
 		for o in options:
@@ -53,17 +46,10 @@ def rollout(playerCopy, nodeCopy, cards, turn, maxTurns):
 			nodeToExpand.appendChild(newNode)
 			value = simulate(editablePlayer, newNode, cards, turn, maxTurns)
 			propagate(value, newNode)
-			#nodeCopy.printTreeBelow(0)
-			#print("---------------")
 	else:
 		editablePlayer = copyPlayer(playerCopy)
 		value = simulate(editablePlayer, nodeToExpand, cards, turn, maxTurns)
 		propagate(value, nodeToExpand)
-		
-		#nodeCopy.printTreeBelow(0)
-		#if nodeToExpand.cardOption:
-		#		print("Simulating on end node : " + nodeToExpand.cardOption.name)
-		#print("---------------")
 
 
 
@@ -81,6 +67,7 @@ def getBestChild(nodeList):
 	bestValue = 0
 	bestNode = None
 	for n in nodeList:
+		# Exploitation vs. Exploration, currently just using uniform exploration.
 		#if n.parent != None:
 		#	nodeValue = n.value + 1 * math.sqrt(math.log(n.parent.timesChosen)/n.timesChosen)
 		#else:
@@ -94,10 +81,12 @@ def getBestChild(nodeList):
 def simulate(playerCopy, node, cards, turn, maxTurns):
 	playerCopy.buyCard(node.cardOption)
 	playerCopy.endTurn()
-	#print(7-node.treeDepth)
+
 	for i in range(turn, maxTurns-node.treeDepth):	# Simulate until game done.
-		#opts = getOptions(calculateMoney(playerCopy), cards)
-		cardChosen = getGreedy(calculateMoney(playerCopy), cards)#rolloutPolicy(opts)
+		# Random playout policy
+		#cardChosen = getRandom(getOptions(calculateMoney(playerCopy), cards))
+		# Greedy playout policy
+		cardChosen = getGreedy(calculateMoney(playerCopy), cards)
 		playerCopy.buyCard(cardChosen)
 		playerCopy.endTurn();
 
@@ -126,19 +115,10 @@ def getGreedy(coins, cards):
 				c = o;
 	return c
 
-def rolloutPolicy(options):
-	# Greedy
-	c = None
-	for o in options:
-		if c == None or o.cost > c.cost:
-			c = o;
-	return c;
-	# Random policy
-	#return options[random.randint(0, len(options)-1)]
+def getRandom(options):
+	return options[random.randint(0, len(options)-1)]
 
 def propagate(score, propagateNode):
-	#if score > propagateNode.value:
-	#	propagateNode.value = score
 	propagateNode.totalValue += score
 	propagateNode.timesPropagated += 1.0
 	propagateNode.value = propagateNode.totalValue/propagateNode.timesPropagated
