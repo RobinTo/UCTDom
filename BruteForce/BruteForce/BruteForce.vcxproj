@@ -62,6 +62,7 @@
   <ItemGroup>
     <ClInclude Include="BruteForce.h" />
     <ClInclude Include="Card.h" />
+    <ClInclude Include="Draw.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="NodePool.h" />
     <ClInclude Include="SupplyPile.h" />
@@ -69,6 +70,7 @@
   <ItemGroup>
     <ClCompile Include="BruteForce.cpp" />
     <ClCompile Include="Card.cpp" />
+    <ClCompile Include="Draw.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="NodePool.cpp" />

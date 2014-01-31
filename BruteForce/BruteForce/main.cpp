@@ -5,7 +5,7 @@
 
 int main()
 {
-	int treeDepth = 3;
+	int treeDepth = 5;
 
 
 	std::cout << "Brute Force Tree" << std::endl;
@@ -14,7 +14,7 @@ int main()
 	std::srand ( unsigned ( std::time(0) ) );
 	bf.initialize();
 	bf.createTree(treeDepth);
-
+	bf.printTree();
 
 	int t;
 	std::cin >> t;

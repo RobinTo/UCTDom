@@ -1,4 +1,5 @@
 #include <unordered_map>
+#include <iostream>
 
 #include "BruteForce.h"
 #include "SupplyPile.h"
@@ -7,7 +8,8 @@
 void BruteForce::initialize()
 {
 	// Node pool
-	nodePoolPtr = new NodePool(500);
+	nodePoolPtr = new NodePool(500000);
+	std::cout << "Done allocating nodes" <<std::endl;
 
 	// Root node
 	rootPtr = nodePoolPtr->requestNewNodePtr();
@@ -51,7 +53,7 @@ void BruteForce::initialize()
 
 void BruteForce::createTree(int turns)
 {
-	int depth = turns*2;
+	int depth = turns*2 - 1;
 	for (int counter = 0; counter < depth; counter++)
 	{
 		std::vector<Node*> leafPtrs = findLeaves();
@@ -75,3 +77,7 @@ std::vector<Node*> BruteForce::findLeaves()
 	return leafPtrs;
 }
 
+void BruteForce::printTree()
+{
+	rootPtr->printSelf(1);
+}

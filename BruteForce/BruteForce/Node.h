@@ -6,7 +6,7 @@
 #include "SupplyPile.h"
 #include "Card.h"
 #include "NodePool.h"
-
+#include "Draw.h"
 
 
 class NodePool;
@@ -27,11 +27,15 @@ public:
 	Node();
 	Node(NodePool* nodePoolPtr2);
 	void doYourThing();
+	void printSelf(int currentDepth);
 private:
 	std::vector<Card*> findAllBuys();
-	std::vector<std::vector<Card*>> findAllDraws();
-	void createBuyNode(Card* buy);
-	void createDrawNode(std::vector<Card*> draw);
+	std::vector<Draw> findAllDraws();
+	std::vector<Card*> findUniqueCards(std::vector<Card*> pile);
+	std::vector<Draw> removeDuplicates(std::vector<Draw> draws);
+	Node* createBuyNode(Card* buy);
+	Node* createDrawNode(Draw draw);
+
 };
 
 

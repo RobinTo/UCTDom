@@ -19,6 +19,7 @@ public:
 
 	void initialize();
 	void createTree(int turns);
+	void printTree();
 
 private:
 	std::vector<Node*> findLeaves();

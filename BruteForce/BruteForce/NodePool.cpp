@@ -1,4 +1,4 @@
-
+#include <iostream>
 
 #include "NodePool.h"
 
@@ -16,5 +16,6 @@ Node* NodePool::requestNewNodePtr()
 	Node* toReturn = emptyNodePtrs.back();
 	usedNodePtrs.push_back(toReturn);
 	emptyNodePtrs.pop_back();
+	std::cout << "Empty nodes left: " << emptyNodePtrs.size() << std::endl;
 	return toReturn;
 }
