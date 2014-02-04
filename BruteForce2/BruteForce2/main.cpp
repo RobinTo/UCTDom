@@ -3,8 +3,12 @@
 
 #include "BruteForce.h"
 
+
+
+
 int main()
 {
+	
 	int treeDepth = 3;
 
 

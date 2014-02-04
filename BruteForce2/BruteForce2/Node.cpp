@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include "Node.h"
 
@@ -29,15 +30,30 @@ void Node::doYourThing()
 		}
 
 		// Find all draws
-			// 
+		std::string s = "";
+		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+		{
+			for (int cardCounter = 0; cardCounter < state.deck[cardIndex]; cardCounter++)
+			{
+				s.append(std::to_string(static_cast<long long>(cardIndex)));
+			}
+		}
 
+		std::size_t k = 5;
+		do
+		{
+			std::cout << std::string(s.begin(),s.begin() + k) << std::endl;
+		}
+		while(next_combination(s.begin(),s.begin() + k,s.end()));
+
+		
 		// For each draw, create child node
 		Node* newNodePtr = bfPtr->requestNewNodePtr();
 		newNodePtr->isBuy = false;
 		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 		{
-			newNodePtr->state.deck[cardIndex] = draw.deck[cardIndex];
-			newNodePtr->state.hand[cardIndex] = draw.hand[cardIndex];
+			newNodePtr->state.deck[cardIndex] = state.deck[cardIndex]; //Not state
+			newNodePtr->state.hand[cardIndex] = state.hand[cardIndex]; //Not state
 			newNodePtr->state.discard[cardIndex] = state.discard[cardIndex];
 			newNodePtr->state.supplyPiles[cardIndex] = state.supplyPiles[cardIndex];
 		}
@@ -131,3 +147,5 @@ void Node::printSelf(int currentDepth)
 		}
 	}
 }
+
+
