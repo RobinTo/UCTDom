@@ -5,7 +5,9 @@ Player::Player()
 
 }
 
-void Player::playTurn(GameState& currentState)
+Option Player::getNextOption(GameState& currentState)
 {
 	uct.findBestChoice(currentState);	// Either let AI play, or return something that the player can 'do'
+	Option option; // Only temporary to avoid compile errors.
+	return option;
 }

@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Option.h"
 
 
 Game::Game()
@@ -56,9 +57,12 @@ void Game::play()
 	{
 		for (int index = 0; index < 4; index++)
 		{
-			players[index].playTurn(gameState);
-
-			inputController.takeInput();
+			Option option;
+			do
+			{
+				option = players[index].getNextOption(gameState);
+			}
+			while (option.type != 0);
 		}
 
 		turnCounter++;

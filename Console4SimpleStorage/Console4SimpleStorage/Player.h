@@ -1,12 +1,13 @@
 #pragma once
 
 #include "UCT.h"
+#include "Option.h"
 
 class Player
 {
 public:
 	int stateIndex;
-	void playTurn(GameState& currentState);
+	Option getNextOption(GameState& currentState);
 
 	Player();
 
