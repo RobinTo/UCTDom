@@ -27,21 +27,27 @@
     <ClInclude Include="GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InputController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="UCT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CardManager.h">
+    <ClInclude Include="option.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Option.h">
+    <ClInclude Include="CardManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InputController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game.cpp">

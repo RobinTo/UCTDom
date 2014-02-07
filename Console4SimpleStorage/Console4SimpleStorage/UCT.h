@@ -4,6 +4,8 @@
 
 #include "GameState.h"
 #include "Node.h"
+#include "Option.h"
+#include <list>
 
 class UCT
 {
@@ -16,7 +18,9 @@ private:
 	void propagate(Node* startNode);
 	Node* requestNewNode();
 
+	std::list<Option> getPossibleOptions();
+
 public:
 	UCT();
-	void getNextOption(GameState currentState, int stateIndex);
+	Option getNextOption(GameState currentState, int stateIndex);
 };

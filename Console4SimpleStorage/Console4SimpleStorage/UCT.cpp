@@ -14,7 +14,15 @@ UCT::UCT()
 	}
 }
 
-void UCT::getNextOption(GameState currentState, int stateIndex)
+std::list<Option> UCT::getPossibleOptions()
+{
+	if (GameState.CardManager.cardLookup[id].cost <= currentMoney)
+	{
+
+	}
+}
+
+Option UCT::getNextOption(GameState currentState, int stateIndex)
 {
 	//Create rootNode
 	Node* rootNode = requestNewNode();
