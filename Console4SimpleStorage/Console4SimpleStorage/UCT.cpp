@@ -4,7 +4,7 @@
 
 UCT::UCT()
 {
-	int allocatedNodes = 5000;
+	int allocatedNodes = 50000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
@@ -12,10 +12,9 @@ UCT::UCT()
 		Node* nodePtr = new Node();
 		emptyNodes.push_back(nodePtr);
 	}
-
 }
 
-void UCT::findBestChoice(GameState currentState, int stateIndex)
+void UCT::getNextOption(GameState currentState, int stateIndex)
 {
 	//Create rootNode
 	Node* rootNode = requestNewNode();

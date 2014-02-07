@@ -18,5 +18,5 @@ private:
 
 public:
 	UCT();
-	void findBestChoice(GameState currentState, int stateIndex);
+	void getNextOption(GameState currentState, int stateIndex);
 };
