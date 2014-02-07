@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "InputController.h"
 
+#define PLAYERS		4
 
 
 class Game
