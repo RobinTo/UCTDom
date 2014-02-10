@@ -19,7 +19,7 @@ std::list<Option> UCT::getActionOptions(GameState* gameState, int hand[])
 	// Return all action cards in hand
 }
 
-std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[], int supplyPile[])
+std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[])
 {
 	int currentMoney = 0;
 	currentMoney += hand[gameState->cardManager.cardIndexer[COPPER]];
@@ -29,11 +29,11 @@ std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[], int suppl
 	std::list<Option> options;
 	for(int i = 0; i < sizeof(hand)/sizeof(*hand); i++)
 	{
-		if (gameState->cardManager.cardLookupByIndex[i].cost <= currentMoney)
+		if (gameState->cardManager.cardLookupByIndex[i].cost <= currentMoney && gameState->supplyPiles[i] > 0)
 		{
 			Option o;
 			o.type = BUY;
-			o.card = gameState->cardManager.cardLookupByIndex[i];
+			o.card = i;
 			options.push_back(o);
 		}
 	}
@@ -60,7 +60,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	while(simulationCounter < simulations)
 	{
 		
-		rollout(currentState, stateIndex);
+		rollout(rootNode, currentState, stateIndex);
 
 
 		simulationCounter ++;
@@ -84,19 +84,24 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 	int maxTurns = 40;
 	if(treeDepth < maxTurns-turns)	// If treeDepth is less than turns left.
 	{
-		getActionOptions(bestLeafPtr->currentState.playerStates[stateIndex].hand);
-		getBuyOptions(bestLeafPtr->currentState.playerStates[stateIndex].hand);
+		getActionOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
+		getBuyOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
 
-		if(gameState.playerStates[stateIndex].actions > 0)
+		if(currentState.playerStates[stateIndex].actions > 0)
 		{
 			// Perhaps do actions?
 		}
-		if(gameState.playerStates[stateIndex].buys > 0)
+		if(currentState.playerStates[stateIndex].buys > 0)
 		{
 			// Perhaps buy something?
 		}
 	}
 	
+}
+
+int UCT::Simulate(GameState gameState, int playerIndex, Node node, int turns, int maxTurns)
+{
+
 }
 
 void UCT::propagate(Node* startNode)

@@ -18,8 +18,10 @@ private:
 	void propagate(Node* endNode);
 	Node* requestNewNode();
 
-	std::list<Option> getBuyOptions(GameState* gameState, int hand[], int supplyPile[]);
+	std::list<Option> getBuyOptions(GameState* gameState, int hand[]);
 	std::list<Option> getActionOptions(GameState* gameState, int hand[]);
+
+	int UCT::Simulate(GameState gameState, int playerIndex, Node node, int turns, int maxTurns);
 
 public:
 	UCT();
