@@ -86,6 +86,15 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 	{
 		getActionOptions(bestLeafPtr->currentState.playerStates[stateIndex].hand);
 		getBuyOptions(bestLeafPtr->currentState.playerStates[stateIndex].hand);
+
+		if(gameState.playerStates[stateIndex].actions > 0)
+		{
+			// Perhaps do actions?
+		}
+		if(gameState.playerStates[stateIndex].buys > 0)
+		{
+			// Perhaps buy something?
+		}
 	}
 	
 }
