@@ -17,6 +17,8 @@ UCT::UCT()
 std::list<Option> UCT::getActionOptions(GameState* gameState, int hand[])
 {
 	// Return all action cards in hand
+	std::list<Option> options;
+	return options;
 }
 
 std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[])
@@ -65,6 +67,9 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 
 		simulationCounter ++;
 	}
+
+	Option o;
+	return o;
 }
 
 Node* UCT::selectBestLeaf()
@@ -101,7 +106,7 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 
 int UCT::Simulate(GameState gameState, int playerIndex, Node node, int turns, int maxTurns)
 {
-
+	return 0;
 }
 
 void UCT::propagate(Node* startNode)
