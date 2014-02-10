@@ -3,6 +3,12 @@
 
 void CardManager::initialize()
 {
+	Card copper, silver, gold, estate, duchy, province, curse,
+	thief, militia, spy, cellar, chapel, chancellor, workshop, feast, remodel, throneRoom, library, mine, moat,
+	councilRoom, moneylender, adventurer, bureaucrat, witch,													
+	market, laboratory, festival, village, smithy, woodcutter,													
+	gardens;	
+
 	copper.cost = 0; copper.name = "Copper"; cardLookup[COPPER] = copper;
 
 	silver.cost = 3; silver.name = "Silver"; cardLookup[SILVER] = silver;

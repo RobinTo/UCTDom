@@ -3,7 +3,6 @@
 #include <set>
 
 #include "Game.h"
-#include "Option.h"
 
 
 Game::Game()
@@ -15,18 +14,19 @@ void Game::initialize()
 {
 	srand (time(NULL));
 
-	gameState.initialize();
+	gameState.initialize(PLAYERS, INSUPPLY);
+	cardManager.initialize();
 
 	if (PLAYERS == 4)
 	{
 		// Always in supply
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[COPPER]] = 32;
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[SILVER]] = 40;
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[GOLD]] = 30;
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[ESTATE]] = 12;
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[DUCHY]] = 12;
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[PROVINCE]] = 12;
-		gameState.supplyPiles[gameState.cardManager.cardIndexer[CURSE]] = 30;
+		gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 32;
+		gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
+		gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
+		gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 12;
+		gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 12;
+		gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 12;
+		gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 30;
 
 		// Randomize ten cards for the supply
 		std::set<int> cardIndexes;
@@ -39,8 +39,8 @@ void Game::initialize()
 		int currentIndex = 7;
 		for (std::set<int>::iterator iterator = cardIndexes.begin(); iterator != cardIndexes.end(); ++iterator)
 		{
-			gameState.cardManager.cardIndexer[*iterator] = currentIndex;
-			gameState.cardManager.cardLookupByIndex[currentIndex] = gameState.cardManager.cardLookup[*iterator];
+			cardManager.cardIndexer[*iterator] = currentIndex;
+			cardManager.cardLookupByIndex[currentIndex] = cardManager.cardLookup[*iterator];
 			if (*iterator == GARDENS)
 				gameState.supplyPiles[currentIndex] = 12;
 			else
@@ -67,12 +67,15 @@ void Game::play()
 	{
 		for (int index = 0; index < 4; index++)
 		{
-			Option option;
-			do
+			Option option = players[index].getNextOption(gameState);
+			if (option.type == 0)	//End turn
+				continue;
+			else if (option.type == 2) // Buy card
 			{
-				option = players[index].getNextOption(gameState);
+				gameState.playerStates[index].discard[cardManager.cardIndexer[option.card]] += 1;
+				gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;
 			}
-			while (option.type != 0);
+			
 		}
 
 		turnCounter++;

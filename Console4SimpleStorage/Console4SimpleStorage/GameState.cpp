@@ -5,7 +5,7 @@ GameState::GameState()
 	
 }
 
-void GameState::initialize()
+void GameState::initialize(int players, int inSupply)
 {
 	for (int index = 0; index < INSUPPLY; index++)
 	{
@@ -13,5 +13,8 @@ void GameState::initialize()
 		trash[index] = 0;
 	}
 
-	cardManager.initialize();
+	for (int index = 0; index < players; index++)
+	{
+		playerStates.push_back(PlayerState());
+	}
 }

@@ -46,11 +46,12 @@ struct Card
 	int cost;
 	std::string name;
 
-} copper, silver, gold, estate, duchy, province, curse,
-	thief, militia, spy, cellar, chapel, chancellor, workshop, feast, remodel, throneRoom, library, mine, moat,	// Choice cards
-	councilRoom, moneylender, adventurer, bureaucrat, witch,													// Complex cards
-	market, laboratory, festival, village, smithy, woodcutter,													// Simple cards
-	gardens;																									// Victory card
+};
+// copper, silver, gold, estate, duchy, province, curse,
+//	thief, militia, spy, cellar, chapel, chancellor, workshop, feast, remodel, throneRoom, library, mine, moat,	// Choice cards
+//	councilRoom, moneylender, adventurer, bureaucrat, witch,													// Complex cards
+//	market, laboratory, festival, village, smithy, woodcutter,													// Simple cards
+//	gardens;																									// Victory card
 
 class CardManager
 {
