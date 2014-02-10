@@ -14,12 +14,36 @@ UCT::UCT()
 	}
 }
 
-std::list<Option> UCT::getPossibleOptions()
+std::list<Option> UCT::getActionOptions(GameState* gameState, int hand[])
 {
-	if (GameState.CardManager.cardLookup[id].cost <= currentMoney)
-	{
+	// Return all action cards in hand
+}
 
+std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[], int supplyPile[])
+{
+	int currentMoney = 0;
+	currentMoney += hand[gameState->cardManager.cardIndexer[COPPER]];
+	currentMoney += hand[gameState->cardManager.cardIndexer[SILVER]] * 2;
+	currentMoney += hand[gameState->cardManager.cardIndexer[GOLD]] * 3;
+	
+	std::list<Option> options;
+	for(int i = 0; i < sizeof(hand)/sizeof(*hand); i++)
+	{
+		if (gameState->cardManager.cardLookupByIndex[i].cost <= currentMoney)
+		{
+			Option o;
+			o.type = BUY;
+			o.card = gameState->cardManager.cardLookupByIndex[i];
+			options.push_back(o);
+		}
 	}
+
+	return options;
+	//gameState->cardManager.cardIndexer[COPPER]; returns int index in hand etc of COPPPER
+	//gameState->cardManager.cardLookup[COPPER]; returns card struct
+	//gameState->cardManager.cardLookupByIndex[1];	returns card struct
+
+	// Return all cards in stockpile with cost <= currentMoney
 }
 
 Option UCT::getNextOption(GameState currentState, int stateIndex)
@@ -35,27 +59,8 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	int simulationCounter = 0;
 	while(simulationCounter < simulations)
 	{
-		// Select best leaf
-		Node* bestLeafPtr = selectBestLeaf();
 		
-		// Find options
-		bestLeafPtr->currentState.playerStates[stateIndex].hand;
-
-		// Create children for each option
-
-		// For each child
-			// Add to tree
-			// Rollout
-			// Propagate
-		/*for (each child)
-		{
-			rollout();
-			propagate();
-		}*/
-		
-		
-		
-		
+		rollout(currentState, stateIndex);
 
 
 		simulationCounter ++;
@@ -68,9 +73,21 @@ Node* UCT::selectBestLeaf()
 	return h;
 }
 
-void UCT::rollout(Node* startNode)
+void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 {
+	// Select best leaf
+	Node* bestLeafPtr = selectBestLeaf();
 
+
+	int treeDepth = 0;	// Placeholder ints
+	int turns = 0;		// TODO: Pass as parameters
+	int maxTurns = 40;
+	if(treeDepth < maxTurns-turns)	// If treeDepth is less than turns left.
+	{
+		getActionOptions(bestLeafPtr->currentState.playerStates[stateIndex].hand);
+		getBuyOptions(bestLeafPtr->currentState.playerStates[stateIndex].hand);
+	}
+	
 }
 
 void UCT::propagate(Node* startNode)

@@ -10,5 +10,8 @@ public:
 	int hand[TOTALCARDS];
 	int inPlay[TOTALCARDS];
 
+	int buys;
+	int actions;
+
 	PlayerState();
 };

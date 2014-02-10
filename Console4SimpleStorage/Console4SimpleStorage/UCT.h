@@ -14,11 +14,12 @@ private:
 	std::vector<Node*> usedNodes;
 
 	Node* selectBestLeaf();
-	void rollout(Node* startNode);
-	void propagate(Node* startNode);
+	void rollout(Node* startNode, GameState currentState, int stateIndex);
+	void propagate(Node* endNode);
 	Node* requestNewNode();
 
-	std::list<Option> getPossibleOptions();
+	std::list<Option> getBuyOptions(GameState* gameState, int hand[], int supplyPile[]);
+	std::list<Option> getActionOptions(GameState* gameState, int hand[]);
 
 public:
 	UCT();
