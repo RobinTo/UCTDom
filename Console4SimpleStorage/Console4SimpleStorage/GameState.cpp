@@ -2,9 +2,16 @@
 
 GameState::GameState()
 {
-	for (int index = 0; index < 6; index++)
+	
+}
+
+void GameState::initialize()
+{
+	for (int index = 0; index < INSUPPLY; index++)
 	{
 		supplyPiles[index] = 0;
 		trash[index] = 0;
 	}
+
+	cardManager.initialize();
 }

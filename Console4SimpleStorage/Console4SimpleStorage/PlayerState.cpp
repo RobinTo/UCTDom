@@ -2,7 +2,7 @@
 
 PlayerState::PlayerState()
 {
-	for (int index = 0; index < 6; index++)
+	for (int index = 0; index < INSUPPLY; index++)
 	{
 		deck[index] = 0;
 		discard[index] = 0;

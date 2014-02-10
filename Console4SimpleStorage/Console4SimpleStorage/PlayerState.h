@@ -5,10 +5,10 @@
 class PlayerState
 {
 public:
-	int deck[TOTALCARDS];
-	int discard[TOTALCARDS];
-	int hand[TOTALCARDS];
-	int inPlay[TOTALCARDS];
+	int deck[INSUPPLY];
+	int discard[INSUPPLY];
+	int hand[INSUPPLY];
+	int inPlay[INSUPPLY];
 
 	int buys;
 	int actions;

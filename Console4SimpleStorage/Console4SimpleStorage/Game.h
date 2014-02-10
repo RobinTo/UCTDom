@@ -2,7 +2,6 @@
 
 #include "Player.h"
 #include "GameState.h"
-#include "InputController.h"
 
 #define PLAYERS		4
 

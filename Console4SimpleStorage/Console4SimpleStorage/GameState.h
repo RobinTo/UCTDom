@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <vector>
 
 #include "PlayerState.h"
 #include "CardManager.h"
@@ -12,10 +13,11 @@ class GameState
 {
 public:
 	CardManager cardManager;
-	PlayerState playerStates[PLAYERS];
-	int supplyPiles[TOTALCARDS];
-	int trash[TOTALCARDS];
+	std::vector<PlayerState> playerStates;
+	int supplyPiles[INSUPPLY];
+	int trash[INSUPPLY];
 
+	void initialize();
 
 	GameState();
 };
