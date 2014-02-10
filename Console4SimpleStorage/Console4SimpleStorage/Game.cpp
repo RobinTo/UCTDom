@@ -1,3 +1,7 @@
+#include <random>
+#include <ctime>
+#include <set>
+
 #include "Game.h"
 #include "Option.h"
 
@@ -9,42 +13,48 @@ Game::Game()
 
 void Game::initialize()
 {
-	gameState.cardName[COPPER] = "Copper";
-	gameState.cardName[SILVER] = "Silver";
-	gameState.cardName[GOLD] = "Gold";
-	gameState.cardName[ESTATE] = "Estate";
-	gameState.cardName[DUCHY] = "Duchy";
-	gameState.cardName[PROVINCE] = "Province";
-	gameState.cardName[SUPERCARD] = "SuperCard";
-	
-	gameState.cardType[COPPER] = "Treasure";
-	gameState.cardType[SILVER] = "Treasure";
-	gameState.cardType[GOLD] = "Treasure";
-	gameState.cardType[ESTATE] = "Victory";
-	gameState.cardType[DUCHY] = "Victory";
-	gameState.cardType[PROVINCE] = "Victory";
-	gameState.cardType[SUPERCARD] = "Action";
+	srand (time(NULL));
 
-	gameState.cardCost[COPPER] = 0;
-	gameState.cardCost[SILVER] = 3;
-	gameState.cardCost[GOLD] = 6;
-	gameState.cardCost[ESTATE] = 2;
-	gameState.cardCost[DUCHY] = 5;
-	gameState.cardCost[PROVINCE] = 8;
-	gameState.cardCost[SUPERCARD] = 1;
+	gameState.initialize();
 
-	gameState.supplyPiles[COPPER] = 32;
-	gameState.supplyPiles[SILVER] = 40;
-	gameState.supplyPiles[GOLD] = 30;
-	gameState.supplyPiles[ESTATE] = 12;
-	gameState.supplyPiles[DUCHY] = 12;
-	gameState.supplyPiles[PROVINCE] = 12;
-
-	for (int index = 0; index < 4; index++)
+	if (PLAYERS == 4)
 	{
-		gameState.playerStates[index].deck[COPPER] = 7;
-		gameState.playerStates[index].deck[ESTATE] = 3;
-		players[index].stateIndex = index;
+		// Always in supply
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[COPPER]] = 32;
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[SILVER]] = 40;
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[GOLD]] = 30;
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[ESTATE]] = 12;
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[DUCHY]] = 12;
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[PROVINCE]] = 12;
+		gameState.supplyPiles[gameState.cardManager.cardIndexer[CURSE]] = 30;
+
+		// Randomize ten cards for the supply
+		std::set<int> cardIndexes;
+		do
+		{
+			int newCard = rand() % 25 + 7;
+			cardIndexes.insert(newCard);
+		} while (cardIndexes.size() < 10);
+
+		int currentIndex = 7;
+		for (std::set<int>::iterator iterator = cardIndexes.begin(); iterator != cardIndexes.end(); ++iterator)
+		{
+			gameState.cardManager.cardIndexer[*iterator] = currentIndex;
+			gameState.cardManager.cardLookupByIndex[currentIndex] = gameState.cardManager.cardLookup[*iterator];
+			if (*iterator == GARDENS)
+				gameState.supplyPiles[currentIndex] = 12;
+			else
+				gameState.supplyPiles[currentIndex] = 10;
+			currentIndex++;
+		}
+
+		// Starting hand, and setting stateIndexes
+		for (int index = 0; index < 4; index++)
+		{
+			gameState.playerStates[index].deck[COPPER] = 7;
+			gameState.playerStates[index].deck[ESTATE] = 3;
+			players[index].stateIndex = index;
+		}
 	}
 }
 

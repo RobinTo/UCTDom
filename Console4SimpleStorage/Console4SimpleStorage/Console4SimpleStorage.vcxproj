@@ -70,6 +70,7 @@
     <ClInclude Include="UCT.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="main.cpp" />
