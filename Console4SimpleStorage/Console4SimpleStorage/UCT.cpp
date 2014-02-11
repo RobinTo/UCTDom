@@ -176,7 +176,7 @@ int UCT::simulate(int playerIndex, GameState gameState, int turn, int maxTurns)
 		gameState.playerStates[playerIndex].endTurn();
 	}
 
-	return gameState.playerStates[playerIndex].calculateVictoryPoints();
+	return gameState.playerStates[playerIndex].calculateVictoryPoints(cardManager);
 }
 
 // Currently greedy
@@ -190,9 +190,9 @@ int UCT::playoutPolicy(GameState& gameState, int playerIndex)
 
 	for(iter=buyOptions.begin(); iter != buyOptions.end(); iter++)
 	{
-		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost = 0)
+		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0)
 		{
-			highestCost = cardManager.cardLookupByIndex[(*iter)].card.cost;
+			highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
 			cardToReturn = (*iter).card;
 		}
 	}
