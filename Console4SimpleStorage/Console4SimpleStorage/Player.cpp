@@ -12,7 +12,6 @@ void Player::setCardManager(CardManager& cardManagerRef)
 
 Option Player::getNextOption(GameState& currentState)
 {
-	uct.getNextOption(currentState, stateIndex);	// Either let AI play, or return something that the player can 'do'
-	Option option; // Only temporary to avoid compile errors.
+	Option option = uct.getNextOption(currentState, stateIndex);
 	return option;
 }

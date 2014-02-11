@@ -13,7 +13,7 @@ Game::Game()
 
 void Game::initialize()
 {
-	srand (time(NULL));
+	srand ( (unsigned int)time(NULL) );
 
 	gameState.initialize(PLAYERS);
 	cardManager.initialize();
@@ -104,7 +104,7 @@ void Game::play()
 	}
 
 	std::cout << "ended game on turn " << turnCounter << std::endl;
-	for (int playerIndex; playerIndex < PLAYERS; playerIndex++)
+	for (int playerIndex = 0; playerIndex < PLAYERS; playerIndex++)
 	{
 		std::cout << "Player " << playerIndex+1 << " VP: " << gameState.playerStates[playerIndex].calculateVictoryPoints(cardManager) << std::endl;
 	}
