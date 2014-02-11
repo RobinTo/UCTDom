@@ -19,8 +19,8 @@ private:
 	std::list<Option> getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 	std::list<Option> getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 
-	int simulate(int playerIndex, GameState gameState, int turns, int maxTurns);
-	void buyCard(PlayerState& pState, int cardToBuy);
+	int simulate(int playerIndex, GameState gameState);
+	void buyCard(PlayerState& pState, int cardToBuy, GameState& gameState);
 	int playoutPolicy(GameState& gameState, int playerIndex);
 
 	CardManager cardManager;

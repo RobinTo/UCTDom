@@ -69,7 +69,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 		return option;
 	}
 
-	int simulations = 500;
+	int simulations = 100;
 
 	// While more simulations
 	int simulationCounter = 0;
@@ -87,6 +87,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	for (int i = 0; i<rootNodePtr->childrenPtrs.size(); i++)
 	{
 		std::cout << "Score for " << cardManager.cardLookupByIndex[rootNodePtr->childrenPtrs.at(i)->opt.card].name << " was: " << rootNodePtr->childrenPtrs.at(i)->value << std::endl;
+		std::cout << "Propagated : " << rootNodePtr->childrenPtrs.at(i)->propagateCounter << std::endl;
 		if (rootNodePtr->childrenPtrs.at(i)->value > highestScore || highestScore == 0)
 		{
 			o = rootNodePtr->childrenPtrs.at(i)->opt;
@@ -106,7 +107,7 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 	{
 		if (!rootNode->childrenPtrs.at(i)->isRoot)
 		{
-			double thisValue = rootNode->childrenPtrs.at(i)->value * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
+			double thisValue = (double)rootNode->childrenPtrs.at(i)->value * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
 			if(thisValue > bestValue || bestValue == 0)
 			{
 				bestValue = thisValue;
@@ -129,11 +130,7 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 	// Select best leaf
 	Node* bestLeafPtr = selectBestLeaf(startNode);
 
-
-	int treeDepth = 0;	// Placeholder ints
-	int turns = 0;		// TODO: Pass as parameters
-	int maxTurns = 40;
-	if(treeDepth < maxTurns-turns)	// If treeDepth is less than turns left.
+	if(!currentState.gameFinished())	// If treeDepth is less than turns left.
 	{
 		std::list<Option> actionOptions = getActionOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
 		std::list<Option> buyOptions = getBuyOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
@@ -161,32 +158,33 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 			{
 				Node* newNode = requestNewNode();
 				newNode->parentPtr = bestLeafPtr;
-				newNode->setState(currentState);
+				newNode->setState(bestLeafPtr->currentState);
 				newNode->setOption(*iter);
 				bestLeafPtr->childrenPtrs.push_back(newNode);
+				buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
 
-				buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card);
-				int result = simulate(stateIndex, newNode->currentState, turns, maxTurns);
+				int result = simulate(stateIndex, newNode->currentState);
 				propagate(newNode, result);
 			}
 		}
 	}
 }
 
-void UCT::buyCard(PlayerState& pState, int cardToBuy)
+void UCT::buyCard(PlayerState& pState, int cardToBuy, GameState& gameState)
 {
-	pState.hand[cardToBuy] += 1;
+	pState.discard[cardToBuy] += 1;
+	gameState.supplyPiles[cardToBuy] -= 1;
 	pState.buys -= 1;
 }
 
-int UCT::simulate(int playerIndex, GameState gameState, int turn, int maxTurns)
+int UCT::simulate(int playerIndex, GameState gameState)
 {
 	gameState.playerStates[playerIndex].endTurn();
 	
-	for (int i = 0; i<maxTurns-turn; i++)
+	while(!gameState.gameFinished())
 	{
 		int cardChosen = playoutPolicy(gameState, playerIndex);
-		buyCard(gameState.playerStates[playerIndex], cardChosen);
+		buyCard(gameState.playerStates[playerIndex], cardChosen, gameState);
 		gameState.playerStates[playerIndex].endTurn();
 	}
 
@@ -204,7 +202,7 @@ int UCT::playoutPolicy(GameState& gameState, int playerIndex)
 
 	for(iter=buyOptions.begin(); iter != buyOptions.end(); iter++)
 	{
-		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0)
+		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0  && cardManager.cardLookupByIndex[(*iter).card].name != "Curse")
 		{
 			highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
 			cardToReturn = (*iter).card;

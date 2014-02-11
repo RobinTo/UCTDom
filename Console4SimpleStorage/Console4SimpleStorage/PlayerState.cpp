@@ -22,22 +22,22 @@ int PlayerState::calculateVictoryPoints(CardManager& cardManager)
 	victoryPoints += 1 * deck[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * deck[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * deck[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * deck[cardManager.cardIndexer[CURSE]];
+	victoryPoints -= 10 * deck[cardManager.cardIndexer[CURSE]];
 
 	victoryPoints += 1 * hand[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * hand[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * hand[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * hand[cardManager.cardIndexer[CURSE]];
+	victoryPoints -= 10 * hand[cardManager.cardIndexer[CURSE]];
 
 	victoryPoints += 1 * discard[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * discard[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * discard[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * discard[cardManager.cardIndexer[CURSE]];
+	victoryPoints -= 10 * discard[cardManager.cardIndexer[CURSE]];
 
 	victoryPoints += 1 * inPlay[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * inPlay[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * inPlay[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * inPlay[cardManager.cardIndexer[CURSE]];
+	victoryPoints -= 10 * inPlay[cardManager.cardIndexer[CURSE]];
 	return victoryPoints;
 }
 
