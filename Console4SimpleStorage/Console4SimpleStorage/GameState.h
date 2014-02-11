@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "PlayerState.h"
+#include "CardManager.h"
 
 
 
@@ -15,7 +16,8 @@ public:
 	int supplyPiles[INSUPPLY];
 	int trash[INSUPPLY];
 
-	void initialize(int players, int inSupply);
+	void initialize(int players);
+	bool gameFinished();
 
 	GameState();
 };
