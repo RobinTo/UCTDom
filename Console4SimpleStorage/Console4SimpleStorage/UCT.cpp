@@ -6,7 +6,7 @@
 
 UCT::UCT()
 {
-	int allocatedNodes = 100000;
+	int allocatedNodes = 200000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
@@ -69,7 +69,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 		return option;
 	}
 
-	int simulations = 500;
+	int simulations = 100;
 
 	// While more simulations
 	int simulationCounter = 0;

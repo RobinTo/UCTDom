@@ -103,7 +103,7 @@ void Game::play()
 		}*/
 	}
 
-	std::cout << "ended game on turn " << turnCounter - 1 << std::endl;
+	std::cout << "ended game on turn " << gameState.turnCounter << std::endl;
 	for (int index = 0; index < PLAYERS; index++)
 	{
 		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
