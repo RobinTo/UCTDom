@@ -67,26 +67,32 @@ void Game::play()
 	bool finished = false;
 	while (!finished)
 	{
+		std::cout << "Turn: " << turnCounter << std::endl;
+		// For each player, play turn
 		for (int index = 0; index < 4; index++)
 		{
-			Option option = players[index].getNextOption(gameState);
-			if (option.type == 0)	//End turn
+			// While player's turn is not finished, keep playing
+			Option option;
+			do
 			{
-				// Clean-up cards
-				gameState.playerStates[index].endTurn();
-				std::cout << "Player " << index << " ended turn " << std::endl;
-				continue;
-			}
-			else if (option.type == 2) // Buy card
-			{
-				std::cout << "Player " << index << " money: " << gameState.playerStates[index].calculateCurrentMoney(cardManager) << std::endl;
-				gameState.playerStates[index].buys --;
-				gameState.playerStates[index].discard[cardManager.cardIndexer[option.card]] += 1;	// Add to player discard
-				gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;					// Remove from supply
-				std::cout << "Player " << index << " bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
-			}
+				option = players[index].getNextOption(gameState);
+				if (option.type == END_TURN)
+				{
+					// Clean-up cards
+					gameState.playerStates[players[index].stateIndex].endTurn();
+					std::cout << "Player " << index << " ended turn " << std::endl;
+				}
+				else if (option.type == BUY)
+				{
+					std::cout << "Player " << index << " Money: " << gameState.playerStates[players[index].stateIndex].calculateCurrentMoney(cardManager);
+					gameState.playerStates[players[index].stateIndex].buyCard(cardManager, option.card);
+					gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;								// Remove from supply
+					std::cout << " bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
+				}
+			} while (option.type != END_TURN);
 			
-			if (gameState.gameFinished()) // Check for game end
+			// When player's turn is finished, check for game end
+			if (gameState.gameFinished())
 			{
 				finished = true;
 				std::cout << "Player " << index << " ";
@@ -102,10 +108,10 @@ void Game::play()
 		}
 	}
 
-	std::cout << "ended game on turn " << turnCounter << std::endl;
-	for (int playerIndex = 0; playerIndex < PLAYERS; playerIndex++)
+	std::cout << "ended game on turn " << turnCounter - 1 << std::endl;
+	for (int index = 0; index < PLAYERS; index++)
 	{
-		std::cout << "Player " << playerIndex+1 << " VP: " << gameState.playerStates[playerIndex].calculateVictoryPoints(cardManager) << std::endl;
+		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
 	}
 }
 

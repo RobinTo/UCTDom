@@ -13,6 +13,7 @@ public:
 	int buys;
 	int actions;
 
+	void buyCard(CardManager& cardManager, int card);
 	void drawCards(int cards);
 	void endTurn();
 	int calculateVictoryPoints(CardManager& cardManager);
