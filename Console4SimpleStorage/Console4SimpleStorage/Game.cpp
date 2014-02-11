@@ -2,6 +2,8 @@
 #include <ctime>
 #include <set>
 #include <iostream>
+#include <fstream>
+#include <string>
 
 #include "Game.h"
 
@@ -60,6 +62,8 @@ void Game::initialize()
 
 void Game::play()
 {
+	std::string logString = "Turns:";
+
 	bool finished = false;
 	while (!finished)
 	{
@@ -87,7 +91,8 @@ void Game::play()
 				}
 			} while (option.type != END_TURN);
 			
-			// When player's turn is finished, check for game end
+			logString += std::to_string(static_cast<long long>(gameState.playerStates[players[index].stateIndex].calculateVictoryPoints(cardManager)));
+			logString += ":";
 			
 		}
 
@@ -96,11 +101,6 @@ void Game::play()
 		{
 			finished = true;
 		}
-		/*if (turnCounter >= 41)
-		{
-			finished = true;
-			std::cout << "Time ";
-		}*/
 	}
 
 	std::cout << "ended game on turn " << gameState.turnCounter << std::endl;
@@ -108,5 +108,12 @@ void Game::play()
 	{
 		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
 	}
+
+	std::ofstream file;
+	file.open("log.txt", std::ios::app);
+	file << logString << std::endl;
+	file << gameState.turnCounter - 1 << ":" << "100:" << gameState.playerStates[players[0].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
+	
+	file.close();
 }
 

@@ -2,7 +2,7 @@
 
 GameState::GameState()
 {
-	turnCounter = 0;
+	turnCounter = 1;
 }
 
 void GameState::initialize(int players)
@@ -21,8 +21,6 @@ void GameState::initialize(int players)
 
 bool GameState::gameFinished()
 {
-	if (turnCounter >= 40)
-		return true;
 	// Count supplypiles
 	int emptyCounter = 0;
 	for (int index = 0; index < INSUPPLY; index++)
@@ -33,7 +31,7 @@ bool GameState::gameFinished()
 		}
 	}
 
-	if (supplyPiles[PROVINCE] == 0 || emptyCounter >= 3) // Check for game end
+	if (supplyPiles[PROVINCE] == 0 || emptyCounter >= 3 || turnCounter >= 41) // Check for game end
 		return true;
 	else
 		return false;
