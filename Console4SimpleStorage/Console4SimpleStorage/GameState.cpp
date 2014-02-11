@@ -5,7 +5,7 @@ GameState::GameState()
 	
 }
 
-void GameState::initialize(int players, int inSupply)
+void GameState::initialize(int players)
 {
 	for (int index = 0; index < INSUPPLY; index++)
 	{
@@ -17,4 +17,22 @@ void GameState::initialize(int players, int inSupply)
 	{
 		playerStates.push_back(PlayerState());
 	}
+}
+
+bool GameState::gameFinished()
+{
+	// Count supplypiles
+	int emptyCounter = 0;
+	for (int index = 0; index < INSUPPLY; index++)
+	{
+		if (supplyPiles[index] == 0)
+		{
+			emptyCounter++;
+		}
+	}
+
+	if (supplyPiles[PROVINCE] == 0 || emptyCounter >= 3) // Check for game end
+		return true;
+	else
+		return false;
 }
