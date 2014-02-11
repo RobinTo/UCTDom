@@ -5,6 +5,11 @@ Player::Player()
 
 }
 
+void Player::setCardManager(CardManager& cardManagerRef)
+{
+	cardManager = cardManagerRef;
+}
+
 Option Player::getNextOption(GameState& currentState)
 {
 	uct.getNextOption(currentState, stateIndex);	// Either let AI play, or return something that the player can 'do'

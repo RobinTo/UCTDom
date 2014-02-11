@@ -54,6 +54,7 @@ void Game::initialize()
 			gameState.playerStates[index].deck[COPPER] = 7;
 			gameState.playerStates[index].deck[ESTATE] = 3;
 			players[index].stateIndex = index;
+			players[index].setCardManager(cardManager);
 		}
 	}
 }
