@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "UCT.h"
+#include <math.h>
 
 UCT::UCT()
 {
@@ -87,16 +88,34 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	return o;
 }
 
-Node* UCT::selectBestLeaf(GameState* currentState)
+Node* UCT::selectBestLeaf(Node* rootNode)
 {
-	Node* h = new Node();
-	return h;
+	double bestValue = 0;
+	Node* bestNode = rootNode;
+
+	for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
+	{
+		if (!rootNode->childrenPtrs.at(i)->isRoot)
+		{
+			double thisValue = rootNode->childrenPtrs.at(i)->value * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
+			if(thisValue > bestValue || bestValue == 0)
+			{
+				bestValue = thisValue;
+				bestNode = rootNode->childrenPtrs.at(i);
+			}
+		}
+	}
+
+	if (bestNode->childrenPtrs.size() <= 0)
+		return bestNode;
+	else
+		return selectBestLeaf(bestNode);
 }
 
 void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 {
 	// Select best leaf
-	Node* bestLeafPtr = selectBestLeaf(&currentState);
+	Node* bestLeafPtr = selectBestLeaf(startNode);
 
 
 	int treeDepth = 0;	// Placeholder ints
@@ -174,7 +193,7 @@ int UCT::playoutPolicy(GameState& gameState, int playerIndex)
 		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost = 0)
 		{
 			highestCost = cardManager.cardLookupByIndex[(*iter)].card.cost;
-			cardToReturn = (*iter);
+			cardToReturn = (*iter).card;
 		}
 	}
 

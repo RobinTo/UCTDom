@@ -15,7 +15,7 @@ private:
 	std::vector<Node*> emptyNodes;
 	std::vector<Node*> usedNodes;
 
-	Node* selectBestLeaf(GameState* currentState);
+	Node* selectBestLeaf(Node* rootNode);
 	void rollout(Node* startNode, GameState currentState, int stateIndex);
 	void propagate(Node* endNode, int result);
 	Node* requestNewNode();
