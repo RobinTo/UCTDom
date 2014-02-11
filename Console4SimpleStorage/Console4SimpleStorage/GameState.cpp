@@ -2,7 +2,7 @@
 
 GameState::GameState()
 {
-	
+	turnCounter = 0;
 }
 
 void GameState::initialize(int players)
@@ -21,6 +21,8 @@ void GameState::initialize(int players)
 
 bool GameState::gameFinished()
 {
+	if (turnCounter >= 40)
+		return true;
 	// Count supplypiles
 	int emptyCounter = 0;
 	for (int index = 0; index < INSUPPLY; index++)

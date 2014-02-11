@@ -6,7 +6,7 @@
 
 UCT::UCT()
 {
-	int allocatedNodes = 50000;
+	int allocatedNodes = 100000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
@@ -69,7 +69,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 		return option;
 	}
 
-	int simulations = 100;
+	int simulations = 500;
 
 	// While more simulations
 	int simulationCounter = 0;
@@ -159,6 +159,7 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 				Node* newNode = requestNewNode();
 				newNode->parentPtr = bestLeafPtr;
 				newNode->setState(bestLeafPtr->currentState);
+				newNode->currentState.turnCounter++;
 				newNode->setOption(*iter);
 				bestLeafPtr->childrenPtrs.push_back(newNode);
 				buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
@@ -186,6 +187,7 @@ int UCT::simulate(int playerIndex, GameState gameState)
 		int cardChosen = playoutPolicy(gameState, playerIndex);
 		buyCard(gameState.playerStates[playerIndex], cardChosen, gameState);
 		gameState.playerStates[playerIndex].endTurn();
+		gameState.turnCounter++;
 	}
 
 	return gameState.playerStates[playerIndex].calculateVictoryPoints(cardManager);

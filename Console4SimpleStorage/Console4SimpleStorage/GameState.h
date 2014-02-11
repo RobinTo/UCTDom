@@ -15,6 +15,8 @@ public:
 	int supplyPiles[INSUPPLY];
 	int trash[INSUPPLY];
 
+	int turnCounter;
+
 	void initialize(int players);
 	bool gameFinished();
 
