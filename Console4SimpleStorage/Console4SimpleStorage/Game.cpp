@@ -101,11 +101,11 @@ void Game::play()
 		}
 
 		turnCounter++;
-		if (turnCounter >= 41)
+		/*if (turnCounter >= 41)
 		{
 			finished = true;
 			std::cout << "Time ";
-		}
+		}*/
 	}
 
 	std::cout << "ended game on turn " << turnCounter - 1 << std::endl;
