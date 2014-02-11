@@ -2,6 +2,7 @@
 
 #include "UCT.h"
 #include <math.h>
+#include <iostream>
 
 UCT::UCT()
 {
@@ -68,7 +69,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 		return option;
 	}
 
-	int simulations = 50;
+	int simulations = 500;
 
 	// While more simulations
 	int simulationCounter = 0;
@@ -85,6 +86,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 
 	for (int i = 0; i<rootNodePtr->childrenPtrs.size(); i++)
 	{
+		std::cout << "Score for " << cardManager.cardLookupByIndex[rootNodePtr->childrenPtrs.at(i)->opt.card].name << " was: " << rootNodePtr->childrenPtrs.at(i)->value << std::endl;
 		if (rootNodePtr->childrenPtrs.at(i)->value > highestScore || highestScore == 0)
 		{
 			o = rootNodePtr->childrenPtrs.at(i)->opt;
@@ -114,7 +116,10 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 	}
 
 	if (bestNode->childrenPtrs.size() <= 0)
+	{
+		// std::cout << "Best leaf was " << cardManager.cardLookupByIndex[bestNode->opt.card].name << std::endl;
 		return bestNode;
+	}
 	else
 		return selectBestLeaf(bestNode);
 }
@@ -213,7 +218,7 @@ void UCT::propagate(Node* endNode, int result)
 {
 	endNode->sum += result;
 	endNode->propagateCounter += 1;
-	endNode->value = (endNode->sum/endNode->propagateCounter);
+	endNode->value = ((double)endNode->sum/(double)endNode->propagateCounter);
 	if(!endNode->isRoot)
 	{
 		propagate(endNode->parentPtr, result);
