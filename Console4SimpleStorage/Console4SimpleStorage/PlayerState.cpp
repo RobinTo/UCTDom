@@ -16,6 +16,12 @@ PlayerState::PlayerState()
 	}
 }
 
+void PlayerState::buyCard(CardManager& cardManager, int card)
+{
+	buys --;											
+	discard[cardManager.cardIndexer[card]] += 1;
+}
+
 int PlayerState::calculateVictoryPoints(CardManager& cardManager)
 {
 	int victoryPoints = 0;
