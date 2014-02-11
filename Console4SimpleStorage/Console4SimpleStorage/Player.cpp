@@ -8,6 +8,7 @@ Player::Player()
 void Player::setCardManager(CardManager& cardManagerRef)
 {
 	cardManager = cardManagerRef;
+	uct.setCardManager(cardManagerRef);
 }
 
 Option Player::getNextOption(GameState& currentState)

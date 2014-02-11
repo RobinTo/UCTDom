@@ -30,7 +30,7 @@ void Game::initialize()
 		gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 30;
 
 		// Randomize ten cards for the supply
-		std::set<int> cardIndexes;
+		/*std::set<int> cardIndexes;
 		do
 		{
 			int newCard = rand() % 25 + 7;
@@ -47,7 +47,7 @@ void Game::initialize()
 			else
 				gameState.supplyPiles[currentIndex] = 10;
 			currentIndex++;
-		}
+		}*/
 
 		// Starting deck, hand, and setting stateIndexes
 		for (int index = 0; index < 4; index++)
@@ -73,15 +73,14 @@ void Game::play()
 			if (option.type == 0)	//End turn
 			{
 				// Clean-up cards
-				for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
-				{
-					gameState.playerStates[index].endTurn();
-				}
+				gameState.playerStates[index].endTurn();
 				std::cout << "Player " << index << " ended turn " << std::endl;
 				continue;
 			}
 			else if (option.type == 2) // Buy card
 			{
+				std::cout << "Player " << index << " money: " << gameState.playerStates[index].calculateCurrentMoney(cardManager) << std::endl;
+				gameState.playerStates[index].buys --;
 				gameState.playerStates[index].discard[cardManager.cardIndexer[option.card]] += 1;	// Add to player discard
 				gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;					// Remove from supply
 				std::cout << "Player " << index << " bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;

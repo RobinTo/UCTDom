@@ -1,7 +1,6 @@
 #pragma once
 
 #include "UCT.h"
-#include "Option.h"
 
 class Player
 {

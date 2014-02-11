@@ -20,14 +20,14 @@ void UCT::setCardManager(CardManager& cm)
 	cardManager = cm;
 }
 
-std::list<Option> UCT::getActionOptions(GameState* gameState, int hand[])
+std::list<Option> UCT::getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY])
 {
 	// Return all action cards in hand
 	std::list<Option> options;
 	return options;
 }
 
-std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[])
+std::list<Option> UCT::getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY])
 {
 	int currentMoney = 0;
 	currentMoney += hand[cardManager.cardIndexer[COPPER]];
@@ -57,9 +57,16 @@ std::list<Option> UCT::getBuyOptions(GameState* gameState, int hand[])
 Option UCT::getNextOption(GameState currentState, int stateIndex)
 {
 	//Create rootNode
-	Node* rootNode = requestNewNode();
-	rootNode->isRoot = true;
-	rootNode->currentState = currentState;
+	Node* rootNodePtr = requestNewNode();
+	rootNodePtr->isRoot = true;
+	rootNodePtr->currentState = currentState;
+
+	if (currentState.playerStates[stateIndex].buys == 0)
+	{
+		Option option;
+		option.type = END_TURN;
+		return option;
+	}
 
 	int simulations = 50;
 
@@ -68,7 +75,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	while(simulationCounter < simulations)
 	{
 		
-		rollout(rootNode, currentState, stateIndex);
+		rollout(rootNodePtr, currentState, stateIndex);
 
 		simulationCounter ++;
 	}
@@ -76,12 +83,12 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	Option o;
 	double highestScore = 0;
 
-	for (int i = 0; i<rootNode->childrenPtrs.size(); i++)
+	for (int i = 0; i<rootNodePtr->childrenPtrs.size(); i++)
 	{
-		if (rootNode->childrenPtrs.at(i)->value > highestScore || highestScore == 0)
+		if (rootNodePtr->childrenPtrs.at(i)->value > highestScore || highestScore == 0)
 		{
-			o = rootNode->childrenPtrs.at(i)->opt;
-			highestScore = rootNode->childrenPtrs.at(i)->value;
+			o = rootNodePtr->childrenPtrs.at(i)->opt;
+			highestScore = rootNodePtr->childrenPtrs.at(i)->value;
 		}
 	}
 	
@@ -151,6 +158,7 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 				newNode->parentPtr = bestLeafPtr;
 				newNode->setState(currentState);
 				newNode->setOption(*iter);
+				bestLeafPtr->childrenPtrs.push_back(newNode);
 
 				buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card);
 				int result = simulate(stateIndex, newNode->currentState, turns, maxTurns);
@@ -160,9 +168,10 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 	}
 }
 
-void buyCard(PlayerState& pState, int cardToBuy)
+void UCT::buyCard(PlayerState& pState, int cardToBuy)
 {
 	pState.hand[cardToBuy] += 1;
+	pState.buys -= 1;
 }
 
 int UCT::simulate(int playerIndex, GameState gameState, int turn, int maxTurns)
@@ -213,7 +222,7 @@ void UCT::propagate(Node* endNode, int result)
 
 Node* UCT::requestNewNode()
 {
-	if (usedNodes.size() <= 0)
+	if (emptyNodes.size() <= 0)
 		std::cout << "No more nodes!" << std::endl;
 	
 	Node* returnNode = emptyNodes.back();

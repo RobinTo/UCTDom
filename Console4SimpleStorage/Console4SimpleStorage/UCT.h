@@ -2,12 +2,8 @@
 
 #include <vector>
 
-#include "GameState.h"
 #include "Node.h"
-#include "Option.h"
 #include <list>
-#include "CardManager.h"
-#include "PlayerState.h"
 
 class UCT
 {
@@ -20,8 +16,8 @@ private:
 	void propagate(Node* endNode, int result);
 	Node* requestNewNode();
 
-	std::list<Option> getBuyOptions(GameState* gameState, int hand[]);
-	std::list<Option> getActionOptions(GameState* gameState, int hand[]);
+	std::list<Option> getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
+	std::list<Option> getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 
 	int simulate(int playerIndex, GameState gameState, int turns, int maxTurns);
 	void buyCard(PlayerState& pState, int cardToBuy);

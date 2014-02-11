@@ -16,6 +16,7 @@ public:
 	void drawCards(int cards);
 	void endTurn();
 	int calculateVictoryPoints(CardManager& cardManager);
+	int calculateCurrentMoney(CardManager& cardManager);
 
 	PlayerState();
 

@@ -4,6 +4,9 @@
 
 PlayerState::PlayerState()
 {
+	buys = 1;
+	actions = 1;
+
 	for (int index = 0; index < INSUPPLY; index++)
 	{
 		deck[index] = 0;
@@ -23,6 +26,15 @@ int PlayerState::calculateVictoryPoints(CardManager& cardManager)
 	victoryPoints += 3 * hand[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * hand[cardManager.cardIndexer[PROVINCE]];
 	return victoryPoints;
+}
+
+int PlayerState::calculateCurrentMoney(CardManager& cardManager)
+{
+	int currentMoney = 0;
+	currentMoney += hand[cardManager.cardIndexer[COPPER]];
+	currentMoney += hand[cardManager.cardIndexer[SILVER]] * 2;
+	currentMoney += hand[cardManager.cardIndexer[GOLD]] * 3;
+	return currentMoney;
 }
 
 int PlayerState::countCards(const int (&cardPile)[INSUPPLY])
@@ -59,6 +71,8 @@ void PlayerState::endTurn()
 		inPlay[cardIndex] = 0;
 		hand[cardIndex] = 0;
 	}
+	buys = 1;
+	actions = 1;
 	drawCards(5);
 }
 
