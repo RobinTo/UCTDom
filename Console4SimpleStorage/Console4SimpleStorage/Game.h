@@ -13,8 +13,9 @@ public:
 	GameState gameState;
 	CardManager cardManager;
 	Player players[PLAYERS];
+	std::string fileName;
 
-	void initialize();
+	void initialize(std::string outputFileName);
 	void play();
 
 	Game();

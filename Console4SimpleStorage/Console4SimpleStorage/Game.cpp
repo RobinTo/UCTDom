@@ -1,8 +1,8 @@
 #include <random>
-#include <ctime>
 #include <set>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 #include <string>
 
 #include "Game.h"
@@ -13,10 +13,10 @@ Game::Game()
 
 }
 
-void Game::initialize()
+void Game::initialize(std::string outputFileName)
 {
-	srand ( (unsigned int)time(NULL) );
-
+	fileName = outputFileName;
+	srand((unsigned int)time(NULL));
 	gameState.initialize(PLAYERS);
 	cardManager.initialize();
 
@@ -110,7 +110,7 @@ void Game::play()
 	}
 
 	std::ofstream file;
-	file.open("log.txt", std::ios::app);
+	file.open(fileName, std::ios::app);
 	file << logString << std::endl;
 	file << gameState.turnCounter - 1 << ":" << "100:" << gameState.playerStates[players[0].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
 	
