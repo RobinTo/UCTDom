@@ -22,10 +22,12 @@ private:
 	int simulate(int playerIndex, GameState gameState);
 	void buyCard(PlayerState& pState, int cardToBuy, GameState& gameState);
 	int playoutPolicy(GameState& gameState, int playerIndex);
+	void resetNodes();
 
 	CardManager cardManager;
 public:
 	UCT();
+	~UCT();
 	void setCardManager(CardManager& cardManager);
 	Option getNextOption(GameState currentState, int stateIndex);
 };

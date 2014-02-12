@@ -16,6 +16,20 @@ UCT::UCT()
 	}
 }
 
+UCT::~UCT()
+{
+	for (int counter = 0; counter < emptyNodes.size(); counter++)
+	{
+		delete emptyNodes[counter];
+	}
+	emptyNodes.clear();
+	for (int counter = 0; counter < usedNodes.size(); counter++)
+	{
+		delete usedNodes[counter];
+	}
+	usedNodes.clear();
+}
+
 void UCT::setCardManager(CardManager& cm)
 {
 	cardManager = cm;
@@ -94,7 +108,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 			highestScore = rootNodePtr->childrenPtrs.at(i)->value;
 		}
 	}
-	
+	resetNodes();
 	return o;
 }
 
@@ -234,4 +248,14 @@ Node* UCT::requestNewNode()
 	usedNodes.push_back(returnNode);
 	emptyNodes.pop_back();
 	return returnNode;
+}
+
+void UCT::resetNodes()
+{
+	for (std::vector<Node*>::iterator iterator = usedNodes.begin(); iterator != usedNodes.end(); ++iterator)
+	{
+		(*iterator)->reset();
+		emptyNodes.push_back(*iterator);
+	}
+	usedNodes.clear();
 }
