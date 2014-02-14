@@ -5,69 +5,110 @@
 #include <fstream>
 
 #include "Game.h"
+#include "NodePool.h"
 
+#define SIMULATIONS	500
+#define NODES		200000	//Must be multiple of 4
+#define GAMES		100		//Must be multiple of 4
 
-void playGame(std::string outputFileName)
+void playGame(Game& game, std::vector<Node*>& emptyNodes)
 {
-	Game game;
-
-	game.initialize(outputFileName);
+	game.initialize(emptyNodes, SIMULATIONS);
 	game.play();
-
-
 	std::cout << "Game over" << std::endl;
+}
+
+void writeToFile(Game& game, std::string outputFileName)
+{
+	game.writeToFile(outputFileName);
 }
 
 int main()
 {
-	/*for (int counter = 0; counter < 40; counter ++)
+	// Delete the 4 temp logfiles.
+	remove("log1.txt");
+	remove("log2.txt");
+	remove("log3.txt");
+	remove("log4.txt");
+
+	// Allocate nodes
+	NodePool nodePool;
+	nodePool.allocateNodes(NODES);
+
+	// Run GAMES runs
+	for (int counter = 0; counter < GAMES/4; counter++)
 	{
-		Game game;
+		Game game1, game2, game3, game4;
+		std::thread first1(playGame, std::ref(game1), nodePool.getRange(0, NODES/4 - 1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));						// Not to avoid race conditions, but to avoid the same random seeds.
+		std::thread second1(playGame, std::ref(game2), nodePool.getRange(NODES / 4, 2*(NODES / 4) - 1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::thread third1(playGame, std::ref(game3), nodePool.getRange(2 * (NODES / 4), 3 * (NODES / 4) - 1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		std::thread fourth1(playGame, std::ref(game4), nodePool.getRange(3 * (NODES / 4), NODES -1 ));
 
-		game.initialize();
-		game.play();
+		first1.join();
+		second1.join();
+		third1.join();
+		fourth1.join();
 
+		game1.writeToFile("log1.txt");
+		game2.writeToFile("log2.txt");
+		game3.writeToFile("log3.txt");
+		game4.writeToFile("log4.txt");
+		
 
-		std::cout << "Game over" << std::endl;
+		nodePool.resetNodes();
+	}
 
-	}*/
+	// Append all to one log file.
 	std::ofstream file;
 	std::ifstream file1, file2, file3, file4;
-	file.open("log.txt", std::ios::app);
+	std::string temp = "";
+
+	file.open("log-" + std::to_string(SIMULATIONS) + "sims.txt", std::ios::app);
 	file1.open("log1.txt");
 	file2.open("log2.txt");
 	file3.open("log3.txt");
 	file4.open("log4.txt");
-	std::string temp;
-	file1 >> temp;
-	file << temp << std::endl;
+
+	while (!file1.eof())
+	{
+		temp = "";
+		file1 >> temp;
+		file << temp << std::endl;
+	}
 	file1.close();
 
-	file2 >> temp;
-	file << temp << std::endl;
+	while (!file2.eof())
+	{
+		temp = "";
+		file2 >> temp;
+		file << temp << std::endl;
+	}
 	file2.close();
 
-	file3 >> temp;
-	file << temp << std::endl;
+	while (!file3.eof())
+	{
+		temp = "";
+		file3 >> temp;
+		file << temp << std::endl;
+	}
 	file3.close();
-	
-	file4 >> temp;
-	file << temp << std::endl;
+
+	while (!file4.eof())
+	{
+		temp = "";
+		file4 >> temp;
+		file << temp << std::endl;
+	}
 	file4.close();
 
 	file.close();
 
-	std::thread first(playGame, "log1.txt");
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::thread second(playGame, "log2.txt");
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::thread third(playGame, "log3.txt");
-	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-	std::thread fourth(playGame, "log4.txt");
-
-	
 
 
+	// Don't close console yet
 	int input = 0;
 	std::cin >> input;
 

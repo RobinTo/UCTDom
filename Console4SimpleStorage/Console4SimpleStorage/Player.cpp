@@ -2,14 +2,15 @@
 
 Player::Player()
 {
-
 }
 
-void Player::setCardManager(CardManager& cardManagerRef)
+void Player::initialize(std::vector<Node*>& emptyNodes, CardManager& cardManagerRef, int simulations)
 {
+	uct.setNodes(emptyNodes);
 	cardManager = cardManagerRef;
-	uct.setCardManager(cardManagerRef);
+	uct.initialize(cardManagerRef, simulations);
 }
+
 
 Option Player::getNextOption(GameState& currentState)
 {

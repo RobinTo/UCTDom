@@ -10,6 +10,7 @@ class UCT
 private:
 	std::vector<Node*> emptyNodes;
 	std::vector<Node*> usedNodes;
+	int simulations;
 
 	Node* selectBestLeaf(Node* rootNode);
 	void rollout(Node* startNode, GameState currentState, int stateIndex);
@@ -28,6 +29,7 @@ private:
 public:
 	UCT();
 	~UCT();
-	void setCardManager(CardManager& cardManager);
+	void initialize(CardManager& cardManager, int simulations2);
 	Option getNextOption(GameState currentState, int stateIndex);
+	void setNodes(std::vector<Node*>& emptyNodePtrs);
 };

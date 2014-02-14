@@ -9,10 +9,12 @@ public:
 	Option getNextOption(GameState& currentState);
 	CardManager cardManager;
 	
-	void setCardManager(CardManager& cardManagerRef);
+	void initialize(std::vector<Node*>& emptyNodes, CardManager& cardManagerRef, int simulations);
 
 	Player();
 	
+
+
 private:
 	UCT uct;
 };

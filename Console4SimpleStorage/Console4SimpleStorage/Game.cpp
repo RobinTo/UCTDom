@@ -13,21 +13,20 @@ Game::Game()
 
 }
 
-void Game::initialize(std::string outputFileName)
+void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 {
-	fileName = outputFileName;
 	srand((unsigned int)time(NULL));
 	gameState.initialize(PLAYERS);
 	cardManager.initialize();
 
 	// Always in supply
-	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 32;
-	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
-	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
-	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 12;
-	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 12;
-	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 12;
-	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 30;
+	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 320;
+	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 400;
+	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 300;
+	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 120;
+	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 120;
+	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 120;
+	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 0;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -56,13 +55,13 @@ void Game::initialize(std::string outputFileName)
 		gameState.playerStates[index].deck[ESTATE] = 3;
 		gameState.playerStates[index].endTurn();
 		players[index].stateIndex = index;
-		players[index].setCardManager(cardManager);
+		players[index].initialize(emptyNodes, cardManager, simulations);
 	}
 }
 
 void Game::play()
 {
-	std::string logString = "Turns:";
+	logString = "Turns:";
 
 	bool finished = false;
 	while (!finished)
@@ -104,16 +103,20 @@ void Game::play()
 	}
 
 	std::cout << "ended game on turn " << gameState.turnCounter << std::endl;
+	
+}
+
+void Game::writeToFile(std::string outputFileName)
+{
 	for (int index = 0; index < PLAYERS; index++)
 	{
 		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
 	}
 
 	std::ofstream file;
-	file.open(fileName, std::ios::app);
+	file.open(outputFileName, std::ios::app);
 	file << logString << std::endl;
-	file << gameState.turnCounter - 1 << ":" << "100:" << gameState.playerStates[players[0].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
-	
+	file << gameState.turnCounter - 1 << ":" << "2:" << gameState.playerStates[players[0].stateIndex].calculateVictoryPoints(cardManager) << std::endl;
+
 	file.close();
 }
-

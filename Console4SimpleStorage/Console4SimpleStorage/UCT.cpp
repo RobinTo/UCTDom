@@ -6,19 +6,19 @@
 
 UCT::UCT()
 {
-	int allocatedNodes = 200000;
+	/*int allocatedNodes = 200000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
 	{
 		Node* nodePtr = new Node();
 		emptyNodes.push_back(nodePtr);
-	}
+	}*/
 }
 
 UCT::~UCT()
 {
-	for (int counter = 0; counter < emptyNodes.size(); counter++)
+	/*for (int counter = 0; counter < emptyNodes.size(); counter++)
 	{
 		delete emptyNodes[counter];
 	}
@@ -27,11 +27,12 @@ UCT::~UCT()
 	{
 		delete usedNodes[counter];
 	}
-	usedNodes.clear();
+	usedNodes.clear();*/
 }
 
-void UCT::setCardManager(CardManager& cm)
+void UCT::initialize(CardManager& cm, int simulations2)
 {
+	simulations = simulations2;
 	cardManager = cm;
 }
 
@@ -82,8 +83,6 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 		option.type = END_TURN;
 		return option;
 	}
-
-	int simulations = 100;
 
 	// While more simulations
 	int simulationCounter = 0;
@@ -258,4 +257,10 @@ void UCT::resetNodes()
 		emptyNodes.push_back(*iterator);
 	}
 	usedNodes.clear();
+}
+
+void UCT::setNodes(std::vector<Node*>& emptyNodePtrs)
+{
+	emptyNodes = emptyNodePtrs;
+	usedNodes.reserve(emptyNodePtrs.size());
 }
