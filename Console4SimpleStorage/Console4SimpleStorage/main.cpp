@@ -23,7 +23,30 @@ void writeToFile(Game& game, std::string outputFileName)
 	game.writeToFile(outputFileName);
 }
 
-int main()
+void run1Thread()
+{
+	// Delete the old logfile
+	remove("log.txt");
+
+	// Allocate nodes
+	NodePool nodePool;
+	nodePool.allocateNodes(NODES);
+
+	// Run GAMES runs
+	for (int counter = 0; counter < GAMES; counter++)
+	{
+		Game game;
+		std::thread first1(playGame, std::ref(game), nodePool.getRange(0, NODES / 4 - 1));
+		first1.join();
+		game.writeToFile("log.txt");
+		nodePool.resetNodes();
+	}
+
+
+	
+}
+
+void run4Threads()
 {
 	// Delete the 4 temp logfiles.
 	remove("log1.txt");
@@ -36,16 +59,16 @@ int main()
 	nodePool.allocateNodes(NODES);
 
 	// Run GAMES runs
-	for (int counter = 0; counter < GAMES/4; counter++)
+	for (int counter = 0; counter < GAMES / 4; counter++)
 	{
 		Game game1, game2, game3, game4;
-		std::thread first1(playGame, std::ref(game1), nodePool.getRange(0, NODES/4 - 1));
+		std::thread first1(playGame, std::ref(game1), nodePool.getRange(0, NODES / 4 - 1));
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));						// Not to avoid race conditions, but to avoid the same random seeds.
-		std::thread second1(playGame, std::ref(game2), nodePool.getRange(NODES / 4, 2*(NODES / 4) - 1));
+		std::thread second1(playGame, std::ref(game2), nodePool.getRange(NODES / 4, 2 * (NODES / 4) - 1));
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		std::thread third1(playGame, std::ref(game3), nodePool.getRange(2 * (NODES / 4), 3 * (NODES / 4) - 1));
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-		std::thread fourth1(playGame, std::ref(game4), nodePool.getRange(3 * (NODES / 4), NODES -1 ));
+		std::thread fourth1(playGame, std::ref(game4), nodePool.getRange(3 * (NODES / 4), NODES - 1));
 
 		first1.join();
 		second1.join();
@@ -56,7 +79,7 @@ int main()
 		game2.writeToFile("log2.txt");
 		game3.writeToFile("log3.txt");
 		game4.writeToFile("log4.txt");
-		
+
 
 		nodePool.resetNodes();
 	}
@@ -105,7 +128,12 @@ int main()
 	file4.close();
 
 	file.close();
+}
 
+int main()
+{
+	run1Thread();
+	//run4Threads();
 
 
 	// Don't close console yet
