@@ -23,43 +23,76 @@ void Node::doYourThing()
 	if (isBuy)
 	{
 		// Discard hand after buy
-		for (int cardIndex = 0; cardIndex < 6; cardIndex ++)
+		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 		{
 			state.discard[cardIndex] += state.hand[cardIndex];
 			state.hand[cardIndex] = 0;
 		}
+		// Add cards so that there are at least five cards in deck
+		int cardCounter = 0;
+		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+		{
+			cardCounter += state.deck[cardIndex];
+		}
+		std::vector<std::vector<int>> draws;
+		if (cardCounter <= 5)
+		{
+			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+			{
+				state.hand[cardIndex] = state.deck[cardIndex];
+				state.deck[cardIndex] = state.discard[cardIndex];
+				state.discard[cardIndex] = 0;
+			}
+		}
 
-		// Find all draws
 		std::string s = "";
 		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 		{
-			for (int cardCounter = 0; cardCounter < state.deck[cardIndex]; cardCounter++)
+			for (int cardCounter2 = 0; cardCounter2 < state.deck[cardIndex]; cardCounter2++)
 			{
 				s.append(std::to_string(static_cast<long long>(cardIndex)));
 			}
 		}
 
-		std::size_t k = 5;
+		std::size_t k = 5 - (cardCounter <= 5 ? cardCounter : 0);
 		do
 		{
-			std::cout << std::string(s.begin(),s.begin() + k) << std::endl;
-		}
-		while(next_combination(s.begin(),s.begin() + k,s.end()));
+			std::vector<int> draw;
+			for (int i = 0; i < 6; i++)
+			{
+				if (state.hand[i] > 0)
+				{
+					for (int n = 0; n < state.hand[i]; n++)
+						draw.push_back(i);
+				}
+			}
+			for (int i = 0; i < (cardCounter <= 5 ? cardCounter : 0); i++)
+			{
+				draw.push_back(atoi(std::string(s.begin() + i, s.begin() + i + 1).c_str()));
+			}
+			draws.push_back(draw);
+		} while (next_combination(s.begin(), s.begin() + k, s.end()));
 
-		
 		// For each draw, create child node
-		Node* newNodePtr = bfPtr->requestNewNodePtr();
-		newNodePtr->isBuy = false;
-		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+		for (std::vector<std::vector<int>>::iterator iterator = draws.begin(); iterator != draws.end(); ++iterator)
 		{
-			newNodePtr->state.deck[cardIndex] = state.deck[cardIndex]; //Not state
-			newNodePtr->state.hand[cardIndex] = state.hand[cardIndex]; //Not state
-			newNodePtr->state.discard[cardIndex] = state.discard[cardIndex];
-			newNodePtr->state.supplyPiles[cardIndex] = state.supplyPiles[cardIndex];
+			Node* newNodePtr = bfPtr->requestNewNodePtr();
+			newNodePtr->isBuy = false;
+
+
+			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+			{
+				newNodePtr->state.deck[cardIndex] = state.deck[cardIndex];
+				newNodePtr->state.discard[cardIndex] = state.discard[cardIndex];
+				newNodePtr->state.supplyPiles[cardIndex] = state.supplyPiles[cardIndex];
+			}
+			for (int i = 0; i < 5 - (cardCounter <= 5 ? cardCounter : 0); i++)
+			{
+				newNodePtr->state.hand[(*iterator)[i]] += 1;
+				newNodePtr->state.deck[(*iterator)[i]] -= 1;
+			}
+			children.push_back(newNodePtr);
 		}
-		children.push_back(newNodePtr);
-
-
 	}
 	else
 	{
@@ -135,6 +168,9 @@ void Node::printSelf(int currentDepth)
 	else
 	{
 		std::cout << "Copper: " << state.hand[0] << ", Estate: " << state.hand[3] << ", Silver: " << state.hand[1] << ", Duchy: " << state.hand[4] << ", Gold: " << state.hand[2] << ", Province: " << state.hand[5] << std::endl;
+		std::cout << "Copper: " << state.deck[0] << ", Estate: " << state.deck[3] << ", Silver: " << state.deck[1] << ", Duchy: " << state.deck[4] << ", Gold: " << state.deck[2] << ", Province: " << state.deck[5] << std::endl;
+		std::cout << "Copper: " << state.discard[0] << ", Estate: " << state.discard[3] << ", Silver: " << state.discard[1] << ", Duchy: " << state.discard[4] << ", Gold: " << state.discard[2] << ", Province: " << state.discard[5] << std::endl;
+
 	}
 	
 	if (children.size() > 0)

@@ -8,8 +8,8 @@
 #include "NodePool.h"
 
 #define SIMULATIONS	500
-#define NODES		200000	//Must be multiple of 4
-#define GAMES		100		//Must be multiple of 4
+#define NODES		600
+#define GAMES		1		
 
 void playGame(Game& game, std::vector<Node*>& emptyNodes)
 {
@@ -36,7 +36,7 @@ void run1Thread()
 	for (int counter = 0; counter < GAMES; counter++)
 	{
 		Game game;
-		std::thread first1(playGame, std::ref(game), nodePool.getRange(0, NODES / 4 - 1));
+		std::thread first1(playGame, std::ref(game), nodePool.getRange(0, NODES - 1));
 		first1.join();
 		game.writeToFile("log.txt");
 		nodePool.resetNodes();

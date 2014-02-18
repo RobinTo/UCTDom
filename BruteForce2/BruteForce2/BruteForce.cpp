@@ -6,9 +6,13 @@
 
 Node* BruteForce::requestNewNodePtr()
 {
+	if (usedNodePtrs.size() == 0)
+		std::cout << "No more nodes" << std::endl;
+
 	Node* nodePtr = emptyNodePtrs.back();
 	usedNodePtrs.push_back(nodePtr);
 	emptyNodePtrs.pop_back();
+
 
 	return nodePtr;
 }
