@@ -93,7 +93,7 @@ void BruteForce::printTree()
 	}
 
 	file.open("printFile.txt", std::ios::app);
-	text = "\r\n }";
+	std::string text = "\r\n }";
 
 	file << text << std::endl;
 	file.close();

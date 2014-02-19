@@ -10,15 +10,16 @@ class BruteForce;
 class Node
 {
 public:
+	int id;
 	bool isRoot;
 	bool isBuy;
 	int boughtCard;
 	State state;
 	std::vector<Node*> children;
 
-	Node(BruteForce* bfPtr2);
+	Node(BruteForce* bfPtr2, int id2);
 	void doYourThing();
-	void printSelf(int currentDepth);
+	void printSelf();
 
 private:
 	BruteForce* bfPtr;

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <ctime>
 #include <fstream>
-#include <string>
 
 #include "BruteForce.h"
 
@@ -91,10 +90,4 @@ void BruteForce::printTree()
 	{
 		(*it)->printSelf();
 	}
-
-	file.open("printFile.txt", std::ios::app);
-	text = "\r\n }";
-
-	file << text << std::endl;
-	file.close();
 }

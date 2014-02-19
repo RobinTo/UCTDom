@@ -201,14 +201,9 @@ void Node::printSelf()
 				", Province: " + std::to_string(state.hand[5]);
 		}
 
-		// Append *tchu tchu*
-		text += "\"";
-
 		// Append the arrow
 		text += " -> ";
 
-		// Append *tchu tchu*
-		text += "\"";
 
 		// Append child id
 		text += std::to_string((*iterator)->id);
@@ -242,7 +237,7 @@ void Node::printSelf()
 		}
 
 		// Append *tchu tchu*
-		text += "\";";
+		text += "\"";
 
 		text += "\r\n";
 	}
@@ -251,6 +246,28 @@ void Node::printSelf()
 	file << text;
 	file.close();
 
+/*
+	if (isBuy)
+	{
+		
+	}
+	else
+	{
+		std::cout << "Copper: " << state.hand[0] << ", Estate: " << state.hand[3] << ", Silver: " << state.hand[1] << ", Duchy: " << state.hand[4] << ", Gold: " << state.hand[2] << ", Province: " << state.hand[5] << std::endl;
+		std::cout << "Copper: " << state.deck[0] << ", Estate: " << state.deck[3] << ", Silver: " << state.deck[1] << ", Duchy: " << state.deck[4] << ", Gold: " << state.deck[2] << ", Province: " << state.deck[5] << std::endl;
+		std::cout << "Copper: " << state.discard[0] << ", Estate: " << state.discard[3] << ", Silver: " << state.discard[1] << ", Duchy: " << state.discard[4] << ", Gold: " << state.discard[2] << ", Province: " << state.discard[5] << std::endl;
+
+	}
+	
+	if (children.size() > 0)
+	{
+		for (std::vector<Node*>::iterator iterator = children.begin(); iterator != children.end(); ++iterator)
+		{
+			for (int counter = 0; counter < currentDepth; counter++)
+				std::cout << "->";
+			(*iterator)->printSelf(currentDepth+1);
+		}
+	}*/
 }
 
 
