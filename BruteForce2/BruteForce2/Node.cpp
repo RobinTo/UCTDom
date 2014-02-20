@@ -158,11 +158,11 @@ void Node::doYourThing()
 }
 
 
-void Node::printSelf()
+void Node::printSelf(int treeDepth)
 {
 	// For each child, print "counter self -> child"
 	std::ofstream file;
-	file.open("printFile.txt", std::ios::app);
+	file.open(std::to_string(treeDepth) + "printFile.gv", std::ios::app);
 	std::string text = "";
 
 	for (std::vector<Node*>::iterator iterator = children.begin(); iterator != children.end(); ++iterator)
@@ -193,12 +193,12 @@ void Node::printSelf()
 		}
 		else
 		{
-			text += "Copper: " + std::to_string(state.hand[0]) +
-				", Estate: " + std::to_string(state.hand[3]) +
-				", Silver: " + std::to_string(state.hand[1]) +
-				", Duchy: " + std::to_string(state.hand[4]) +
-				", Gold: " + std::to_string(state.hand[2]) +
-				", Province: " + std::to_string(state.hand[5]);
+			text += "C:" + std::to_string(state.hand[0]) +
+				", E:" + std::to_string(state.hand[3]) +
+				", S:" + std::to_string(state.hand[1]) +
+				", D:" + std::to_string(state.hand[4]) +
+				", G:" + std::to_string(state.hand[2]) +
+				", P:" + std::to_string(state.hand[5]);
 		}
 
 		// Append *tchu tchu*
@@ -233,17 +233,17 @@ void Node::printSelf()
 		}
 		else
 		{
-			text += "Copper: " + std::to_string((*iterator)->state.hand[0]) +
-				", Estate: " + std::to_string((*iterator)->state.hand[3]) +
-				", Silver: " + std::to_string((*iterator)->state.hand[1]) +
-				", Duchy: " + std::to_string((*iterator)->state.hand[4]) +
-				", Gold: " + std::to_string((*iterator)->state.hand[2]) +
-				", Province: " + std::to_string((*iterator)->state.hand[5]);
+			text += "C:" + std::to_string((*iterator)->state.hand[0]) +
+				", E:" + std::to_string((*iterator)->state.hand[3]) +
+				", S:" + std::to_string((*iterator)->state.hand[1]) +
+				", D:" + std::to_string((*iterator)->state.hand[4]) +
+				", G:" + std::to_string((*iterator)->state.hand[2]) +
+				", P:" + std::to_string((*iterator)->state.hand[5]);
 		}
 
 		// Append *tchu tchu*
 		text += "\";";
-
+		
 		text += "\r\n";
 	}
 	

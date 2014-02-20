@@ -9,16 +9,19 @@
 int main()
 {
 	
-	int treeDepth = 3;
+	int treeDepth = 5;
 
 
 	std::cout << "Brute Force Tree" << std::endl;
 	
 	BruteForce bf;
 	std::srand ( unsigned ( std::time(0) ) );
-	bf.initialize(5000);
+	bf.initialize(5000000);
 	bf.createTree(treeDepth);
-	bf.printTree();
+	bf.printTree(treeDepth);
+
+
+	std::cout << "Done printing tree" << std::endl;
 
 	int t;
 	std::cin >> t;

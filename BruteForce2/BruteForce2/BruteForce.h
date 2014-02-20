@@ -15,8 +15,8 @@ public:
 	
 	Node* requestNewNodePtr();
 	void initialize(int nodes);
-	void createTree(int turns);
-	void printTree();
+	void createTree(int treeDepth);
+	void printTree(int treeDepth);
 
 private:
 	std::vector<Node*> findLeaves();

@@ -28,7 +28,7 @@ void BruteForce::initialize(int nodes)
 	//Allocate nodes
 	for (int counter = 1; counter < nodes; counter ++)
 	{
-		emptyNodePtrs.push_back(new Node(this, counter));
+		emptyNodePtrs.push_back(new Node(this, nodes - counter));
 	}
 
 	//Create root
@@ -77,22 +77,23 @@ std::vector<Node*> BruteForce::findLeaves()
 	return leafPtrs;
 }
 
-void BruteForce::printTree()
+void BruteForce::printTree(int treeDepth)
 {
-	remove("printFile.txt");
+	std::string fileName = std::to_string(treeDepth) + "printFile.gv";
+	remove(fileName.c_str());
 
 	std::ofstream file;
-	file.open("printFile.txt", std::ios::app);
-	std::string text = "digraph unix{\r\n size = \"6, 6\";\r\n node[color = lightblue2, style = filled];";
+	file.open(std::to_string(treeDepth) + "printFile.gv", std::ios::app);
+	std::string text = "digraph unix{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
 	
 	file << text << std::endl;
 	file.close();
 	for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)
 	{
-		(*it)->printSelf();
+		(*it)->printSelf(treeDepth);
 	}
 
-	file.open("printFile.txt", std::ios::app);
+	file.open(std::to_string(treeDepth) + "printFile.gv", std::ios::app);
 	text = "\r\n }";
 
 	file << text << std::endl;

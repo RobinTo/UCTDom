@@ -19,7 +19,7 @@ public:
 
 	Node(BruteForce* bfPtr2, int id2);
 	void doYourThing();
-	void printSelf();
+	void printSelf(int treeDepth);
 
 private:
 	BruteForce* bfPtr;

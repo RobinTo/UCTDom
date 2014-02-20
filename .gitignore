@@ -1,5 +1,6 @@
-# Txt
+# Txt and Graphviz
 *.txt
+*.gv
 
 # Python files
 *.pyc
