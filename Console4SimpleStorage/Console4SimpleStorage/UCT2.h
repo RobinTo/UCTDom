@@ -18,6 +18,7 @@ private:
 	Node* UCTSelectChild(Node* rootNode);
 	void resetNodes();
 	void doMove(GameState& gameState, Option option);
+	void doGreedy(GameState& gameState, std::vector<Option> options);
 
 public:
 	int simulations;

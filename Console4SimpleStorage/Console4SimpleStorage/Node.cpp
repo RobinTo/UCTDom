@@ -2,12 +2,7 @@
 
 Node::Node()
 {
-	isRoot = false;
-	value = 0;
-	visited = 0;
-	sum = 0;
-	propagateCounter = 0;
-	parentPtr = nullptr;
+	reset();
 }
 
 Node::~Node()
@@ -24,6 +19,7 @@ void Node::reset()
 	propagateCounter = 0;
 	childrenPtrs.clear();
 	parentPtr = nullptr;
+	untriedMoves.clear();
 }
 
 void Node::setState(GameState state)
@@ -43,7 +39,7 @@ void Node::findMoves(CardManager cardManager)
 	currentMoney += currentState.playerStates[0].hand[cardManager.cardIndexer[SILVER]] * 2;
 	currentMoney += currentState.playerStates[0].hand[cardManager.cardIndexer[GOLD]] * 3;
 
-	for (int i = 0; i < sizeof(currentState.playerStates[0].hand) / sizeof(*currentState.playerStates[0].hand); i++)
+	for (int i = 0; i < INSUPPLY; i++)
 	{
 		if (cardManager.cardLookupByIndex[i].cost <= currentMoney && currentState.supplyPiles[i] > 0)
 		{

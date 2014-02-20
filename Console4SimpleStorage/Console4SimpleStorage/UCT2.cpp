@@ -45,12 +45,13 @@ Option UCT2::getNextOption(GameState rootState, int maximumIterations)
 	rootNodePtr->currentState = rootState;
 	rootNodePtr->findMoves(cardManager);
 
+	Node* tempNodePtr = requestNewNode();
+
 	for (int i = 0; i < maximumIterations; i++)
 	{
-		Node* nodePtr = requestNewNode();
+		Node* nodePtr = tempNodePtr;
 		nodePtr = rootNodePtr;
 		GameState state = rootState;
-
 		// Select
 		while (nodePtr->untriedMoves.empty() && !nodePtr->childrenPtrs.empty()) // Node is fully expanded and non-terminal
 		{
@@ -78,14 +79,16 @@ Option UCT2::getNextOption(GameState rootState, int maximumIterations)
 		while (!getBuyOptions(state).empty() && state.turnCounter <= 40) //While state is non-terminal
 		{
 			std::vector<Option> options = getBuyOptions(state);
-			doMove(state, options[rand() % options.size()]);
+			//doMove(state, options[rand() % options.size()]);
+			doGreedy(state, options);
 		}
 		
 		// Backpropagate
 		while (nodePtr)
 		{
-			nodePtr->sum += state.playerStates[0].calculateVictoryPoints(cardManager);
 			nodePtr->propagateCounter++;
+			nodePtr->sum += state.playerStates[0].calculateVictoryPoints(cardManager);
+			nodePtr->value = ((double)nodePtr->sum / (double)nodePtr->propagateCounter);
 			nodePtr = nodePtr->parentPtr;
 		}
 	}
@@ -96,11 +99,12 @@ Option UCT2::getNextOption(GameState rootState, int maximumIterations)
 
 	for (int i = 0; i<rootNodePtr->childrenPtrs.size(); i++)
 	{
-		std::cout << "Score for " << cardManager.cardLookupByIndex[rootNodePtr->childrenPtrs.at(i)->opt.card].name << " was: " << rootNodePtr->childrenPtrs.at(i)->sum / rootNodePtr->childrenPtrs.at(i)->propagateCounter << std::endl;
+		std::cout << "Score for " << cardManager.cardLookupByIndex[rootNodePtr->childrenPtrs.at(i)->opt.card].name << " was: " << rootNodePtr->childrenPtrs.at(i)->value << std::endl;
 		std::cout << "Propagated : " << rootNodePtr->childrenPtrs.at(i)->propagateCounter << std::endl;
 		if (rootNodePtr->childrenPtrs[i]->propagateCounter > highestCount || highestCount == 0)
 		{
 			o = rootNodePtr->childrenPtrs[i]->opt;
+			//highestCount = rootNodePtr->childrenPtrs[i]->value;
 			highestCount = rootNodePtr->childrenPtrs[i]->propagateCounter;
 		}
 	}
@@ -124,7 +128,7 @@ Node* UCT2::UCTSelectChild(Node* rootNode)
 		{
 			bestValue = thisValue;
 			bestNode = rootNode->childrenPtrs[i];
-		}		
+		}
 	}
 		
 	return bestNode;
@@ -148,7 +152,6 @@ std::vector<Option> UCT2::getBuyOptions(const GameState& gameState)
 			options.push_back(o);
 		}
 	}
-
 	return options;
 }
 
@@ -157,4 +160,20 @@ void UCT2::doMove(GameState& gameState, Option option)
 	gameState.playerStates[0].buyCard(cardManager, option.card);
 	gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;
 	gameState.turnCounter++;
+}
+
+void UCT2::doGreedy(GameState& gameState, std::vector<Option> options)
+{
+	int highestCost = 0;
+	Option bestOption;
+	for (std::vector<Option>::iterator iterator = options.begin(); iterator != options.end(); ++iterator)
+	{
+		// Buy card with the highest cost, but not curse.
+		if (cardManager.cardLookupByIndex[(*iterator).card].cost > highestCost || highestCost == 0 && cardManager.cardLookupByIndex[(*iterator).card].name != "Curse")
+		{
+			highestCost = cardManager.cardLookupByIndex[(*iterator).card].cost;
+			bestOption = (*iterator);
+		}
+	}
+	doMove(gameState, bestOption);
 }
