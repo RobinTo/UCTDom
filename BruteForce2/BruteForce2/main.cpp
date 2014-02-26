@@ -16,14 +16,19 @@ int main()
 	
 	BruteForce bf;
 	std::srand ( unsigned ( std::time(0) ) );
+	std::cout << "Initializing, please wait." << std::endl;
 	bf.initialize(5000000);
+	std::cout << "Creating tree." << std::endl;
 	bf.createTree(treeDepth);
-	bf.printTree(treeDepth);
-
-
-	std::cout << "Done printing tree" << std::endl;
+	std::cout << "Done creating tree." << std::endl;
+	bf.printSmallTreeAccordingToInput();
+	std::cout << "Done printing tree." << std::endl;
+	//bf.printTree(treeDepth);
 
 	int t;
 	std::cin >> t;
 	return 0;
 }
+
+
+

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <array>
 #include <fstream>
 
@@ -254,3 +253,28 @@ void Node::printSelf(int treeDepth)
 }
 
 
+std::string Node::serializeSelf()
+{
+	std::string toReturn = "";
+	// Append id
+	toReturn.append(std::to_string(id));
+	// Append separator
+	toReturn.append(";");
+
+	// Append isRoot
+	toReturn.append(std::to_string(isRoot));
+	// Append separator
+	toReturn.append(";");
+
+	// Append isBuy
+	toReturn.append(std::to_string(isBuy));
+	// Append separator
+	toReturn.append(";");
+
+	// Append boughtCard
+	toReturn.append(std::to_string(boughtCard));
+	// Append separator
+	toReturn.append(";");
+
+	return toReturn;
+}

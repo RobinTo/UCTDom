@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iterator>
+#include <string>
 
 #include "BruteForce.h"
 #include "State.h"
@@ -20,6 +21,7 @@ public:
 	Node(BruteForce* bfPtr2, int id2);
 	void doYourThing();
 	void printSelf(int treeDepth);
+	std::string serializeSelf();
 
 private:
 	BruteForce* bfPtr;

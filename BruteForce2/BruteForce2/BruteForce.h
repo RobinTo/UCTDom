@@ -17,6 +17,7 @@ public:
 	void initialize(int nodes);
 	void createTree(int treeDepth);
 	void printTree(int treeDepth);
+	void printSmallTreeAccordingToInput();
 
 private:
 	std::vector<Node*> findLeaves();

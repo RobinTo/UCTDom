@@ -99,3 +99,15 @@ void BruteForce::printTree(int treeDepth)
 	file << text << std::endl;
 	file.close();
 }
+
+void BruteForce::printSmallTreeAccordingToInput()
+{
+	std::cout << "Please enter your draw according to the following format:" << std::endl;
+	std::cout << "Copper,estate,silver,duchy,gold,province. For instance: '2,1,1,0,0,1', without the quotes." << std::endl;
+
+
+}
+
+
+
+
