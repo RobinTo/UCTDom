@@ -42,9 +42,6 @@
     <ClInclude Include="NodePool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UCT2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,9 +69,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NodePool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UCT2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

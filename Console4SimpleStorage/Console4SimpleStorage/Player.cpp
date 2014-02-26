@@ -8,12 +8,12 @@ void Player::initialize(std::vector<Node*>& emptyNodes, CardManager& cardManager
 {
 	//uct.setNodes(emptyNodes);
 	cardManager = cardManagerRef;
-	uct.initialize(cardManagerRef, simulations, emptyNodes);
+	uct.initialize(cardManagerRef, simulations);
 }
 
 
 Option Player::getNextOption(GameState& currentState)
 {
-	Option option = uct.getNextOption(currentState, uct.simulations);
+	Option option = uct.getNextOption(currentState, stateIndex);
 	return option;
 }

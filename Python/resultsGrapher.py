@@ -34,8 +34,17 @@ def graphAverage(resultsArrays):
 	print(averageArray)
 	plt.plot(range(0, len(averageArray)), averageArray)
 
-
-graphAverage(readResults("results500.txt"))
+graphAverage(readResults("treasure10victory.txt"))
+graphAverage(readResults("treasure13victory.txt"))
+graphAverage(readResults("treasure14victory.txt"))
+graphAverage(readResults("treasure15victory.txt"))
+graphAverage(readResults("treasure16victory.txt"))
+graphAverage(readResults("treasure17victory.txt"))
+graphAverage(readResults("treasure18victory.txt"))
+graphAverage(readResults("treasure19victory.txt"))
+graphAverage(readResults("treasure20victory.txt"))
+graphAverage(readResults("treasure25victory.txt"))
+graphAverage(readResults("treasure30victory.txt"))
 
 #graphAverage(readResults("resultsRandomPlay.txt"))
 #graphAverage(readResults("resultsRandomPlayoutPolicy.txt"))

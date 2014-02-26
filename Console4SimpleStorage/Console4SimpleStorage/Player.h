@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UCT2.h"
+#include "UCT.h"
 
 class Player
 {
@@ -16,5 +16,5 @@ public:
 
 
 private:
-	UCT2 uct;
+	UCT uct;
 };
