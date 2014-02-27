@@ -1,7 +1,3 @@
-#include <iostream>
-#include <array>
-#include <fstream>
-#include <sstream>
 
 #include "Node.h"
 
@@ -160,11 +156,9 @@ void Node::doYourThing()
 }
 
 
-void Node::printSelf(int treeDepth)
+void Node::printSelf(std::ofstream& file)
 {
 	// For each child, print "counter self -> child"
-	std::ofstream file;
-	file.open(std::to_string(treeDepth) + "printFile.gv", std::ios::app);
 	std::string text = "";
 
 	for (std::vector<Node*>::iterator iterator = children.begin(); iterator != children.end(); ++iterator)
@@ -202,6 +196,9 @@ void Node::printSelf(int treeDepth)
 				", G:" + std::to_string(state.hand[2]) +
 				", P:" + std::to_string(state.hand[5]);
 		}
+
+		// Append score
+		text += " Score:" + std::to_string(score);
 
 		// Append *tchu tchu*
 		text += "\"";
@@ -243,17 +240,17 @@ void Node::printSelf(int treeDepth)
 				", P:" + std::to_string((*iterator)->state.hand[5]);
 		}
 
+		// Append score
+		text += " Score:" + std::to_string((*iterator)->score);
+
 		// Append *tchu tchu*
 		text += "\";";
 		
 		text += "\r\n";
 	}
-	
-
 	file << text;
-	file.close();
-
 }
+
 
 bool Node::deserialize(std::string serialized)
 {
@@ -350,14 +347,14 @@ void Node::calculateScore()
 	}
 	else
 	{
-		score += state.deck[3] * 2;
-		score += state.deck[4] * 5;
-		score += state.deck[5] * 8;
-		score += state.discard[3] * 2;
-		score += state.discard[4] * 5;
-		score += state.discard[5] * 8;
-		score += state.hand[3] * 2;
-		score += state.hand[4] * 5;
-		score += state.hand[5] * 8;
+		score += state.deck[3] * 1;
+		score += state.deck[4] * 3;
+		score += state.deck[5] * 6;
+		score += state.discard[3] * 1;
+		score += state.discard[4] * 3;
+		score += state.discard[5] * 6;
+		score += state.hand[3] * 1;
+		score += state.hand[4] * 3;
+		score += state.hand[5] * 6;
 	}
 }

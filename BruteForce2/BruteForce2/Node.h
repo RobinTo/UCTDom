@@ -2,6 +2,11 @@
 
 #include <iterator>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <array>
+#include <sstream>
+
 
 #include "BruteForce.h"
 #include "State.h"
@@ -22,7 +27,7 @@ public:
 
 	Node(BruteForce* bfPtr2, int id2);
 	void doYourThing();
-	void printSelf(int treeDepth);
+	void printSelf(std::ofstream& file);
 	std::string serialize();
 	bool deserialize(std::string serialized);
 	void calculateScore();
