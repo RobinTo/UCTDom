@@ -276,6 +276,7 @@ bool Node::deserialize(std::string serialized)
 		tempIDvector.push_back(std::atoi(childIDs.at(i).c_str()));
 	}
 
+	score = std::atof(stringParts.at(6).c_str());
 }
 
 std::vector<std::string> split(std::string s, char delim)
@@ -315,6 +316,8 @@ std::string Node::serialize()
 		toReturn.append(std::to_string(children.at(i)->id));
 		toReturn.append("-");
 	}
+	toReturn.append(SEPARATOR);
+	toReturn.append(std::to_string(score));
 
 	return toReturn;
 }
