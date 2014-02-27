@@ -17,13 +17,16 @@ public:
 	int boughtCard;
 	State state;
 	std::vector<Node*> children;
+	std::vector<int> tempIDvector;
 
 	Node(BruteForce* bfPtr2, int id2);
 	void doYourThing();
 	void printSelf(int treeDepth);
-	std::string serializeSelf();
+	std::string serialize();
+	bool deserialize(std::string serialized);
 
 private:
+	std::vector<std::string> split(std::string s, char delim);
 	BruteForce* bfPtr;
 	template <typename Iterator>
 	inline bool next_combination(const Iterator first, Iterator k, const Iterator last)

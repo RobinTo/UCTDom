@@ -1,9 +1,11 @@
 #include <iostream>
 #include <array>
 #include <fstream>
+#include <sstream>
 
 #include "Node.h"
 
+#define SEPARATOR ":"
 
 Node::Node(BruteForce* bfPtr2, int id2)
 {
@@ -252,29 +254,66 @@ void Node::printSelf(int treeDepth)
 
 }
 
+bool Node::deserialize(std::string serialized)
+{
+	std::vector<std::string> stringParts = split(serialized, ':');
+	
+	id = std::atoi(stringParts.at(0).c_str());
+	isRoot = std::atoi(stringParts.at(1).c_str());
+	isBuy = std::atoi(stringParts.at(2).c_str());
+	boughtCard = std::atoi(stringParts.at(3).c_str());
 
-std::string Node::serializeSelf()
+	std::vector<std::string> handValues = split(stringParts.at(4), '-');
+	for (int i = 0; i < 6; i++)
+	{
+		state.hand[i] = std::atoi(handValues.at(i).c_str());
+	}
+
+	std::vector<std::string> childIDs = split(stringParts.at(5), '-');
+	for (int i = 0; i < childIDs.size(); i++)
+	{
+		tempIDvector.push_back(std::atoi(childIDs.at(i).c_str()));
+	}
+
+}
+
+std::vector<std::string> split(std::string s, char delim)
+{
+	std::stringstream test(s);
+	std::string segment;
+	std::vector<std::string> seglist;
+
+	while (std::getline(test, segment, delim))
+	{
+		seglist.push_back(segment);
+	}
+
+	return seglist;
+}
+
+std::string Node::serialize()
 {
 	std::string toReturn = "";
-	// Append id
 	toReturn.append(std::to_string(id));
-	// Append separator
-	toReturn.append(";");
-
-	// Append isRoot
+	toReturn.append(SEPARATOR);
 	toReturn.append(std::to_string(isRoot));
-	// Append separator
-	toReturn.append(";");
-
-	// Append isBuy
+	toReturn.append(SEPARATOR);
 	toReturn.append(std::to_string(isBuy));
-	// Append separator
-	toReturn.append(";");
-
-	// Append boughtCard
+	toReturn.append(SEPARATOR);
 	toReturn.append(std::to_string(boughtCard));
-	// Append separator
-	toReturn.append(";");
+	toReturn.append(SEPARATOR);
+	for (int i = 0; i < 6; i++) // Hand size is 6
+	{
+		toReturn.append(std::to_string(state.hand[i]));
+		toReturn.append("-");
+	}
+	// Append state hand
+	toReturn.append(SEPARATOR);
+	for (int i = 0; i < children.size(); i++)
+	{
+		toReturn.append(std::to_string(children.at(i)->id));
+		toReturn.append("-");
+	}
 
 	return toReturn;
 }
