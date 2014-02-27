@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 
 #include "Node.h"
 
@@ -18,6 +19,7 @@ public:
 	void createTree(int treeDepth);
 	void printTree(int treeDepth);
 	void printSmallTreeAccordingToInput();
+	void loadTree(std::string fileName);
 
 private:
 	std::vector<Node*> findLeaves();

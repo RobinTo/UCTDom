@@ -2,7 +2,6 @@
 #include <sstream>
 #include <ctime>
 #include <fstream>
-#include <string>
 
 #include "BruteForce.h"
 
@@ -31,9 +30,12 @@ void BruteForce::initialize(int nodes)
 	{
 		emptyNodePtrs.push_back(new Node(this, nodes - counter));
 	}
+}
 
+void BruteForce::createTree(int turns)
+{
 	//Create root
-	rootPtr = new Node(this,0);
+	rootPtr = new Node(this, 0);
 	rootPtr->isBuy = false;
 	rootPtr->isRoot = true;
 
@@ -42,7 +44,7 @@ void BruteForce::initialize(int nodes)
 
 	rootPtr->state.deck[0] = 7;
 	rootPtr->state.deck[3] = 3;
-	
+
 	rootPtr->state.supplyPiles[0] = 53;
 	rootPtr->state.supplyPiles[1] = 40;
 	rootPtr->state.supplyPiles[2] = 30;
@@ -51,10 +53,7 @@ void BruteForce::initialize(int nodes)
 	rootPtr->state.supplyPiles[5] = 12;
 
 	usedNodePtrs.push_back(rootPtr);
-}
 
-void BruteForce::createTree(int turns)
-{
 	int depth = turns*2 - 1;
 	for (int counter = 0; counter < depth; counter++)
 	{
@@ -144,5 +143,22 @@ void BruteForce::printSmallTreeAccordingToInput()
 }
 
 
+void BruteForce::loadTree(std::string fileName)
+{
+	std::ifstream file;
+	std::string temp = "";
 
+	file.open(fileName);
+
+	while (!file.eof())
+	{
+		temp = "";
+		file >> temp;
+		if (temp == "")
+			break;
+		Node* nodePtr = requestNewNodePtr();
+		nodePtr->deserialize(temp);
+	}
+	file.close();
+}
 

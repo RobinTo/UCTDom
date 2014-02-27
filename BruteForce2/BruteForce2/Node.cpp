@@ -277,9 +277,11 @@ bool Node::deserialize(std::string serialized)
 	}
 
 	score = std::atof(stringParts.at(6).c_str());
+
+	return true;
 }
 
-std::vector<std::string> split(std::string s, char delim)
+std::vector<std::string> Node::split(std::string s, char delim)
 {
 	std::stringstream test(s);
 	std::string segment;

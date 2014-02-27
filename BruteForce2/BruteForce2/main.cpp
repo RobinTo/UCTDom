@@ -9,7 +9,7 @@
 int main()
 {
 	
-	int treeDepth = 7;
+	int treeDepth = 3;
 
 
 	std::cout << "Brute Force Tree" << std::endl;
@@ -17,9 +17,10 @@ int main()
 	BruteForce bf;
 	std::srand ( unsigned ( std::time(0) ) );
 	std::cout << "Initializing, please wait." << std::endl;
-	bf.initialize(5000000);
+	bf.initialize(50000);
 	std::cout << "Creating tree." << std::endl;
-	bf.createTree(treeDepth);
+	//bf.createTree(treeDepth);
+	bf.loadTree("tree.txt");
 	std::cout << "Done creating tree." << std::endl;
 	std::cout << "Nodes used: " << bf.usedNodePtrs.size() << std::endl;
 	//bf.printSmallTreeAccordingToInput();
