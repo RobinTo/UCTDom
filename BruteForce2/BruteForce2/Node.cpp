@@ -337,7 +337,7 @@ void Node::calculateScore()
 			self.vp = hand[4] * 2 + hand[5] * 5 + hand[6] * 8 + deck...
 	*/
 
-	if (children.size() == 0)
+	if (children.size() > 0)
 	{
 		for (std::vector<Node*>::iterator iter = children.begin(); iter != children.end(); ++iter)
 		{

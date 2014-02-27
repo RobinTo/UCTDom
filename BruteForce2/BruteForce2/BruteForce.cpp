@@ -68,6 +68,15 @@ void BruteForce::createTree(int turns)
 	std::cout << "Calculating score." << std::endl;
 	rootPtr->calculateScore();
 	std::cout << "Done calculating score." << std::endl;
+
+	remove("tree.txt");
+	std::ofstream file;
+	file.open("tree.txt");
+	for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)
+	{
+		file << (*it)->serialize() << std::endl;
+	}
+	file.close();
 }
 
 std::vector<Node*> BruteForce::findLeaves()
