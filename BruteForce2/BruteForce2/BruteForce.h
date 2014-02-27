@@ -20,6 +20,7 @@ public:
 	void printTree(int treeDepth);
 	void printSmallTreeAccordingToInput();
 	void loadTree(std::string fileName);
+	Node* getNodeByID(int id);
 
 private:
 	std::vector<Node*> findLeaves();

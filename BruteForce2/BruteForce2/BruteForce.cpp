@@ -160,5 +160,22 @@ void BruteForce::loadTree(std::string fileName)
 		nodePtr->deserialize(temp);
 	}
 	file.close();
+
+	for (int i = 0; i < usedNodePtrs.size(); i++)
+	{
+		for (int c = 0; c < usedNodePtrs.at(i)->tempIDvector.size(); c++)
+		{
+			usedNodePtrs.at(i)->children.push_back(getNodeByID(usedNodePtrs.at(i)->tempIDvector.at(c)));
+		}
+	}
 }
 
+Node* BruteForce::getNodeByID(int id)
+{
+	for (int i = 0; i < usedNodePtrs.size(); i++)
+	{
+		if (usedNodePtrs.at(i)->id == id)
+			return usedNodePtrs.at(i);
+	}
+	return NULL;
+}
