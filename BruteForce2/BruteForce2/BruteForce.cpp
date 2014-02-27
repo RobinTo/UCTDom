@@ -36,7 +36,7 @@ void BruteForce::createTree(int turns)
 {
 	//Create root
 	rootPtr = new Node(this, 0);
-	rootPtr->isBuy = false;
+	rootPtr->isBuy = true;
 	rootPtr->isRoot = true;
 
 	//rootPtr->state.hand[0] = 4;
@@ -114,10 +114,11 @@ void BruteForce::printTree(int treeDepth)
 
 void BruteForce::printSmallTreeAccordingToInput()
 {
-	std::cout << "Please enter your draw according to the following format:" << std::endl;
-	std::cout << "Copper,silver,gold,estate,duchy,province. For instance: '2,2,0,1,0,0', without the quotes." << std::endl;
+	Node* currentNode = rootPtr;
 
 	// Receive draw input and convert to stringstream
+	std::cout << "Please enter your draw according to the following format:" << std::endl;
+	std::cout << "Copper,silver,gold,estate,duchy,province. For instance: '2,2,0,1,0,0', without the quotes." << std::endl;
 	std::string cardInput = "";
 	std::cin >> cardInput;
 	std::stringstream cardInputStream(cardInput);
@@ -129,16 +130,35 @@ void BruteForce::printSmallTreeAccordingToInput()
 	{
 		seglist.push_back(segment);
 	}
+	int matchHand[6];
+	matchHand[0] = std::atoi(seglist[0].c_str());
+	matchHand[1] = std::atoi(seglist[1].c_str());
+	matchHand[2] = std::atoi(seglist[2].c_str());
+	matchHand[3] = std::atoi(seglist[3].c_str());
+	matchHand[4] = std::atoi(seglist[4].c_str());
+	matchHand[5] = std::atoi(seglist[5].c_str());
 
-	// Remove all children from currentroot, except the one with the draw matched in vector
+
+	// For each child in currentroot,
+	for (std::vector<Node*>::iterator it = currentNode->children.begin(); it != currentNode->children.end(); ++it)
+	{
+		// except the one with a matching hand
+		if (currentNode->state.hand[0] == matchHand[0] && currentNode->state.hand[1] == matchHand[1] && currentNode->state.hand[2] == matchHand[2] && currentNode->state.hand[3] == matchHand[3] && currentNode->state.hand[4] == matchHand[4] && currentNode->state.hand[5] == matchHand[5])
+		{
+			continue;
+		}
+		// remove all their children.
+		else
+		{
+			(*it)->children.clear();
+		}
+	}
 
 	// Receive buy input
 
 	// Remove children from currentroot, except the one matched from buy input
 
 	// Repeat until currentroot has no children
-
-
 
 }
 
