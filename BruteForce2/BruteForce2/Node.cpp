@@ -20,6 +20,7 @@ Node::Node(BruteForce* bfPtr2, int id2)
 	boughtCard = -1;
 	isRoot = false;
 	id = id2;
+	score = 0;
 }
 
 void Node::doYourThing()
@@ -316,4 +317,42 @@ std::string Node::serialize()
 	}
 
 	return toReturn;
+}
+
+void Node::calculateScore()
+{
+	/*
+	root.calculatevp()
+
+	calculatevp():
+		if children.size() > 0:
+			for each child:
+				child.calculatevp()
+				self.vp += child.vp
+			self.vp = self.vp/children.size()
+		else:
+			self.vp = hand[4] * 2 + hand[5] * 5 + hand[6] * 8 + deck...
+	*/
+
+	if (children.size() == 0)
+	{
+		for (std::vector<Node*>::iterator iter = children.begin(); iter != children.end(); ++iter)
+		{
+			(*iter)->calculateScore();
+			score += (*iter)->score;
+		}
+		score = score / children.size();
+	}
+	else
+	{
+		score += state.deck[3] * 2;
+		score += state.deck[4] * 5;
+		score += state.deck[5] * 8;
+		score += state.discard[3] * 2;
+		score += state.discard[4] * 5;
+		score += state.discard[5] * 8;
+		score += state.hand[3] * 2;
+		score += state.hand[4] * 5;
+		score += state.hand[5] * 8;
+	}
 }

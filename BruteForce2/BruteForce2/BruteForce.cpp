@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <ctime>
 #include <fstream>
 #include <string>
@@ -36,11 +37,11 @@ void BruteForce::initialize(int nodes)
 	rootPtr->isBuy = false;
 	rootPtr->isRoot = true;
 
-	rootPtr->state.hand[0] = 4;
-	rootPtr->state.hand[3] = 1;
+	//rootPtr->state.hand[0] = 4;
+	//rootPtr->state.hand[3] = 1;
 
-	rootPtr->state.deck[0] = 3;
-	rootPtr->state.deck[3] = 2;
+	rootPtr->state.deck[0] = 7;
+	rootPtr->state.deck[3] = 3;
 	
 	rootPtr->state.supplyPiles[0] = 53;
 	rootPtr->state.supplyPiles[1] = 40;
@@ -64,6 +65,9 @@ void BruteForce::createTree(int turns)
 			(*iterator)->doYourThing();
 		}
 	}
+	std::cout << "Calculating score." << std::endl;
+	rootPtr->calculateScore();
+	std::cout << "Done calculating score." << std::endl;
 }
 
 std::vector<Node*> BruteForce::findLeaves()
@@ -103,7 +107,29 @@ void BruteForce::printTree(int treeDepth)
 void BruteForce::printSmallTreeAccordingToInput()
 {
 	std::cout << "Please enter your draw according to the following format:" << std::endl;
-	std::cout << "Copper,estate,silver,duchy,gold,province. For instance: '2,1,1,0,0,1', without the quotes." << std::endl;
+	std::cout << "Copper,silver,gold,estate,duchy,province. For instance: '2,2,0,1,0,0', without the quotes." << std::endl;
+
+	// Receive draw input and convert to stringstream
+	std::string cardInput = "";
+	std::cin >> cardInput;
+	std::stringstream cardInputStream(cardInput);
+	
+	// Split the stringstream on char ','
+	std::string segment;
+	std::vector<std::string> seglist;
+	while (std::getline(cardInputStream, segment, ','))
+	{
+		seglist.push_back(segment);
+	}
+
+	// Remove all children from currentroot, except the one with the draw matched in vector
+
+	// Receive buy input
+
+	// Remove children from currentroot, except the one matched from buy input
+
+	// Repeat until currentroot has no children
+
 
 
 }

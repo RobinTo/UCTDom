@@ -9,7 +9,7 @@
 int main()
 {
 	
-	int treeDepth = 5;
+	int treeDepth = 7;
 
 
 	std::cout << "Brute Force Tree" << std::endl;
@@ -21,9 +21,12 @@ int main()
 	std::cout << "Creating tree." << std::endl;
 	bf.createTree(treeDepth);
 	std::cout << "Done creating tree." << std::endl;
-	bf.printSmallTreeAccordingToInput();
+	std::cout << "Nodes used: " << bf.usedNodePtrs.size() << std::endl;
+	//bf.printSmallTreeAccordingToInput();
+	
+	bf.printTree(treeDepth);
 	std::cout << "Done printing tree." << std::endl;
-	//bf.printTree(treeDepth);
+
 
 	int t;
 	std::cin >> t;

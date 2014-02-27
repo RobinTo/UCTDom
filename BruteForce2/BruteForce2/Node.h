@@ -15,6 +15,7 @@ public:
 	bool isRoot;
 	bool isBuy;
 	int boughtCard;
+	double score;
 	State state;
 	std::vector<Node*> children;
 	std::vector<int> tempIDvector;
@@ -24,6 +25,7 @@ public:
 	void printSelf(int treeDepth);
 	std::string serialize();
 	bool deserialize(std::string serialized);
+	void calculateScore();
 
 private:
 	std::vector<std::string> split(std::string s, char delim);
