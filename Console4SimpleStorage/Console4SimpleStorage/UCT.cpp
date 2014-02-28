@@ -94,16 +94,17 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	}
 
 	Option o;
-	double highestScore = 0;
+	double highestVisited = 0;
 
 	for (int i = 0; i<rootNodePtr->childrenPtrs.size(); i++)
 	{
 		std::cout << "Score for " << cardManager.cardLookupByIndex[rootNodePtr->childrenPtrs.at(i)->opt.card].name << " was: " << rootNodePtr->childrenPtrs.at(i)->value << std::endl;
 		std::cout << "Propagated : " << rootNodePtr->childrenPtrs.at(i)->propagateCounter << std::endl;
-		if (rootNodePtr->childrenPtrs.at(i)->value > highestScore || highestScore == 0)
+		std::cout << "Visited : " << rootNodePtr->childrenPtrs.at(i)->propagateCounter << std::endl;
+		if (rootNodePtr->childrenPtrs.at(i)->propagateCounter > highestVisited || highestVisited == 0)
 		{
 			o = rootNodePtr->childrenPtrs.at(i)->opt;
-			highestScore = rootNodePtr->childrenPtrs.at(i)->value;
+			highestVisited = rootNodePtr->childrenPtrs.at(i)->propagateCounter;
 		}
 	}
 	resetNodes();
@@ -114,6 +115,9 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 {
 	double bestValue = 0;
 	Node* bestNode = rootNode;
+
+	if (rootNode->isRoot)
+		rootNode->visited++;
 
 	std::vector<Node*> unvisitedNodes;
 	for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
@@ -134,7 +138,9 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 	{
 		for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
 		{
-			double thisValue = (double)rootNode->childrenPtrs.at(i)->value + 1 * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
+			//std::cout << "Visited: " << rootNode->visited << std::endl;
+			//std::cout << "Propagated: " << rootNode->propagateCounter << std::endl;
+			double thisValue = (double)rootNode->childrenPtrs.at(i)->value + 10 * sqrt(log((double)rootNode->propagateCounter / rootNode->childrenPtrs.at(i)->propagateCounter));
 			if(thisValue > bestValue || bestValue == 0)
 			{
 				bestValue = thisValue;
@@ -149,7 +155,10 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 		return bestNode;
 	}
 	else
+	{
+		bestNode->visited++;
 		return selectBestLeaf(bestNode);
+	}
 }
 
 void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateIndex)
@@ -206,6 +215,7 @@ void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateInde
 			{
 				int result = rollout(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
 				propagate(bestLeafPtr->childrenPtrs.at(randomChild), result);
+				bestLeafPtr->childrenPtrs.at(randomChild)->visited++;
 			}
 		}
 	}
@@ -258,6 +268,8 @@ void UCT::propagate(Node* endNode, int result)
 {
 	endNode->sum += result;
 	endNode->propagateCounter += 1;
+	//std::cout << "Visited: " << endNode->visited << std::endl;
+	//std::cout << "Propagated: " << endNode->propagateCounter << std::endl;
 	endNode->value = ((double)endNode->sum/(double)endNode->propagateCounter);
 	if(!endNode->isRoot)
 	{
