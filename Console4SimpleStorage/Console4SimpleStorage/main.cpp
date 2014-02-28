@@ -7,9 +7,9 @@
 #include "Game.h"
 #include "NodePool.h"
 
-#define SIMULATIONS	400
+#define SIMULATIONS	200
 #define NODES		1
-#define GAMES		1000
+#define GAMES		50
 
 void playGame(Game& game, std::vector<Node*>& emptyNodes)
 {

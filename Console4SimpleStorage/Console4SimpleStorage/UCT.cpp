@@ -159,48 +159,56 @@ void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateInde
 	// Select best leaf
 	Node* bestLeafPtr = selectBestLeaf(startNode);
 
-	if(!currentState.gameFinished())	// If treeDepth is less than turns left.
+	if (bestLeafPtr->visited <= 0) // If it was an unvisited node, perform a rollout.
 	{
-		std::list<Option> actionOptions = getActionOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
-		std::list<Option> buyOptions = getBuyOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
-
-		// TODO: for each action
-
-		std::list<Option>::iterator iter;
-
-		for(iter=actionOptions.begin(); iter != actionOptions.end(); iter++)
+		int result = rollout(stateIndex, bestLeafPtr->currentState);
+		propagate(bestLeafPtr, result);
+	}
+	else // Else, create all children and rollout a random childnode.
+	{
+		if (!currentState.gameFinished())	// If treeDepth is less than turns left.
 		{
-			if(currentState.playerStates[stateIndex].actions > 0)
+			std::list<Option> actionOptions = getActionOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
+			std::list<Option> buyOptions = getBuyOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
+
+			// TODO: for each action
+
+			std::list<Option>::iterator iter;
+
+			for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
 			{
-				Node* newNode = requestNewNode();
-				newNode->parentPtr = bestLeafPtr;
-				newNode->setState(currentState);	// Copy, not reference.
-			
-				// playAction(&newNode->currentState, actionIterator);
-				// simulate(newNode->currentState, stateIndex, newNode, turns, maxTurns);
+				if (currentState.playerStates[stateIndex].actions > 0)
+				{
+					Node* newNode = requestNewNode();
+					newNode->parentPtr = bestLeafPtr;
+					newNode->setState(currentState);	// Copy, not reference.
+
+					// playAction(&newNode->currentState, actionIterator);
+					// simulate(newNode->currentState, stateIndex, newNode, turns, maxTurns);
+				}
 			}
-		}
-		
-		for(iter=buyOptions.begin(); iter != buyOptions.end(); iter++)
-		{
-			if(currentState.playerStates[stateIndex].buys > 0)
+
+			for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
 			{
-				Node* newNode = requestNewNode();
-				newNode->parentPtr = bestLeafPtr;
-				newNode->setState(bestLeafPtr->currentState);
-				newNode->currentState.turnCounter++;
-				newNode->setOption(*iter);
-				bestLeafPtr->childrenPtrs.push_back(newNode);
-				buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
+				if (currentState.playerStates[stateIndex].buys > 0)
+				{
+					Node* newNode = requestNewNode();
+					newNode->parentPtr = bestLeafPtr;
+					newNode->setState(bestLeafPtr->currentState);
+					newNode->currentState.turnCounter++;
+					newNode->setOption(*iter);
+					bestLeafPtr->childrenPtrs.push_back(newNode);
+					buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
+				}
 			}
-		}
 
-		int randomChild = rand() % bestLeafPtr->childrenPtrs.size();
+			int randomChild = rand() % bestLeafPtr->childrenPtrs.size();
 
-		if (bestLeafPtr->childrenPtrs.at(randomChild)->visited <= 0)
-		{
-			int result = rollout(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
-			propagate(bestLeafPtr->childrenPtrs.at(randomChild), result);
+			if (bestLeafPtr->childrenPtrs.at(randomChild)->visited <= 0)
+			{
+				int result = rollout(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
+				propagate(bestLeafPtr->childrenPtrs.at(randomChild), result);
+			}
 		}
 	}
 }
