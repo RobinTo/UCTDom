@@ -13,14 +13,14 @@ private:
 	int simulations;
 
 	Node* selectBestLeaf(Node* rootNode);
-	void rollout(Node* startNode, GameState currentState, int stateIndex);
+	void selectAndExpand(Node* startNode, GameState currentState, int stateIndex);
 	void propagate(Node* endNode, int result);
 	Node* requestNewNode();
 
 	std::list<Option> getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 	std::list<Option> getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 
-	int simulate(int playerIndex, GameState gameState);
+	int rollout(int playerIndex, GameState gameState);
 	void buyCard(PlayerState& pState, int cardToBuy, GameState& gameState);
 	int playoutPolicy(GameState& gameState, int playerIndex);
 	void resetNodes();

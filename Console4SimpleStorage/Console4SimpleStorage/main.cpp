@@ -7,9 +7,9 @@
 #include "Game.h"
 #include "NodePool.h"
 
-#define SIMULATIONS	100
-#define NODES		105
-#define GAMES		1		
+#define SIMULATIONS	400
+#define NODES		1
+#define GAMES		1000
 
 void playGame(Game& game, std::vector<Node*>& emptyNodes)
 {
@@ -41,9 +41,6 @@ void run1Thread()
 		game.writeToFile("log.txt");
 		nodePool.resetNodes();
 	}
-
-
-	
 }
 
 void run4Threads()

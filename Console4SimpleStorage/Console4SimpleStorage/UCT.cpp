@@ -7,7 +7,7 @@
 
 UCT::UCT()
 {
-	int allocatedNodes = 1000;
+	int allocatedNodes = 10000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
@@ -89,9 +89,7 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	int simulationCounter = 0;
 	while(simulationCounter < simulations)
 	{
-		
-		rollout(rootNodePtr, currentState, stateIndex);
-
+		selectAndExpand(rootNodePtr, currentState, stateIndex);
 		simulationCounter ++;
 	}
 
@@ -149,7 +147,6 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 
 	if (bestNode->childrenPtrs.size() <= 0)
 	{
-		// std::cout << "Best leaf was " << cardManager.cardLookupByIndex[bestNode->opt.card].name << std::endl;
 		bestNode->visited++;
 		return bestNode;
 	}
@@ -157,7 +154,7 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 		return selectBestLeaf(bestNode);
 }
 
-void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
+void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateIndex)
 {
 	// Select best leaf
 	Node* bestLeafPtr = selectBestLeaf(startNode);
@@ -202,7 +199,7 @@ void UCT::rollout(Node* startNode, GameState currentState, int stateIndex)
 
 		if (bestLeafPtr->childrenPtrs.at(randomChild)->visited <= 0)
 		{
-			int result = simulate(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
+			int result = rollout(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
 			propagate(bestLeafPtr->childrenPtrs.at(randomChild), result);
 		}
 	}
@@ -215,7 +212,7 @@ void UCT::buyCard(PlayerState& pState, int cardToBuy, GameState& gameState)
 	pState.buys -= 1;
 }
 
-int UCT::simulate(int playerIndex, GameState gameState)
+int UCT::rollout(int playerIndex, GameState gameState)
 {
 	gameState.playerStates[playerIndex].endTurn();
 	
