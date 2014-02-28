@@ -127,20 +127,18 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 	{
 		int randomChild = rand() % unvisitedNodes.size();
 		
+		unvisitedNodes.at(randomChild)->visited++;
 		return unvisitedNodes.at(randomChild);
 	}
 	else
 	{
 		for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
 		{
-			if (!rootNode->childrenPtrs.at(i)->isRoot)
+			double thisValue = (double)rootNode->childrenPtrs.at(i)->value + 1 * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
+			if(thisValue > bestValue || bestValue == 0)
 			{
-				double thisValue = (double)rootNode->childrenPtrs.at(i)->value * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
-				if(thisValue > bestValue || bestValue == 0)
-				{
-					bestValue = thisValue;
-					bestNode = rootNode->childrenPtrs.at(i);
-				}
+				bestValue = thisValue;
+				bestNode = rootNode->childrenPtrs.at(i);
 			}
 		}
 	}
