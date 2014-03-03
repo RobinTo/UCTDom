@@ -37,21 +37,21 @@ void UCT::initialize(CardManager& cm, int simulations2)
 	cardManager = cm;
 }
 
-std::list<Option> UCT::getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY])
+std::vector<Option> UCT::getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY])
 {
 	// Return all action cards in hand
-	std::list<Option> options;
+	std::vector<Option> options;
 	return options;
 }
 
-std::list<Option> UCT::getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY])
+std::vector<Option> UCT::getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY])
 {
 	int currentMoney = 0;
 	currentMoney += hand[cardManager.cardIndexer[COPPER]];
 	currentMoney += hand[cardManager.cardIndexer[SILVER]] * 2;
 	currentMoney += hand[cardManager.cardIndexer[GOLD]] * 3;
 	
-	std::list<Option> options;
+	std::vector<Option> options;
 	for(int i = 0; i < sizeof(hand)/sizeof(*hand); i++)
 	{
 		if (cardManager.cardLookupByIndex[i].cost <= currentMoney && gameState->supplyPiles[i] > 0)
@@ -138,9 +138,7 @@ Node* UCT::selectBestLeaf(Node* rootNode)
 	{
 		for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
 		{
-			//std::cout << "Visited: " << rootNode->visited << std::endl;
-			//std::cout << "Propagated: " << rootNode->propagateCounter << std::endl;
-			double thisValue = (double)rootNode->childrenPtrs.at(i)->value + 10 * sqrt(log((double)rootNode->propagateCounter / rootNode->childrenPtrs.at(i)->propagateCounter));
+			double thisValue = (double)rootNode->childrenPtrs.at(i)->value + 10 * sqrt(log((double)rootNode->propagateCounter/rootNode->childrenPtrs.at(i)->propagateCounter));
 			if(thisValue > bestValue || bestValue == 0)
 			{
 				bestValue = thisValue;
@@ -166,56 +164,64 @@ void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateInde
 	// Select best leaf
 	Node* bestLeafPtr = selectBestLeaf(startNode);
 
-	if (bestLeafPtr->visited <= 0) // If it was an unvisited node, perform a rollout.
+	if (bestLeafPtr->currentState.gameFinished())
 	{
 		int result = rollout(stateIndex, bestLeafPtr->currentState);
 		propagate(bestLeafPtr, result);
 	}
-	else // Else, create all children and rollout a random childnode.
+	else
 	{
-		if (!currentState.gameFinished())	// If treeDepth is less than turns left.
+		if (bestLeafPtr->visited <= 0) // If it was an unvisited node, perform a rollout.
 		{
-			std::list<Option> actionOptions = getActionOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
-			std::list<Option> buyOptions = getBuyOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
-
-			// TODO: for each action
-
-			std::list<Option>::iterator iter;
-
-			for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
+			int result = rollout(stateIndex, bestLeafPtr->currentState);
+			propagate(bestLeafPtr, result);
+		}
+		else // Else, create all children and rollout a random childnode.
+		{
+			if (!currentState.gameFinished())	// If treeDepth is less than turns left.
 			{
-				if (currentState.playerStates[stateIndex].actions > 0)
+				std::vector<Option> actionOptions = getActionOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
+				std::vector<Option> buyOptions = getBuyOptions(&currentState, bestLeafPtr->currentState.playerStates[stateIndex].hand);
+
+				// TODO: for each action
+
+				std::vector<Option>::iterator iter;
+
+				for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
 				{
-					Node* newNode = requestNewNode();
-					newNode->parentPtr = bestLeafPtr;
-					newNode->setState(currentState);	// Copy, not reference.
+					if (currentState.playerStates[stateIndex].actions > 0)
+					{
+						Node* newNode = requestNewNode();
+						newNode->parentPtr = bestLeafPtr;
+						newNode->setState(currentState);	// Copy, not reference.
 
-					// playAction(&newNode->currentState, actionIterator);
-					// simulate(newNode->currentState, stateIndex, newNode, turns, maxTurns);
+						// playAction(&newNode->currentState, actionIterator);
+						// simulate(newNode->currentState, stateIndex, newNode, turns, maxTurns);
+					}
 				}
-			}
 
-			for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
-			{
-				if (currentState.playerStates[stateIndex].buys > 0)
+				for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
 				{
-					Node* newNode = requestNewNode();
-					newNode->parentPtr = bestLeafPtr;
-					newNode->setState(bestLeafPtr->currentState);
-					newNode->currentState.turnCounter++;
-					newNode->setOption(*iter);
-					bestLeafPtr->childrenPtrs.push_back(newNode);
-					buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
+					if (currentState.playerStates[stateIndex].buys > 0)
+					{
+						Node* newNode = requestNewNode();
+						newNode->parentPtr = bestLeafPtr;
+						newNode->setState(bestLeafPtr->currentState);
+						newNode->currentState.turnCounter++;
+						newNode->setOption(*iter);
+						bestLeafPtr->childrenPtrs.push_back(newNode);
+						buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
+					}
 				}
-			}
 
-			int randomChild = rand() % bestLeafPtr->childrenPtrs.size();
+				int randomChild = rand() % bestLeafPtr->childrenPtrs.size();
 
-			if (bestLeafPtr->childrenPtrs.at(randomChild)->visited <= 0)
-			{
-				int result = rollout(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
-				propagate(bestLeafPtr->childrenPtrs.at(randomChild), result);
-				bestLeafPtr->childrenPtrs.at(randomChild)->visited++;
+				if (bestLeafPtr->childrenPtrs.at(randomChild)->visited <= 0)
+				{	
+					int result = rollout(stateIndex, bestLeafPtr->childrenPtrs.at(randomChild)->currentState);
+					propagate(bestLeafPtr->childrenPtrs.at(randomChild), result);
+					bestLeafPtr->childrenPtrs.at(randomChild)->visited++;
+				}
 			}
 		}
 	}
@@ -243,22 +249,33 @@ int UCT::rollout(int playerIndex, GameState gameState)
 	return gameState.playerStates[playerIndex].calculateVictoryPoints(cardManager);
 }
 
-// Currently greedy
+// Currently epsilon greedy
 int UCT::playoutPolicy(GameState& gameState, int playerIndex)
 {
-	std::list<Option> buyOptions = getBuyOptions(&gameState, gameState.playerStates[playerIndex].hand);
-	std::list<Option>::iterator iter;
+	std::vector<Option> buyOptions = getBuyOptions(&gameState, gameState.playerStates[playerIndex].hand);
 
-	int highestCost = 0;
 	int cardToReturn = 0;
 
-	for(iter=buyOptions.begin(); iter != buyOptions.end(); iter++)
+	int chance = rand() % 10;
+	if (chance <= 8)
 	{
-		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0  && cardManager.cardLookupByIndex[(*iter).card].name != "Curse")
+		std::vector<Option>::iterator iter;
+
+		int highestCost = 0;
+
+		for(iter=buyOptions.begin(); iter != buyOptions.end(); iter++)
 		{
-			highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
-			cardToReturn = (*iter).card;
+			if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0  && cardManager.cardLookupByIndex[(*iter).card].name != "Curse")
+			{
+				highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
+				cardToReturn = (*iter).card;
+			}
 		}
+	}
+	else
+	{
+		int randomCardToReturn = rand() % (buyOptions.size());
+		cardToReturn = buyOptions[randomCardToReturn].card;
 	}
 
 	return cardToReturn;

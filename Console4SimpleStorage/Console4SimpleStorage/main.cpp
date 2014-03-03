@@ -7,9 +7,9 @@
 #include "Game.h"
 #include "NodePool.h"
 
-#define SIMULATIONS	100
+#define SIMULATIONS 2000
 #define NODES		8
-#define GAMES		52
+#define GAMES		1
 
 void playGame(Game& game, std::vector<Node*>& emptyNodes)
 {
@@ -129,8 +129,8 @@ void run4Threads()
 
 int main()
 {
-	//run1Thread();
-	run4Threads();
+	run1Thread();
+	//run4Threads();
 
 
 	// Don't close console yet

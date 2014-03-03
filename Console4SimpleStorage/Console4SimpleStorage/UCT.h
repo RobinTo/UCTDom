@@ -17,8 +17,8 @@ private:
 	void propagate(Node* endNode, int result);
 	Node* requestNewNode();
 
-	std::list<Option> getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
-	std::list<Option> getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
+	std::vector<Option> getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
+	std::vector<Option> getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 
 	int rollout(int playerIndex, GameState gameState);
 	void buyCard(PlayerState& pState, int cardToBuy, GameState& gameState);
