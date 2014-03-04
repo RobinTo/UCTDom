@@ -11,6 +11,9 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	rootNode->playerPlaying = UCTPlayer;
 	createAllChildren(rootNode);
 
+	if (rootNode->childrenPtrs.size() == 1)
+		return rootNode->childrenPtrs.at(0)->opt;
+
 	// Perform UCT
 	for (int i = 0; i < maxSimulations; i++)
 	{
