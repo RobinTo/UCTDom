@@ -1,6 +1,7 @@
 # Txt and Graphviz
 *.txt
 *.gv
+*.svg
 
 # Python files
 *.pyc

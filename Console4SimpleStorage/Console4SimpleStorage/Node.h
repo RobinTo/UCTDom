@@ -21,12 +21,13 @@ public:
 	std::vector<Node*> childrenPtrs;
 	std::vector<Option> untriedMoves;
 	Node* parentPtr;
+
 	void setOption(Option o);
 	void setState(GameState gameState);
 	Node();
 	~Node();
 	void reset();
 
-	void findMoves(CardManager cardManager);
+	//void findMoves(CardManager cardManager);
 	void printSelf(std::ofstream& file);
 };

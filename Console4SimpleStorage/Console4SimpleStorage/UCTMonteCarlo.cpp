@@ -4,7 +4,8 @@
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
 	// Create inital root node and its children.
-	Node* rootNode = new Node();
+	Node* rootNode = requestNewNode();
+	//Node* rootNode = new Node();
 	rootNode->isRoot = true;
 	rootNode->visited = 1;
 	rootNode->currentState = gameState;
@@ -28,19 +29,22 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 		std::cout << cardManager.cardLookupByIndex[rootNode->childrenPtrs.at(i)->opt.card].name;
 		std::cout << " visited: " << rootNode->childrenPtrs.at(i)->visited;
 		std::cout << " score: " << rootNode->childrenPtrs.at(i)->value << std::endl;
+
 		if (rootNode->childrenPtrs.at(i)->visited > mostVisited)
 		{
 			bestOption = rootNode->childrenPtrs.at(i)->opt;
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
+	printTree(gameState.turnCounter, rootNode);
+	resetNodes();
 	return bestOption;
 }
 
 Node* UCTMonteCarlo::select(Node* root)
 {
 	Node* currentNode = root;
-	while (currentNode->childrenPtrs.size() > 0 && getUntriedChilds(currentNode).size() == 0)
+	while (currentNode->childrenPtrs.size() > 0 && getUntriedChildren(currentNode).size() == 0)
 	{
 		currentNode->visited++;
 		currentNode = UCTSelectChild(currentNode);
@@ -50,9 +54,9 @@ Node* UCTMonteCarlo::select(Node* root)
 
 void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 {
-	if (getUntriedChilds(node).size() > 0)
+	if (getUntriedChildren(node).size() > 0)
 	{
-		Node* randomNode = getRandomNode(getUntriedChilds(node));
+		Node* randomNode = getRandomNode(getUntriedChildren(node));
 		randomNode->visited++;
 		rollout(randomNode, randomNode->currentState, UCTPlayer);
 	}
@@ -141,7 +145,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	}
 
 	// Create end turn node to enable doing nothing.
-	Node* endTurnChild = new Node();
+	Node* endTurnChild = requestNewNode();
+	//Node* endTurnChild = new Node();
 	Option o;
 	o.type = END_TURN;
 	endTurnChild->opt = o;
@@ -171,13 +176,16 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, node->currentState.playerStates[node->playerPlaying].hand);
 		for (int i = 0; i < possibleBuys.size(); i++)
 		{
-			Node* newBuyNode = new Node();
+			Node* newBuyNode = requestNewNode();
+			//Node* newBuyNode = new Node();
 			newBuyNode->opt = possibleBuys.at(i);
 			newBuyNode->parentPtr = node;
 			newBuyNode->currentState = currentState;
 			newBuyNode->playerPlaying = currentlyPlaying;
 			// Perform the buy action of this node.
 			newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
+			// End turn in node
+			newBuyNode->currentState.playerStates[currentlyPlaying].endTurn();
 			node->childrenPtrs.push_back(newBuyNode);
 		}
 	}
@@ -190,7 +198,7 @@ Node* UCTMonteCarlo::getRandomNode(std::vector<Node*> nodes)
 	return nodes.at(randomNode);
 }
 
-std::vector<Node*> UCTMonteCarlo::getUntriedChilds(Node* parent)
+std::vector<Node*> UCTMonteCarlo::getUntriedChildren(Node* parent)
 {
 	std::vector<Node*> untriedNodes;
 
@@ -251,4 +259,78 @@ int UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex)
 	}
 
 	return cardToReturn;
+}
+
+// Tree printing
+void UCTMonteCarlo::printTree(int turnCounter, Node* rootNodePtr)
+{
+	//std::cout << "Printing tree" << std::endl;
+	std::string fileName = std::to_string(turnCounter) + "uctTree.gv";
+	remove(fileName.c_str());
+	std::ofstream file;
+	file.open(fileName, std::ios::app);
+	std::string text = "digraph ucttree{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
+	file << text << std::endl;
+	printNode(rootNodePtr, file);
+	text = "\r\n }";
+	file << text << std::endl;
+	file.close();
+	//std::cout << "Done printing tree" << std::endl;
+}
+void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
+{
+	nodePtr->printSelf(file);
+	for (std::vector<Node*>::iterator it = nodePtr->childrenPtrs.begin(); it != nodePtr->childrenPtrs.end(); ++it)
+		printNode(*it, file);
+}
+
+
+// Node allocation
+UCTMonteCarlo::UCTMonteCarlo()
+{
+	int allocatedNodes = 200000;
+	emptyNodes.reserve(allocatedNodes);
+	usedNodes.reserve(allocatedNodes);
+	for (int counter = 0; counter < allocatedNodes; counter++)
+	{
+		Node* nodePtr = new Node();
+		nodePtr->id = allocatedNodes - counter;
+		emptyNodes.push_back(nodePtr);
+	}
+}
+UCTMonteCarlo::~UCTMonteCarlo()
+{
+	for (int counter = 0; counter < emptyNodes.size(); counter++)
+	{
+		delete emptyNodes[counter];
+	}
+	emptyNodes.clear();
+	for (int counter = 0; counter < usedNodes.size(); counter++)
+	{
+		delete usedNodes[counter];
+	}
+	usedNodes.clear();
+}
+Node* UCTMonteCarlo::requestNewNode()
+{
+	//std::cout << "Requesting node" << std::endl;
+	if (emptyNodes.size() <= 0)
+		std::cout << "No more nodes!" << std::endl;
+
+	Node* returnNode = emptyNodes.back();
+	usedNodes.push_back(returnNode);
+	emptyNodes.pop_back();
+	//std::cout << "Done requesting node" << std::endl;
+	return returnNode;
+}
+void UCTMonteCarlo::resetNodes()
+{
+	//std::cout << "Resetting nodes" << std::endl;
+	for (std::vector<Node*>::iterator iterator = usedNodes.begin(); iterator != usedNodes.end(); ++iterator)
+	{
+		(*iterator)->reset();
+		emptyNodes.push_back(*iterator);
+	}
+	usedNodes.clear();
+	//std::cout << "Done resetting nodes" << std::endl;
 }

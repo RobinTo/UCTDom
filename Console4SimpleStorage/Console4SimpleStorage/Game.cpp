@@ -70,7 +70,13 @@ void Game::play()
 		// For each player, play turn
 		for (int index = 0; index < PLAYERS; index++)
 		{
+<<<<<<< HEAD
 			std::cout << "Player " << index << " with money " << gameState.playerStates[players[index].stateIndex].calculateCurrentMoney(cardManager) << std::endl;
+=======
+			if (finished)
+				break;
+
+>>>>>>> Fixing UCT
 			// While player's turn is not finished, keep playing
 			Option option;
 			do
