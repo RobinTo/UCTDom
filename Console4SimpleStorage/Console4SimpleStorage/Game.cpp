@@ -70,6 +70,7 @@ void Game::play()
 		// For each player, play turn
 		for (int index = 0; index < PLAYERS; index++)
 		{
+			std::cout << "Player " << index << " with money " << gameState.playerStates[players[index].stateIndex].calculateCurrentMoney(cardManager) << std::endl;
 			// While player's turn is not finished, keep playing
 			Option option;
 			do
@@ -78,15 +79,15 @@ void Game::play()
 				if (option.type == END_TURN)
 				{
 					// Clean-up cards
+					
 					gameState.playerStates[players[index].stateIndex].endTurn();
-					std::cout << "Player " << index << " ended turn " << std::endl;
+					std::cout << "Ended turn " << std::endl;
 				}
 				else if (option.type == BUY)
 				{
-					std::cout << "Player " << index << " Money: " << gameState.playerStates[players[index].stateIndex].calculateCurrentMoney(cardManager);
 					gameState.playerStates[players[index].stateIndex].buyCard(cardManager, option.card);
 					gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;								// Remove from supply
-					std::cout << " bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
+					std::cout << "Bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
 				}
 			} while (option.type != END_TURN);
 			

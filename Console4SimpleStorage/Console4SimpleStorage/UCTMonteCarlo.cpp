@@ -1,6 +1,6 @@
 #include "UCTMonteCarlo.h"
-
-
+#include <iostream>
+#include "CardManager.h"
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
 	// Create inital root node and its children.
@@ -25,6 +25,9 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	int mostVisited = 0;
 	for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
 	{
+		std::cout << cardManager.cardLookupByIndex[rootNode->childrenPtrs.at(i)->opt.card].name;
+		std::cout << " visited: " << rootNode->childrenPtrs.at(i)->visited;
+		std::cout << " score: " << rootNode->childrenPtrs.at(i)->value << std::endl;
 		if (rootNode->childrenPtrs.at(i)->visited > mostVisited)
 		{
 			bestOption = rootNode->childrenPtrs.at(i)->opt;
@@ -56,9 +59,16 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 	else
 	{
 		createAllChildren(node);
-		Node* randomNode = getRandomNode(node->childrenPtrs);
-		randomNode->visited++;
-		rollout(randomNode, randomNode->currentState, UCTPlayer);
+		if (node->childrenPtrs.size() > 0)
+		{
+			Node* randomNode = getRandomNode(node->childrenPtrs);
+			randomNode->visited++;
+			rollout(randomNode, randomNode->currentState, UCTPlayer);
+		}
+		else
+		{
+			rollout(node, node->currentState, UCTPlayer);
+		}
 	}
 }
 
@@ -116,6 +126,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 void UCTMonteCarlo::createAllChildren(Node* node)
 {
 	// If parent is end turn, end old players turn and increment turn counter.
+
 	int currentlyPlaying = node->playerPlaying;
 	GameState currentState = node->currentState;
 	if (node->opt.type == END_TURN)
@@ -126,6 +137,20 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			currentlyPlaying = 0;
 	}
 
+	if (node->currentState.gameFinished())
+	{
+		Node* endTurnChild = new Node();
+		Option o;
+		o.type = END_TURN;
+		endTurnChild->opt = o;
+		endTurnChild->parentPtr = node;
+		endTurnChild->currentState = currentState;
+		endTurnChild->playerPlaying = currentlyPlaying;
+		endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
+		node->childrenPtrs.push_back(endTurnChild);
+		return;
+	}
+
 	// Create end turn node to enable doing nothing.
 	Node* endTurnChild = new Node();
 	Option o;
@@ -134,6 +159,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	endTurnChild->parentPtr = node;
 	endTurnChild->currentState = currentState;
 	endTurnChild->playerPlaying = currentlyPlaying;
+	endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
 	node->childrenPtrs.push_back(endTurnChild);
 
 	// Add all possible actions.
@@ -201,7 +227,7 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, const int
 		if (cardManager.cardLookupByIndex[i].cost <= currentMoney && gameState->supplyPiles[i] > 0)
 		{
 			Option o;
-			o.type = 2;
+			o.type = BUY;
 			o.card = i;
 			options.push_back(o);
 		}
