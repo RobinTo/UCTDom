@@ -8,13 +8,13 @@
 
 int main()
 {
-	int turns = 6;
+	int turns = 5;
 
 	std::cout << "Brute Force Tree" << std::endl;
 	
 	BruteForce bf;
 	std::srand ( unsigned ( std::time(0) ) );
-	bf.initialize(5000000);
+	bf.initialize(700000);
 	bf.createTree(turns);
 	//bf.serializeTree();
 	//bf.loadTree("tree.txt");

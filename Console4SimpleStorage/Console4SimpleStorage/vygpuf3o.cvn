@@ -208,7 +208,7 @@ void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateInde
 						newNode->setOption(*iter);
 						bestLeafPtr->childrenPtrs.push_back(newNode);
 						buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
-						newNode->currentState.playerStates[stateIndex].endTurn();
+						newNode->currentState.playerStates[0].endTurn();
 					}
 				}
 
@@ -234,7 +234,7 @@ void UCT::buyCard(PlayerState& pState, int cardToBuy, GameState& gameState)
 
 int UCT::rollout(int playerIndex, GameState gameState)
 {
-	//gameState.playerStates[playerIndex].endTurn();
+	gameState.playerStates[playerIndex].endTurn();
 	
 	while(!gameState.gameFinished())
 	{
@@ -313,11 +313,11 @@ void UCT::resetNodes()
 	usedNodes.clear();
 }
 
-//void UCT::setNodes(std::vector<Node*>& emptyNodePtrs)
-//{
-//	emptyNodes = emptyNodePtrs;
-//	usedNodes.reserve(emptyNodePtrs.size());
-//}
+void UCT::setNodes(std::vector<Node*>& emptyNodePtrs)
+{
+	emptyNodes = emptyNodePtrs;
+	usedNodes.reserve(emptyNodePtrs.size());
+}
 
 void UCT::printTree(int turnCounter, Node* rootNodePtr)
 {
@@ -326,7 +326,7 @@ void UCT::printTree(int turnCounter, Node* rootNodePtr)
 	remove(fileName.c_str());
 	std::ofstream file;
 	file.open(fileName, std::ios::app);
-	std::string text = "digraph ucttree{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
+	std::string text = "digraph unix{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
 	file << text << std::endl;
 	printNode(rootNodePtr, file);
 	text = "\r\n }";

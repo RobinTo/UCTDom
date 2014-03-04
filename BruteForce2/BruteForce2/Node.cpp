@@ -30,20 +30,22 @@ void Node::doYourThing()
 			state.hand[cardIndex] = 0;
 		}
 
+		State copyState = state;
+
 		// Check for shuffle
 		int cardCounter = 0;
 		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 		{
-			cardCounter += state.deck[cardIndex];
+			cardCounter += copyState.deck[cardIndex];
 		}
 		std::array<int, 6> guaranteedCards = { 0, 0, 0, 0, 0, 0 };
 		if (cardCounter < 5)
 		{
 			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 			{
-				guaranteedCards[cardIndex] = state.deck[cardIndex];
-				state.deck[cardIndex] = state.discard[cardIndex];
-				state.discard[cardIndex] = 0;
+				guaranteedCards[cardIndex] = copyState.deck[cardIndex];
+				copyState.deck[cardIndex] = copyState.discard[cardIndex];
+				copyState.discard[cardIndex] = 0;
 			}
 		}
 
@@ -51,7 +53,7 @@ void Node::doYourThing()
 		std::string s = "";
 		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 		{
-			for (int j = 0; j < state.deck[cardIndex]; j++)
+			for (int j = 0; j < copyState.deck[cardIndex]; j++)
 			{
 				s.append(std::to_string(static_cast<long long>(cardIndex)));
 			}
@@ -97,9 +99,9 @@ void Node::doYourThing()
 			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 			{
 				newNodePtr->state.hand[cardIndex] = (*iterator)[cardIndex];
-				newNodePtr->state.deck[cardIndex] = state.deck[cardIndex] - (*iterator)[cardIndex];
-				newNodePtr->state.discard[cardIndex] = state.discard[cardIndex];
-				newNodePtr->state.supplyPiles[cardIndex] = state.supplyPiles[cardIndex];
+				newNodePtr->state.deck[cardIndex] = copyState.deck[cardIndex] - (*iterator)[cardIndex] + guaranteedCards[cardIndex];
+				newNodePtr->state.discard[cardIndex] = copyState.discard[cardIndex];
+				newNodePtr->state.supplyPiles[cardIndex] = copyState.supplyPiles[cardIndex];
 			}
 			children.push_back(newNodePtr);
 		}
@@ -200,6 +202,10 @@ void Node::printSelf(std::ofstream& file)
 		// Append score
 		text += " Score:" + std::to_string(score);
 
+		// Append estates
+		int estates = state.deck[3] + state.hand[3] + state.discard[3];
+		text += " Estates: " + std::to_string(estates);
+
 		// Append *tchu tchu*
 		text += "\"";
 
@@ -242,6 +248,10 @@ void Node::printSelf(std::ofstream& file)
 
 		// Append score
 		text += " Score:" + std::to_string((*iterator)->score);
+
+		// Append estates
+		estates = (*iterator)->state.deck[3] + (*iterator)->state.hand[3] + (*iterator)->state.discard[3];
+		text += " Estates: " + std::to_string(estates);
 
 		// Append *tchu tchu*
 		text += "\";";

@@ -1,9 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <random>
+#include <math.h>
+#include <iostream>
+#include <fstream>
+#include <list>
+#include <string>
 
 #include "Node.h"
-#include <list>
 
 class UCT
 {
@@ -24,6 +29,7 @@ private:
 	void buyCard(PlayerState& pState, int cardToBuy, GameState& gameState);
 	int playoutPolicy(GameState& gameState, int playerIndex);
 	void resetNodes();
+	void printNode(Node* nodePtr, std::ofstream& file); //Recursive print function
 
 	CardManager cardManager;
 public:
@@ -32,4 +38,5 @@ public:
 	void initialize(CardManager& cardManager, int simulations2);
 	Option getNextOption(GameState currentState, int stateIndex);
 	void setNodes(std::vector<Node*>& emptyNodePtrs);
+	void printTree(int turnCounter, Node* rootNodePtr);
 };

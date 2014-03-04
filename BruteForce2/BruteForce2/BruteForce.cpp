@@ -108,7 +108,7 @@ void BruteForce::printTree(int treeDepth)
 
 	std::ofstream file;
 	file.open(fileName, std::ios::app);
-	std::string text = "digraph unix{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
+	std::string text = "digraph bruteForce{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
 	
 	file << text << std::endl;
 	for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)

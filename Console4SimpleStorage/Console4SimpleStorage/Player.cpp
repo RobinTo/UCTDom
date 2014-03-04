@@ -14,6 +14,6 @@ void Player::initialize(std::vector<Node*>& emptyNodes, CardManager& cardManager
 
 Option Player::getNextOption(GameState& currentState)
 {
-	Option option = uct.getNextOption(currentState, stateIndex);
+	Option option = uct.getNextOption(currentState, stateIndex);	
 	return option;
 }

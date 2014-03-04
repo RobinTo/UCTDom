@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <fstream>
 
 #include "GameState.h"
 #include "Option.h"
@@ -9,6 +10,7 @@ class Node
 {
 public:
 	GameState currentState;
+	int id;
 	int visited;
 	bool isRoot;
 	double value;
@@ -25,4 +27,5 @@ public:
 	void reset();
 
 	void findMoves(CardManager cardManager);
+	void printSelf(std::ofstream& file);
 };
