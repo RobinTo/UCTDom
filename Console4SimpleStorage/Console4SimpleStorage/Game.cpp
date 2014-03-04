@@ -20,12 +20,12 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	cardManager.initialize();
 
 	// Always in supply
-	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 32;
-	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
-	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
-	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 12;
-	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 12;
-	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 12;
+	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 321;
+	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 401;
+	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 301;
+	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 121;
+	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 121;
+	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 121;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 30;
 
 	// Randomize ten cards for the supply

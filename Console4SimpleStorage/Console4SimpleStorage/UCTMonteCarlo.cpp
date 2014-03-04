@@ -83,8 +83,11 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 
 	while (!gameState.gameFinished())
 	{
-		int cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
-		gameState.playerStates[currentPlayer].buyCard(cardManager, cardChosen);
+		while (gameState.playerStates[currentPlayer].buys > 0)
+		{
+			int cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
+			gameState.playerStates[currentPlayer].buyCard(cardManager, cardChosen);
+		}
 		gameState.playerStates[currentPlayer].endTurn();
 		currentPlayer++;
 		if (currentPlayer >= gameState.playerStates.size())
