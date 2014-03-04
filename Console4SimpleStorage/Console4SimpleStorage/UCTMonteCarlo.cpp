@@ -58,16 +58,16 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 	}
 	else
 	{
-		createAllChildren(node);
-		if (node->childrenPtrs.size() > 0)
+		if (node->currentState.gameFinished())
 		{
-			Node* randomNode = getRandomNode(node->childrenPtrs);
-			randomNode->visited++;
-			rollout(randomNode, randomNode->currentState, UCTPlayer);
+			rollout(node, node->currentState, UCTPlayer);
 		}
 		else
 		{
-			rollout(node, node->currentState, UCTPlayer);
+			createAllChildren(node);
+			Node* randomNode = getRandomNode(node->childrenPtrs);
+			randomNode->visited++;
+			rollout(randomNode, randomNode->currentState, UCTPlayer);
 		}
 	}
 }
@@ -102,7 +102,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 void UCTMonteCarlo::propagate(Node* node, double score)
 {
 	node->sum += score;
-	node->value = node->sum / node->visited;
+	node->value = (double)node->sum / (double)node->visited;
 	if (!node->isRoot)
 		propagate(node->parentPtr, score);
 }
@@ -138,20 +138,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		currentlyPlaying++;
 		if (currentlyPlaying >= node->currentState.playerStates.size())
 			currentlyPlaying = 0;
-	}
-
-	if (node->currentState.gameFinished())
-	{
-		Node* endTurnChild = new Node();
-		Option o;
-		o.type = END_TURN;
-		endTurnChild->opt = o;
-		endTurnChild->parentPtr = node;
-		endTurnChild->currentState = currentState;
-		endTurnChild->playerPlaying = currentlyPlaying;
-		endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
-		node->childrenPtrs.push_back(endTurnChild);
-		return;
 	}
 
 	// Create end turn node to enable doing nothing.
