@@ -3,6 +3,7 @@
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
+	// Create inital root node and its children.
 	Node* rootNode = new Node();
 	rootNode->isRoot = true;
 	rootNode->visited = 1;
@@ -10,12 +11,13 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	rootNode->playerPlaying = UCTPlayer;
 	createAllChildren(rootNode);
 
+	// Perform UCT
 	for (int i = 0; i < maxSimulations; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
-		// Rollout and propagate is called inside.
 	}
 
+	// Return best option
 	Option bestOption;
 	int mostVisited = 0;
 	for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
