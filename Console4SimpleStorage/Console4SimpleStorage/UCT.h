@@ -24,6 +24,7 @@ private:
 
 	std::vector<Option> getBuyOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
 	std::vector<Option> getActionOptions(GameState* gameState, const int (&hand)[INSUPPLY]);
+	void nextPlayerTurn(int& playerIndex, GameState& gameState);
 
 	int rollout(int playerIndex, GameState gameState);
 	void buyCard(PlayerState& pState, int cardToBuy, GameState& gameState);

@@ -42,6 +42,9 @@
     <ClInclude Include="NodePool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="UCTMonteCarlo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NodePool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UCTMonteCarlo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

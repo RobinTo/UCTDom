@@ -71,6 +71,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerState.h" />
     <ClInclude Include="UCT.h" />
+    <ClInclude Include="UCTMonteCarlo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CardManager.cpp" />
@@ -82,6 +83,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerState.cpp" />
     <ClCompile Include="UCT.cpp" />
+    <ClCompile Include="UCTMonteCarlo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

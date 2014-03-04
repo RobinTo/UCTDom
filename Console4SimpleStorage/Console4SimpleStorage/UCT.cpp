@@ -2,7 +2,7 @@
 
 UCT::UCT()
 {
-	int allocatedNodes = 10000;
+	int allocatedNodes = 200000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
@@ -86,7 +86,18 @@ Option UCT::getNextOption(GameState currentState, int stateIndex)
 	while(simulationCounter < simulations)
 	{
 		selectAndExpand(rootNodePtr, currentState, stateIndex);
+
+		if (stateIndex == currentState.playerStates.size() - 1)
+		{
+			stateIndex = 0;
+		}
+		else
+		{
+			stateIndex++;
+		}
+
 		simulationCounter ++;
+		//std::cout << (emptyNodes.size()) << std::endl;
 	}
 
 	Option o;
@@ -206,9 +217,10 @@ void UCT::selectAndExpand(Node* startNode, GameState currentState, int stateInde
 						newNode->setState(bestLeafPtr->currentState);
 						newNode->currentState.turnCounter++;
 						newNode->setOption(*iter);
+						newNode->playerPlaying = stateIndex;
 						bestLeafPtr->childrenPtrs.push_back(newNode);
 						buyCard(newNode->currentState.playerStates[stateIndex], (*iter).card, newNode->currentState);
-						newNode->currentState.playerStates[stateIndex].endTurn();
+						newNode->currentState.playerStates[stateIndex].buys--;
 					}
 				}
 
@@ -234,14 +246,39 @@ void UCT::buyCard(PlayerState& pState, int cardToBuy, GameState& gameState)
 
 int UCT::rollout(int playerIndex, GameState gameState)
 {
-	//gameState.playerStates[playerIndex].endTurn();
+	int currentPlayer = playerIndex;
 	
+	gameState.playerStates[currentPlayer].endTurn();
+
+	if (playerIndex == gameState.playerStates.size() - 1)
+	{
+		playerIndex = 0;
+	}
+	else
+	{
+		playerIndex++;
+	}
+
+	if (currentPlayer == 0)
+		gameState.turnCounter++;
+
 	while(!gameState.gameFinished())
 	{
-		int cardChosen = playoutPolicy(gameState, playerIndex);
-		buyCard(gameState.playerStates[playerIndex], cardChosen, gameState);
-		gameState.playerStates[playerIndex].endTurn();
-		gameState.turnCounter++;
+		int cardChosen = playoutPolicy(gameState, currentPlayer);
+		buyCard(gameState.playerStates[currentPlayer], cardChosen, gameState);
+		gameState.playerStates[currentPlayer].endTurn();
+
+		if (playerIndex == gameState.playerStates.size() - 1)
+		{
+			playerIndex = 0;
+		}
+		else
+		{
+			playerIndex++;
+		}
+
+		if(currentPlayer == 0)
+			gameState.turnCounter++;
 	}
 
 	return gameState.playerStates[playerIndex].calculateVictoryPoints(cardManager);
@@ -255,7 +292,7 @@ int UCT::playoutPolicy(GameState& gameState, int playerIndex)
 	int cardToReturn = 0;
 
 	int chance = rand() % 10;
-	if (chance <= 8)
+	if (chance <= 9)
 	{
 		std::vector<Option>::iterator iter;
 
@@ -290,6 +327,10 @@ void UCT::propagate(Node* endNode, int result)
 	{
 		propagate(endNode->parentPtr, result);
 	}
+}
+
+void UCT::nextPlayerTurn(int& playerIndex, GameState& gameState)
+{
 }
 
 Node* UCT::requestNewNode()

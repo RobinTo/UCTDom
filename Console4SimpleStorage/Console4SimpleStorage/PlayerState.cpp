@@ -18,7 +18,7 @@ PlayerState::PlayerState()
 
 void PlayerState::buyCard(CardManager& cardManager, int card)
 {
-	buys --;											
+	buys--;											
 	discard[cardManager.cardIndexer[card]] += 1;
 }
 

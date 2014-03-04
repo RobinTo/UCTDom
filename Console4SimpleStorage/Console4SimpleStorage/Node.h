@@ -11,6 +11,7 @@ class Node
 public:
 	GameState currentState;
 	int id;
+	int playerPlaying;
 	int visited;
 	bool isRoot;
 	double value;
