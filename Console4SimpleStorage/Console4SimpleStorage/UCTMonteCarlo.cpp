@@ -7,7 +7,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	Node* rootNode = requestNewNode();
 	//Node* rootNode = new Node();
 	rootNode->isRoot = true;
-	rootNode->visited = 1;
+	rootNode->visited = 0;
 	rootNode->currentState = gameState;
 	rootNode->playerPlaying = UCTPlayer;
 	createAllChildren(rootNode);
@@ -44,9 +44,10 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 Node* UCTMonteCarlo::select(Node* root)
 {
 	Node* currentNode = root;
+
 	while (currentNode->childrenPtrs.size() > 0 && getUntriedChildren(currentNode).size() == 0)
 	{
-		currentNode->visited++;
+		//currentNode->visited++;
 		currentNode = UCTSelectChild(currentNode);
 	}
 	return currentNode;
@@ -57,7 +58,7 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 	if (getUntriedChildren(node).size() > 0)
 	{
 		Node* randomNode = getRandomNode(getUntriedChildren(node));
-		randomNode->visited++;
+		//randomNode->visited++;
 		rollout(randomNode, randomNode->currentState, UCTPlayer);
 	}
 	else
@@ -70,7 +71,7 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 		{
 			createAllChildren(node);
 			Node* randomNode = getRandomNode(node->childrenPtrs);
-			randomNode->visited++;
+			//randomNode->visited++;
 			rollout(randomNode, randomNode->currentState, UCTPlayer);
 		}
 	}
@@ -106,6 +107,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 void UCTMonteCarlo::propagate(Node* node, double score)
 {
 	node->sum += score;
+	node->visited++;
 	node->value = (double)node->sum / (double)node->visited;
 	if (!node->isRoot)
 		propagate(node->parentPtr, score);
@@ -120,7 +122,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	{
 		double value = (double)root->childrenPtrs.at(i)->value + 10 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited));
 
-		if (value >= bestValue)
+		if (value >= bestValue || bestValue == 0)
 		{
 			bestValue = value;
 			bestNode = root->childrenPtrs.at(i);

@@ -7,7 +7,7 @@
 #include "Game.h"
 #include "NodePool.h"
 
-#define SIMULATIONS 10000
+#define SIMULATIONS 1000
 #define NODES		8
 #define GAMES		1
 
