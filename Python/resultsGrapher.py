@@ -35,6 +35,7 @@ def graphAverage(resultsArrays):
 	plt.plot(range(0, len(averageArray)), averageArray)
 
 graphAverage(readResults("log-1000sims-10C.txt"))
+graphAverage(readResults("log-1000sims.txt"))
 
 #graphAverage(readResults("resultsRandomPlay.txt"))
 #graphAverage(readResults("resultsRandomPlayoutPolicy.txt"))

@@ -36,7 +36,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	printTree(gameState.turnCounter, rootNode);
+	//printTree(gameState.turnCounter, rootNode);
 	resetNodes();
 	return bestOption;
 }
@@ -95,6 +95,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 		{
 			int cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
 			gameState.playerStates[currentPlayer].buyCard(cardManager, cardChosen);
+			gameState.supplyPiles[cardManager.cardIndexer[cardChosen]] -= 1;
 		}
 		gameState.playerStates[currentPlayer].endTurn();
 		currentPlayer++;
@@ -193,6 +194,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			newBuyNode->playerPlaying = currentlyPlaying;
 			// Perform the buy action of this node.
 			newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
+			newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.card]] -= 1;
 			// End turn in node
 			//newBuyNode->currentState.playerStates[currentlyPlaying].endTurn();
 			node->childrenPtrs.push_back(newBuyNode);
