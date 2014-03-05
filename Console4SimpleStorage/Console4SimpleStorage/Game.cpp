@@ -20,13 +20,13 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	cardManager.initialize();
 
 	// Always in supply
-	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 321;
-	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 401;
-	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 301;
-	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 121;
-	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 121;
-	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 121;
-	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 30;
+	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 46;
+	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
+	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
+	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -63,15 +63,14 @@ void Game::play()
 {
 	logString = "Turns:";
 
-	bool finished = false;
-	while (!finished)
+	while (!gameState.gameFinished())
 	{
 		std::cout << "Turn: " << gameState.turnCounter << std::endl;
 		// For each player, play turn
 		for (int index = 0; index < PLAYERS; index++)
 		{
 			std::cout << "Player " << index << " with money " << gameState.playerStates[players[index].stateIndex].calculateCurrentMoney(cardManager) << std::endl;
-			if (finished)
+			if (gameState.gameFinished())
 				break;
 			// While player's turn is not finished, keep playing
 			Option option;
@@ -99,10 +98,6 @@ void Game::play()
 		}
 
 		gameState.turnCounter++;
-		if (gameState.gameFinished())
-		{
-			finished = true;
-		}
 	}
 
 	std::cout << "ended game on turn " << gameState.turnCounter << std::endl;

@@ -7,9 +7,10 @@
 #include "Game.h"
 #include "NodePool.h"
 
-#define SIMULATIONS 1000
+#define SIMULATIONS 200
 #define NODES		8
 #define GAMES		1
+#define MULTITHREAD 0
 
 void playGame(Game& game, std::vector<Node*>& emptyNodes)
 {
@@ -129,8 +130,11 @@ void run4Threads()
 
 int main()
 {
-	run1Thread();
-	//run4Threads();
+	if (MULTITHREAD)
+		run4Threads();
+	else
+		run1Thread();
+	
 
 
 	// Don't close console yet
