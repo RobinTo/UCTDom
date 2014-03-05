@@ -4,7 +4,7 @@
 #include "GameState.h"
 #include "CardManager.h"
 
-#define PLAYERS		2
+#define PLAYERS		1
 
 
 class Game

@@ -64,7 +64,7 @@ void Node::printSelf(std::ofstream &file)
 		else if (opt.card == CURSE)
 			text += "Curse";
 		else
-			text += "Nothing";
+			text += "EndTurn";
 		
 		text += "C:" + std::to_string(currentState.playerStates[0].hand[COPPER]) +
 			", E:" + std::to_string(currentState.playerStates[0].hand[ESTATE]) +
@@ -105,7 +105,7 @@ void Node::printSelf(std::ofstream &file)
 		else if ((*iterator)->opt.card == CURSE)
 			text += "Curse";
 		else
-			text += "Nothing";
+			text += "EndTurn";
 		
 		text += "C:" + std::to_string((*iterator)->currentState.playerStates[0].hand[COPPER]) +
 			", E:" + std::to_string((*iterator)->currentState.playerStates[0].hand[ESTATE]) +

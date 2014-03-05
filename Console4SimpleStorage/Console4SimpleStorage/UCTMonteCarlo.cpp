@@ -86,10 +86,9 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 		currentPlayer++;
 	if (currentPlayer >= gameState.playerStates.size())
 	{
-		currentPlayer = 0;
 		gameState.turnCounter++;
+		currentPlayer = 0;
 	}
-
 	while (!gameState.gameFinished())
 	{
 		while (gameState.playerStates[currentPlayer].buys > 0)
@@ -144,23 +143,24 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	GameState currentState = node->currentState;
 	if (node->opt.type == END_TURN)
 	{
-		currentState.playerStates[currentlyPlaying].endTurn();
 		currentlyPlaying++;
 		if (currentlyPlaying >= node->currentState.playerStates.size())
 		{
 			currentlyPlaying = 0;
 			currentState.turnCounter++;
 		}
+		//currentState.playerStates[currentlyPlaying].endTurn();
 	}
 	// Create end turn node to enable doing nothing.
 	Node* endTurnChild = requestNewNode();
 	//Node* endTurnChild = new Node();
 	Option o;
 	o.type = END_TURN;
+	o.card = -1;
 	endTurnChild->opt = o;
 	endTurnChild->parentPtr = node;
 	endTurnChild->currentState = currentState;
-	endTurnChild->currentState.turnCounter++;
+	//endTurnChild->currentState.turnCounter++;
 	endTurnChild->playerPlaying = currentlyPlaying;
 	endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
 	node->childrenPtrs.push_back(endTurnChild);
@@ -180,9 +180,9 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	*/
 
 	// Add all possible buy nodes.
-	if (node->currentState.playerStates[node->playerPlaying].buys > 0)
+	if (node->currentState.playerStates[currentlyPlaying].buys > 0)
 	{
-		std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, node->currentState.playerStates[node->playerPlaying].hand);
+		std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
 		for (int i = 0; i < possibleBuys.size(); i++)
 		{
 			Node* newBuyNode = requestNewNode();
@@ -194,7 +194,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			// Perform the buy action of this node.
 			newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
 			// End turn in node
-			newBuyNode->currentState.playerStates[currentlyPlaying].endTurn();
+			//newBuyNode->currentState.playerStates[currentlyPlaying].endTurn();
 			node->childrenPtrs.push_back(newBuyNode);
 		}
 	}
@@ -297,7 +297,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 200000;
+	int allocatedNodes = 10000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
