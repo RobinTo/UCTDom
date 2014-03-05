@@ -63,6 +63,7 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 	}
 	else
 	{
+
 		if (node->currentState.gameFinished())
 		{
 			rollout(node, node->currentState, UCTPlayer);
@@ -84,7 +85,10 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	if (node->opt.type == END_TURN)
 		currentPlayer++;
 	if (currentPlayer >= gameState.playerStates.size())
+	{
 		currentPlayer = 0;
+		gameState.turnCounter++;
+	}
 
 	while (!gameState.gameFinished())
 	{
@@ -143,9 +147,11 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		currentState.playerStates[currentlyPlaying].endTurn();
 		currentlyPlaying++;
 		if (currentlyPlaying >= node->currentState.playerStates.size())
+		{
 			currentlyPlaying = 0;
+			currentState.turnCounter++;
+		}
 	}
-
 	// Create end turn node to enable doing nothing.
 	Node* endTurnChild = requestNewNode();
 	//Node* endTurnChild = new Node();
@@ -154,6 +160,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	endTurnChild->opt = o;
 	endTurnChild->parentPtr = node;
 	endTurnChild->currentState = currentState;
+	endTurnChild->currentState.turnCounter++;
 	endTurnChild->playerPlaying = currentlyPlaying;
 	endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
 	node->childrenPtrs.push_back(endTurnChild);
