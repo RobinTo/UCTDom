@@ -1,6 +1,8 @@
 #include "UCTMonteCarlo.h"
 #include <iostream>
 #include "CardManager.h"
+#include <array>
+
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
 	// Create inital root node and its children.
@@ -152,51 +154,145 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		}
 		//currentState.playerStates[currentlyPlaying].endTurn();
 	}
-	// Create end turn node to enable doing nothing.
-	Node* endTurnChild = requestNewNode();
-	//Node* endTurnChild = new Node();
-	Option o;
-	o.type = END_TURN;
-	o.card = -1;
-	endTurnChild->opt = o;
-	endTurnChild->parentPtr = node;
-	endTurnChild->currentState = currentState;
-	//endTurnChild->currentState.turnCounter++;
-	endTurnChild->playerPlaying = currentlyPlaying;
-	endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
-	node->childrenPtrs.push_back(endTurnChild);
 
-	// Add all possible actions.
-	/*
-	std::vector<Option> possibleActions = getActionOptions();
-	for (int i = 0; i < possibleActions.size(); i++)
+	if (node->opt.type == END_TURN)
 	{
-		Node* newActionNode;
-		newActionNode->opt = possibleActions.at(i);
-		newActionNode->parentPtr = node;
-		newActionNode->currentState = currentState;
-		newActionNode->playerPlaying = currentlyPlaying;
-		node->childrenPtrs.push_back(newActionNode);
-	}
-	*/
-
-	// Add all possible buy nodes.
-	if (node->currentState.playerStates[currentlyPlaying].buys > 0)
-	{
-		std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
-		for (int i = 0; i < possibleBuys.size(); i++)
+		// Create all combination drawnodes.
+		// Discard hand after buy
+		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
 		{
-			Node* newBuyNode = requestNewNode();
-			//Node* newBuyNode = new Node();
-			newBuyNode->opt = possibleBuys.at(i);
-			newBuyNode->parentPtr = node;
-			newBuyNode->currentState = currentState;
-			newBuyNode->playerPlaying = currentlyPlaying;
-			// Perform the buy action of this node.
-			newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
-			newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.card]] -= 1;
-			node->childrenPtrs.push_back(newBuyNode);
+			currentState.playerStates[currentlyPlaying].discard[cardIndex] += currentState.playerStates[currentlyPlaying].hand[cardIndex];
+			currentState.playerStates[currentlyPlaying].hand[cardIndex] = 0;
 		}
+
+		GameState copyState = currentState;
+
+		// Check for shuffle
+		int cardCounter = 0;
+		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+		{
+			cardCounter += copyState.playerStates[currentlyPlaying].deck[cardIndex];
+		}
+		std::array<int, 6> guaranteedCards = { 0, 0, 0, 0, 0, 0 };
+		if (cardCounter < 5)
+		{
+			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+			{
+				guaranteedCards[cardIndex] = copyState.playerStates[currentlyPlaying].deck[cardIndex];
+				copyState.playerStates[currentlyPlaying].deck[cardIndex] = copyState.playerStates[currentlyPlaying].discard[cardIndex];
+				copyState.playerStates[currentlyPlaying].discard[cardIndex] = 0;
+			}
+		}
+
+		// Append each card in deck to string
+		std::string s = "";
+		for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+		{
+			for (int j = 0; j < copyState.playerStates[currentlyPlaying].deck[cardIndex]; j++)
+			{
+				s.append(std::to_string(static_cast<long long>(cardIndex)));
+			}
+		}
+
+		// If <= than 5 in cardCounter, then draw fewer cards.
+		std::size_t k = 5;
+		if (cardCounter < 5)
+			k = 5 - cardCounter;
+
+		// While there are still new combinations of chars in string, create a new draw.
+		std::vector<std::array<int, 6>> draws;
+		do
+		{
+			std::array<int, 6> draw = { 0, 0, 0, 0, 0, 0 };
+			// First, add the guaranteedCards
+			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+			{
+				draw[cardIndex] += guaranteedCards[cardIndex];
+			}
+
+			// This is the combinationString, containing a combination of cards.
+			std::string combinationString = std::string(s.begin(), s.begin() + k);
+
+			// For each letter in the combinationString
+			for (int stringIndex = 0; stringIndex < k; stringIndex++)
+			{
+				// Convert letter to int, and add to draw
+				int cardNumber = atoi(std::string(combinationString.begin() + stringIndex, combinationString.begin() + stringIndex + 1).c_str());
+				draw[cardNumber]++;
+			}
+
+			// Finally, add draw to collecction of draws
+			draws.push_back(draw);
+		} while (next_combination(s.begin(), s.begin() + k, s.end()));
+
+		// For each draw, create child node
+		for (std::vector<std::array<int, 6>>::iterator iterator = draws.begin(); iterator != draws.end(); ++iterator)
+		{
+			Node* newNodePtr = requestNewNode();
+			newNodePtr->currentState = currentState;
+
+			for (int cardIndex = 0; cardIndex < 6; cardIndex++)
+			{
+				newNodePtr->currentState.playerStates[currentlyPlaying].hand[cardIndex] = (*iterator)[cardIndex];
+				newNodePtr->currentState.playerStates[currentlyPlaying].deck[cardIndex] = copyState.playerStates[currentlyPlaying].deck[cardIndex] - (*iterator)[cardIndex] + guaranteedCards[cardIndex];
+				newNodePtr->currentState.playerStates[currentlyPlaying].discard[cardIndex] = copyState.playerStates[currentlyPlaying].discard[cardIndex];
+				newNodePtr->currentState.supplyPiles[cardIndex] = copyState.supplyPiles[cardIndex];
+			}
+			node->childrenPtrs.push_back(newNodePtr);
+			newNodePtr->parentPtr = node;
+			newNodePtr->playerPlaying = currentlyPlaying;
+		}
+
+	}
+	else
+	{
+		// Create end turn node to enable doing nothing.
+		Node* endTurnChild = requestNewNode();
+		//Node* endTurnChild = new Node();
+		Option o;
+		o.type = END_TURN;
+		o.card = -1;
+		endTurnChild->opt = o;
+		endTurnChild->parentPtr = node;
+		endTurnChild->currentState = currentState;
+		//endTurnChild->currentState.turnCounter++;
+		endTurnChild->playerPlaying = currentlyPlaying;
+		//endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
+		node->childrenPtrs.push_back(endTurnChild);
+
+		// Add all possible actions.
+		/*
+		std::vector<Option> possibleActions = getActionOptions();
+		for (int i = 0; i < possibleActions.size(); i++)
+		{
+			Node* newActionNode;
+			newActionNode->opt = possibleActions.at(i);
+			newActionNode->parentPtr = node;
+			newActionNode->currentState = currentState;
+			newActionNode->playerPlaying = currentlyPlaying;
+			node->childrenPtrs.push_back(newActionNode);
+		}
+		*/
+
+		// Add all possible buy nodes.
+		if (node->currentState.playerStates[currentlyPlaying].buys > 0)
+		{
+			std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
+			for (int i = 0; i < possibleBuys.size(); i++)
+			{
+				Node* newBuyNode = requestNewNode();
+				//Node* newBuyNode = new Node();
+				newBuyNode->opt = possibleBuys.at(i);
+				newBuyNode->parentPtr = node;
+				newBuyNode->currentState = currentState;
+				newBuyNode->playerPlaying = currentlyPlaying;
+				// Perform the buy action of this node.
+				newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
+				newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.card]] -= 1;
+				node->childrenPtrs.push_back(newBuyNode);
+			}
+		}
+	
 	}
 }
 
@@ -297,7 +393,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 10000;
+	int allocatedNodes = 400000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
