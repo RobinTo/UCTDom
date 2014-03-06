@@ -154,17 +154,18 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			currentlyPlaying = 0;
 			currentState.turnCounter++;
 		}
-		//currentState.playerStates[currentlyPlaying].endTurn();
+		currentState.playerStates[currentlyPlaying].buys = 1;
+		currentState.playerStates[currentlyPlaying].actions = 1;
 	}
 
 	if (node->opt.type == END_TURN)
 	{
-		// Create all combination drawnodes.
-		// Discard hand after buy
+		// Clean-up
 		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
 		{
 			currentState.playerStates[currentlyPlaying].discard[cardIndex] += currentState.playerStates[currentlyPlaying].hand[cardIndex];
 			currentState.playerStates[currentlyPlaying].hand[cardIndex] = 0;
+			// TODO: move from inplay to discard
 		}
 
 		GameState copyState = currentState;
@@ -283,9 +284,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		endTurnChild->opt = o;
 		endTurnChild->parentPtr = node;
 		endTurnChild->currentState = currentState;
-		//endTurnChild->currentState.turnCounter++;
 		endTurnChild->playerPlaying = currentlyPlaying;
-		//endTurnChild->currentState.playerStates[currentlyPlaying].endTurn();
 		node->childrenPtrs.push_back(endTurnChild);
 
 		// Add all possible actions.
