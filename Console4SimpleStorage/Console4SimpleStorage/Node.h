@@ -15,6 +15,7 @@ public:
 	int visited;
 	bool isRoot;
 	double value;
+	double probability;
 	int sum;
 	Option opt;
 	int propagateCounter;

@@ -16,6 +16,8 @@ void Node::reset()
 	value = 0;
 	visited = 0;
 	sum = 0;
+	probability = 0;
+	value = 0;
 	propagateCounter = 0;
 	childrenPtrs.clear();
 	parentPtr = nullptr;
@@ -63,6 +65,8 @@ void Node::printSelf(std::ofstream &file)
 			text += "Province";
 		else if (opt.card == CURSE)
 			text += "Curse";
+		else if (opt.type == DRAW)
+			text += "DrawCards";
 		else
 			text += "EndTurn";
 		
@@ -76,6 +80,9 @@ void Node::printSelf(std::ofstream &file)
 
 		// Append visited
 		text += " Vis:" + std::to_string(visited);
+
+		// Append probability
+		text += " Prob:" + std::to_string(probability);
 
 		// Append *tchu tchu*
 		text += "\"";
@@ -104,6 +111,8 @@ void Node::printSelf(std::ofstream &file)
 			text += "Province";
 		else if ((*iterator)->opt.card == CURSE)
 			text += "Curse";
+		else if ((*iterator)->opt.type == DRAW)
+			text += "DrawCards";
 		else
 			text += "EndTurn";
 		
@@ -118,6 +127,9 @@ void Node::printSelf(std::ofstream &file)
 		
 		// Append visited
 		text += " Vis:" + std::to_string((*iterator)->visited);
+
+		// Append probability
+		text += " Prob:" + std::to_string((*iterator)->probability);
 
 		// Append *tchu tchu*
 		text += "\";";

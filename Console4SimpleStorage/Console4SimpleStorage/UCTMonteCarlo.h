@@ -38,6 +38,7 @@ private:
 	std::vector<Node*> usedNodes;
 	void resetNodes();
 	Node* requestNewNode();
+	unsigned long long choose(unsigned long long n, unsigned long long k);
 
 	template <typename Iterator>
 	inline bool next_combination(const Iterator first, Iterator k, const Iterator last)
