@@ -195,8 +195,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			// Perform the buy action of this node.
 			newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
 			newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.card]] -= 1;
-			// End turn in node
-			//newBuyNode->currentState.playerStates[currentlyPlaying].endTurn();
 			node->childrenPtrs.push_back(newBuyNode);
 		}
 	}
