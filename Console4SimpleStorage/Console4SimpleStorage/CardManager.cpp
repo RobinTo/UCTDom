@@ -83,6 +83,7 @@ void CardManager::initialize()
 	cardIndexer[WOODCUTTER] = 7;
 	cardIndexer[GARDENS] = 8;
 	cardIndexer[FESTIVAL] = 9;
+	cardIndexer[MONEYLENDER] = 10;
 
 	cardLookupByIndex[cardIndexer[COPPER]] = copper;
 	cardLookupByIndex[cardIndexer[SILVER]] = silver;
@@ -94,4 +95,5 @@ void CardManager::initialize()
 	cardLookupByIndex[cardIndexer[WOODCUTTER]] = woodcutter;
 	cardLookupByIndex[cardIndexer[GARDENS]] = gardens;
 	cardLookupByIndex[cardIndexer[FESTIVAL]] = festival;
+	cardLookupByIndex[cardIndexer[MONEYLENDER]] = moneylender;
 }

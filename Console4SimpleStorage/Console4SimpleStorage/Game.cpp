@@ -20,16 +20,16 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	cardManager.initialize();
 
 	// Always in supply
-	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 460;
-	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 400;
-	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 300;
-	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 100;
-	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 100;
-	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 100;
+	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 46;
+	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
+	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
+	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -106,6 +106,14 @@ void Game::play()
 					case FESTIVAL:
 						gameState.playerStates[players[index].stateIndex].buys += 1;
 						gameState.playerStates[players[index].stateIndex].actions += 2;
+						break;
+					case MONEYLENDER:
+						if (cardManager.cardIndexer[COPPER] > 0)
+						{
+							gameState.playerStates[players[index].stateIndex].hand[cardManager.cardIndexer[COPPER]] --;
+							gameState.trash[cardManager.cardIndexer[COPPER]] ++;
+							gameState.playerStates[players[index].stateIndex].spentMoney -= 3; // TODO: Careful here. This is a hack.
+						}
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;
