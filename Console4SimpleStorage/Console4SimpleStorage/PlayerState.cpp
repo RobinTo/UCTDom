@@ -6,6 +6,7 @@ PlayerState::PlayerState()
 {
 	buys = 1;
 	actions = 1;
+	spentMoney = 0;
 
 	for (int index = 0; index < INSUPPLY; index++)
 	{
@@ -20,6 +21,9 @@ void PlayerState::buyCard(CardManager& cardManager, int absoluteCardId)
 {
 	buys--;											
 	discard[cardManager.cardIndexer[absoluteCardId]] += 1;
+	spentMoney += cardManager.cardLookup[absoluteCardId].cost;
+	spentMoney = spentMoney;
+
 }
 
 void PlayerState::playCard(CardManager& cardManager, int absoluteCardId)
@@ -61,6 +65,8 @@ int PlayerState::calculateCurrentMoney(CardManager& cardManager)
 	currentMoney += hand[cardManager.cardIndexer[SILVER]] * 2;
 	currentMoney += hand[cardManager.cardIndexer[GOLD]] * 3;
 	currentMoney += inPlay[cardManager.cardIndexer[WOODCUTTER]] * 2;
+
+	currentMoney -= spentMoney;
 	return currentMoney;
 }
 
@@ -100,6 +106,7 @@ void PlayerState::endTurn()
 	}
 	buys = 1;
 	actions = 1;
+	spentMoney = 0;
 	drawCards(5);
 }
 

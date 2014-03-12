@@ -77,6 +77,7 @@ void Game::play()
 			Option option;
 			do
 			{
+				int sm = gameState.playerStates[index].spentMoney;
 				option = players[index].getNextOption(gameState);
 				if (option.type == END_TURN)
 				{
@@ -88,15 +89,15 @@ void Game::play()
 				else if (option.type == BUY)
 				{
 					gameState.playerStates[players[index].stateIndex].actions = 0;
-					gameState.playerStates[players[index].stateIndex].buyCard(cardManager, option.card);
-					gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;								// Remove from supply
-					std::cout << "Bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
+					gameState.playerStates[players[index].stateIndex].buyCard(cardManager, option.absoluteCardId);
+					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
+					std::cout << "Bought " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
 				}
 				else if (option.type == ACTION)
 				{
-					gameState.playerStates[players[index].stateIndex].playCard(cardManager, option.card);
-					std::cout << "Played " << cardManager.cardLookupByIndex[option.card].name << std::endl;
-					switch (option.card)
+					gameState.playerStates[players[index].stateIndex].playCard(cardManager, option.absoluteCardId);
+					std::cout << "Played " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					switch (option.absoluteCardId)
 					{
 					case WOODCUTTER:
 						gameState.playerStates[players[index].stateIndex].buys += 1;

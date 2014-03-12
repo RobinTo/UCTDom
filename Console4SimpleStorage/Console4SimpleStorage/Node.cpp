@@ -23,7 +23,7 @@ void Node::reset()
 	parentPtr = nullptr;
 	untriedMoves.clear();
 	playerPlaying = -1;
-	opt.card = -1;
+	opt.absoluteCardId = -1;
 	opt.type = -1;
 }
 
@@ -51,19 +51,19 @@ void Node::printSelf(std::ofstream &file)
 		text += std::to_string(id);
 
 		// Append self
-		if (opt.card == COPPER)
+		if (opt.absoluteCardId == COPPER)
 			text += "Copper";
-		else if (opt.card == SILVER)
+		else if (opt.absoluteCardId == SILVER)
 			text += "Silver";
-		else if (opt.card == GOLD)
+		else if (opt.absoluteCardId == GOLD)
 			text += "Gold";
-		else if (opt.card == ESTATE)
+		else if (opt.absoluteCardId == ESTATE)
 			text += "Estate";
-		else if (opt.card == DUCHY)
+		else if (opt.absoluteCardId == DUCHY)
 			text += "Duchy";
-		else if (opt.card == PROVINCE)
+		else if (opt.absoluteCardId == PROVINCE)
 			text += "Province";
-		else if (opt.card == CURSE)
+		else if (opt.absoluteCardId == CURSE)
 			text += "Curse";
 		else if (opt.type == DRAW)
 			text += "DrawCards";
@@ -97,19 +97,19 @@ void Node::printSelf(std::ofstream &file)
 		text += std::to_string((*iterator)->id);
 
 		// Append child text
-		if ((*iterator)->opt.card == COPPER)
+		if ((*iterator)->opt.absoluteCardId == COPPER)
 			text += "Copper";
-		else if ((*iterator)->opt.card == SILVER)
+		else if ((*iterator)->opt.absoluteCardId == SILVER)
 			text += "Silver";
-		else if ((*iterator)->opt.card == GOLD)
+		else if ((*iterator)->opt.absoluteCardId == GOLD)
 			text += "Gold";
-		else if ((*iterator)->opt.card == ESTATE)
+		else if ((*iterator)->opt.absoluteCardId == ESTATE)
 			text += "Estate";
-		else if ((*iterator)->opt.card == DUCHY)
+		else if ((*iterator)->opt.absoluteCardId == DUCHY)
 			text += "Duchy";
-		else if ((*iterator)->opt.card == PROVINCE)
+		else if ((*iterator)->opt.absoluteCardId == PROVINCE)
 			text += "Province";
-		else if ((*iterator)->opt.card == CURSE)
+		else if ((*iterator)->opt.absoluteCardId == CURSE)
 			text += "Curse";
 		else if ((*iterator)->opt.type == DRAW)
 			text += "DrawCards";

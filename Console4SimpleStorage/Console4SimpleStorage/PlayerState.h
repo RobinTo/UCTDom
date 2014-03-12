@@ -12,6 +12,7 @@ public:
 	int inPlay[INSUPPLY];
 	int buys;
 	int actions;
+	int spentMoney;
 
 	void buyCard(CardManager& cardManager, int absoluteCardId);
 	void playCard(CardManager& cardManager, int absoluteCardId);

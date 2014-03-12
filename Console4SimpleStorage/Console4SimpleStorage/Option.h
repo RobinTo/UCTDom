@@ -9,5 +9,5 @@ class Option
 {
 public:
 	int type;
-	int card;
+	int absoluteCardId;
 };
