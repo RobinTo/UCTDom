@@ -154,6 +154,11 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	return bestNode;
 }
 
+void UCTMonteCarlo::playActionCard(GameState &gameState, int playerIndex)
+{
+
+}
+
 void UCTMonteCarlo::createAllChildren(Node* node)
 {
 	// If parent is end turn, end old players turn and increment turn counter.

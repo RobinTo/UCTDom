@@ -28,7 +28,8 @@ private:
 	std::vector<Option> getBuyOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
 	std::vector<Option> getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
 	Option getCardPlayoutPolicy(GameState& gameState, int playerIndex);
-	
+	void playActionCard(GameState &gameState, int playerIndex);
+
 	// Tree printing
 	void printNode(Node* nodePtr, std::ofstream& file);
 	void printTree(int turnCounter, Node* rootNodePtr);
