@@ -27,7 +27,7 @@ private:
 	// Dominion-specific
 	std::vector<Option> getBuyOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
 	std::vector<Option> getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
-	int getCardPlayoutPolicy(GameState& gameState, int playerIndex);
+	Option getCardPlayoutPolicy(GameState& gameState, int playerIndex);
 	
 	// Tree printing
 	void printNode(Node* nodePtr, std::ofstream& file);

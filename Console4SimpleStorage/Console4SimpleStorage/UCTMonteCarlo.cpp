@@ -93,11 +93,25 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	}
 	while (!gameState.gameFinished())
 	{
-		while (gameState.playerStates[currentPlayer].buys > 0)
+		while (gameState.playerStates[currentPlayer].buys > 0 || gameState.playerStates[currentPlayer].actions > 0)
 		{
-			int cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
-			gameState.playerStates[currentPlayer].buyCard(cardManager, cardChosen);
-			gameState.supplyPiles[cardManager.cardIndexer[cardChosen]] -= 1;
+			Option cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
+			if (cardChosen.type == ACTION)
+			{
+				// TODO: Play action.
+				gameState.playerStates[currentPlayer].actions--;
+				// TODO: Move from hand to inPlay.
+			}
+			else if (cardChosen.type == BUY)
+			{
+				gameState.playerStates[currentPlayer].actions = 0; // Can not perform more actions after entering buy phase.
+				gameState.playerStates[currentPlayer].buyCard(cardManager, cardChosen.card);
+				gameState.supplyPiles[cardManager.cardIndexer[cardChosen.card]] -= 1;
+			}
+			else if (cardChosen.type == END_TURN)
+			{
+				break;
+			}
 		}
 		gameState.playerStates[currentPlayer].endTurn();
 		currentPlayer++;
@@ -294,16 +308,15 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
 			for (int i = 0; i < possibleActions.size(); i++)
 			{
-				Node* newBuyNode = requestNewNode();
+				Node* newActionNode = requestNewNode();
 				//Node* newBuyNode = new Node();
-				newBuyNode->opt = possibleActions.at(i);
-				newBuyNode->parentPtr = node;
-				newBuyNode->currentState = currentState;
-				newBuyNode->playerPlaying = currentlyPlaying;
-				// Perform the buy action of this node.
-				newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
-				newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.card]] -= 1;
-				node->childrenPtrs.push_back(newBuyNode);
+				newActionNode->opt = possibleActions.at(i);
+				newActionNode->parentPtr = node;
+				newActionNode->currentState = currentState;
+				newActionNode->playerPlaying = currentlyPlaying;
+				// TODO: Play action.
+				// TODO: Move card from hand to inPlay.
+				node->childrenPtrs.push_back(newActionNode);
 			}
 		}
 
@@ -384,26 +397,51 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 	return actionOptions;
 }
 
-int UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex)
+Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex)
 {
-	std::vector<Option> buyOptions = getBuyOptions(&gameState, gameState.playerStates[playerIndex].hand);
-
-	int cardToReturn = 0;
-
 	std::vector<Option>::iterator iter;
 
+	Option cardToReturn;
+	cardToReturn.type = END_TURN;
+	cardToReturn.card = -1;
 	int highestCost = 0;
 
-	for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
+	if (gameState.playerStates[playerIndex].actions > 0)
 	{
-		if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0 && cardManager.cardLookupByIndex[(*iter).card].name != "Curse")
+		std::vector<Option> actionOptions = getActionOptions(&gameState, gameState.playerStates[playerIndex].hand);
+		if (actionOptions.size() > 0)
 		{
-			highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
-			cardToReturn = (*iter).card;
+			for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
+			{
+				if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0)
+				{
+					highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
+					cardToReturn.type = ACTION;
+					cardToReturn.card = (*iter).card;
+				}
+			}
+
+			return cardToReturn;	// Return early if there was an action card.
+		}
+	}
+	if (gameState.playerStates[playerIndex].buys > 0)
+	{
+		std::vector<Option> buyOptions = getBuyOptions(&gameState, gameState.playerStates[playerIndex].hand);
+		cardToReturn.card = -1;
+		highestCost = 0;
+
+		for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
+		{
+			if (cardManager.cardLookupByIndex[(*iter).card].cost > highestCost || highestCost == 0 && cardManager.cardLookupByIndex[(*iter).card].name != "Curse")
+			{
+				highestCost = cardManager.cardLookupByIndex[(*iter).card].cost;
+				cardToReturn.card = (*iter).card;
+				cardToReturn.type = BUY;
+			}
 		}
 	}
 
-	return cardToReturn;
+	return cardToReturn;	// -1 if there were no buys or actions available.
 }
 
 // Tree printing
