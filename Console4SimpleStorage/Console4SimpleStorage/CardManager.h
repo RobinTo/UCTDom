@@ -38,7 +38,7 @@
 #define WORKSHOP	31
 
 #define TOTALCARDS	32
-#define INSUPPLY	8
+#define INSUPPLY	9
 
 
 struct Card

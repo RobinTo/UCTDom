@@ -40,21 +40,25 @@ int PlayerState::calculateVictoryPoints(CardManager& cardManager)
 	victoryPoints += 3 * deck[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * deck[cardManager.cardIndexer[PROVINCE]];
 	victoryPoints -= 1 * deck[cardManager.cardIndexer[CURSE]];
+	victoryPoints += 1 * deck[cardManager.cardIndexer[GARDENS]] * (countCards() / 10);
 
 	victoryPoints += 1 * hand[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * hand[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * hand[cardManager.cardIndexer[PROVINCE]];
 	victoryPoints -= 1 * hand[cardManager.cardIndexer[CURSE]];
+	victoryPoints += 1 * hand[cardManager.cardIndexer[GARDENS]] * (countCards()/10);
 
 	victoryPoints += 1 * discard[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * discard[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * discard[cardManager.cardIndexer[PROVINCE]];
 	victoryPoints -= 1 * discard[cardManager.cardIndexer[CURSE]];
+	victoryPoints += 1 * discard[cardManager.cardIndexer[GARDENS]] * (countCards() / 10);
 
 	victoryPoints += 1 * inPlay[cardManager.cardIndexer[ESTATE]];
 	victoryPoints += 3 * inPlay[cardManager.cardIndexer[DUCHY]];
 	victoryPoints += 6 * inPlay[cardManager.cardIndexer[PROVINCE]];
 	victoryPoints -= 1 * inPlay[cardManager.cardIndexer[CURSE]];
+	victoryPoints += 1 * inPlay[cardManager.cardIndexer[GARDENS]] * (countCards() / 10);
 	return victoryPoints;
 }
 
@@ -70,12 +74,25 @@ int PlayerState::calculateCurrentMoney(CardManager& cardManager)
 	return currentMoney;
 }
 
-int PlayerState::countCards(const int (&cardPile)[INSUPPLY])
+int PlayerState::countCards(const int (&cardPile)[INSUPPLY]) // counts the cards in a specific pile (discard, hand, inPlay or deck)
 {
 	int cards = 0;
 	for (int index = 0; index < INSUPPLY; index ++)
 	{
 		cards += cardPile[index];
+	}
+	return cards;
+}
+
+int PlayerState::countCards() // Counts all cards belonging to the player
+{
+	int cards = 0;
+	for (int index = 0; index < INSUPPLY; index++)
+	{
+		cards += deck[index];
+		cards += hand[index];
+		cards += discard[index];
+		cards += inPlay[index];
 	}
 	return cards;
 }

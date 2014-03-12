@@ -24,6 +24,7 @@ public:
 	PlayerState();
 
 private:
+	int countCards();
 	int countCards(const int (&cardPile)[INSUPPLY]);
 	int pickRandom(const int (&cardPile)[INSUPPLY]);
 	void shuffle();
