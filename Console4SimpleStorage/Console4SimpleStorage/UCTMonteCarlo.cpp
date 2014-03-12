@@ -161,6 +161,10 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 1;
 		break;
+	case FESTIVAL:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].buys += 2;
+		break;
 	default:
 		break;
 	}
@@ -383,6 +387,7 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, int playe
 	currentMoney += gameState->playerStates[playerIndex].hand[cardManager.cardIndexer[SILVER]] * 2;
 	currentMoney += gameState->playerStates[playerIndex].hand[cardManager.cardIndexer[GOLD]] * 3;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[WOODCUTTER]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[FESTIVAL]] * 2;
 	currentMoney -= gameState->playerStates[playerIndex].spentMoney;
 
 	std::vector<Option> options;
@@ -408,6 +413,13 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = WOODCUTTER;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[FESTIVAL]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = FESTIVAL;
 		actionOptions.push_back(o);
 	}
 	return actionOptions;
