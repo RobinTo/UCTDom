@@ -25,7 +25,7 @@ private:
 	std::vector<Node*> getUntriedChildren(Node* parent);
 
 	// Dominion-specific
-	std::vector<Option> getBuyOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
+	std::vector<Option> getBuyOptions(GameState* gameState, int playerIndex);
 	std::vector<Option> getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
 	Option getCardPlayoutPolicy(GameState& gameState, int playerIndex);
 	void playActionCard(GameState &gameState, int card, int playerIndex);

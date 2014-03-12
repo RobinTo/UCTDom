@@ -45,6 +45,7 @@ struct Card
 {
 	int cost;
 	std::string name;
+	int id;
 
 };
 // copper, silver, gold, estate, duchy, province, curse,

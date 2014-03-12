@@ -20,14 +20,14 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	cardManager.initialize();
 
 	// Always in supply
-	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 460;
-	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 400;
-	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 300;
-	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 80;
-	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 100;
-	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 100;
+	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 46;
+	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
+	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
+	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -52,8 +52,8 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	// Starting deck, hand, and setting stateIndexes
 	for (int index = 0; index < PLAYERS; index++)
 	{
-		gameState.playerStates[index].deck[COPPER] = 7;
-		gameState.playerStates[index].deck[ESTATE] = 3;
+		gameState.playerStates[index].deck[cardManager.cardIndexer[COPPER]] = 7;
+		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
 		gameState.playerStates[index].endTurn();
 		players[index].stateIndex = index;
 		players[index].initialize(emptyNodes, cardManager, simulations);
@@ -87,6 +87,7 @@ void Game::play()
 				}
 				else if (option.type == BUY)
 				{
+					gameState.playerStates[players[index].stateIndex].actions = 0;
 					gameState.playerStates[players[index].stateIndex].buyCard(cardManager, option.card);
 					gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;								// Remove from supply
 					std::cout << "Bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
@@ -95,10 +96,10 @@ void Game::play()
 				{
 					gameState.playerStates[players[index].stateIndex].playCard(cardManager, option.card);
 					std::cout << "Played " << cardManager.cardLookupByIndex[option.card].name << std::endl;
-					switch (cardManager.cardIndexer[option.card])
+					switch (option.card)
 					{
 					case WOODCUTTER:
-						gameState.playerStates[players[index].stateIndex].buys += 3;
+						gameState.playerStates[players[index].stateIndex].buys += 1;
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;

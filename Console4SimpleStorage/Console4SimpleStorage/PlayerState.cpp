@@ -16,17 +16,17 @@ PlayerState::PlayerState()
 	}
 }
 
-void PlayerState::buyCard(CardManager& cardManager, int card)
+void PlayerState::buyCard(CardManager& cardManager, int absoluteCardId)
 {
 	buys--;											
-	discard[cardManager.cardIndexer[card]] += 1;
+	discard[cardManager.cardIndexer[absoluteCardId]] += 1;
 }
 
-void PlayerState::playCard(CardManager& cardManager, int card)
+void PlayerState::playCard(CardManager& cardManager, int absoluteCardId)
 {
 	actions--;
-	inPlay[cardManager.cardIndexer[card]]++;
-	hand[cardManager.cardIndexer[card]]--;
+	inPlay[cardManager.cardIndexer[absoluteCardId]]++;
+	hand[cardManager.cardIndexer[absoluteCardId]]--;
 }
 
 int PlayerState::calculateVictoryPoints(CardManager& cardManager)
@@ -60,6 +60,7 @@ int PlayerState::calculateCurrentMoney(CardManager& cardManager)
 	currentMoney += hand[cardManager.cardIndexer[COPPER]];
 	currentMoney += hand[cardManager.cardIndexer[SILVER]] * 2;
 	currentMoney += hand[cardManager.cardIndexer[GOLD]] * 3;
+	currentMoney += inPlay[cardManager.cardIndexer[WOODCUTTER]] * 2;
 	return currentMoney;
 }
 
