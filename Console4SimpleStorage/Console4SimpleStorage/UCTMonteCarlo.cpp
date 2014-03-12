@@ -165,6 +165,15 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 2;
 		break;
+	case MONEYLENDER:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]] > 0)
+		{
+			gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]]--;
+			gameState.trash[cardManager.cardIndexer[COPPER]]++;
+			gameState.playerStates[playerIndex].spentMoney -= 3;	// Take away 3 spent money to give money if trashed. TODO: Use less hacky way
+		}
+		break;
 	default:
 		break;
 	}
@@ -420,6 +429,13 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = FESTIVAL;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[MONEYLENDER]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = MONEYLENDER;
 		actionOptions.push_back(o);
 	}
 	return actionOptions;
