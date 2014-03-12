@@ -29,6 +29,7 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 100;
 	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 100;
 	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 80;
+	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 100;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -78,7 +79,6 @@ void Game::play()
 			Option option;
 			do
 			{
-				int sm = gameState.playerStates[index].spentMoney;
 				option = players[index].getNextOption(gameState);
 				if (option.type == END_TURN)
 				{
@@ -102,6 +102,10 @@ void Game::play()
 					{
 					case WOODCUTTER:
 						gameState.playerStates[players[index].stateIndex].buys += 1;
+						break;
+					case FESTIVAL:
+						gameState.playerStates[players[index].stateIndex].buys += 1;
+						gameState.playerStates[players[index].stateIndex].actions += 2;
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;
