@@ -22,6 +22,13 @@ void PlayerState::buyCard(CardManager& cardManager, int card)
 	discard[cardManager.cardIndexer[card]] += 1;
 }
 
+void PlayerState::playCard(CardManager& cardManager, int card)
+{
+	actions--;
+	inPlay[cardManager.cardIndexer[card]]++;
+	hand[cardManager.cardIndexer[card]]--;
+}
+
 int PlayerState::calculateVictoryPoints(CardManager& cardManager)
 {
 	int victoryPoints = 0;

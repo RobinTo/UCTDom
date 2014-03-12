@@ -91,6 +91,19 @@ void Game::play()
 					gameState.supplyPiles[cardManager.cardIndexer[option.card]] -= 1;								// Remove from supply
 					std::cout << "Bought " << cardManager.cardLookupByIndex[option.card].name << std::endl;
 				}
+				else if (option.type == ACTION)
+				{
+					gameState.playerStates[players[index].stateIndex].playCard(cardManager, option.card);
+					std::cout << "Played " << cardManager.cardLookupByIndex[option.card].name << std::endl;
+					switch (cardManager.cardIndexer[option.card])
+					{
+					case WOODCUTTER:
+						gameState.playerStates[players[index].stateIndex].buys += 3;
+						break;
+					default:
+						std::cout << "Error, no action card found" << std::endl;
+					}
+				}
 			} while (option.type != END_TURN);
 			
 			logString += std::to_string(static_cast<long long>(gameState.playerStates[players[index].stateIndex].calculateVictoryPoints(cardManager)));

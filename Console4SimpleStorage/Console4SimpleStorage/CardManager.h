@@ -58,7 +58,7 @@ class CardManager
 public:
 	std::unordered_map<int, int> cardIndexer;			//deck[cardIndexer[COPPER]]
 	std::unordered_map<int, Card> cardLookup;			//cardLookup[7] returns adventurer
-	std::unordered_map<int, Card> cardLookupByIndex;	//cardLookup[7] returns whatever is at index 7
+	std::unordered_map<int, Card> cardLookupByIndex;	//cardLookupByIndex[7] returns whatever is at index 7
 
 	void initialize();
 };
