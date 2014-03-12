@@ -288,18 +288,24 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		node->childrenPtrs.push_back(endTurnChild);
 
 		// Add all possible actions.
-		/*
-		std::vector<Option> possibleActions = getActionOptions();
-		for (int i = 0; i < possibleActions.size(); i++)
+		// Add all possible buy nodes.
+		if (node->currentState.playerStates[currentlyPlaying].actions > 0)
 		{
-			Node* newActionNode;
-			newActionNode->opt = possibleActions.at(i);
-			newActionNode->parentPtr = node;
-			newActionNode->currentState = currentState;
-			newActionNode->playerPlaying = currentlyPlaying;
-			node->childrenPtrs.push_back(newActionNode);
+			std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
+			for (int i = 0; i < possibleActions.size(); i++)
+			{
+				Node* newBuyNode = requestNewNode();
+				//Node* newBuyNode = new Node();
+				newBuyNode->opt = possibleActions.at(i);
+				newBuyNode->parentPtr = node;
+				newBuyNode->currentState = currentState;
+				newBuyNode->playerPlaying = currentlyPlaying;
+				// Perform the buy action of this node.
+				newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.card);
+				newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.card]] -= 1;
+				node->childrenPtrs.push_back(newBuyNode);
+			}
 		}
-		*/
 
 		// Add all possible buy nodes.
 		if (node->currentState.playerStates[currentlyPlaying].buys > 0)
@@ -365,9 +371,16 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, const int
 	return options;
 }
 
-std::vector<Option> UCTMonteCarlo::getActionOptions()
+std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY])
 {
 	std::vector<Option> actionOptions;
+	if (hand[cardManager.cardIndexer[WOODCUTTER]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.card = cardManager.cardIndexer[WOODCUTTER];
+		actionOptions.push_back(o);
+	}
 	return actionOptions;
 }
 
