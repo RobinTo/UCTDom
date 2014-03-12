@@ -98,9 +98,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 			Option cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
 			if (cardChosen.type == ACTION)
 			{
-				// TODO: Play action.
-				gameState.playerStates[currentPlayer].actions--;
-				// TODO: Move from hand to inPlay.
+				playActionCard(gameState, cardChosen.card, currentPlayer);
 			}
 			else if (cardChosen.type == BUY)
 			{
@@ -154,9 +152,17 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	return bestNode;
 }
 
-void UCTMonteCarlo::playActionCard(GameState &gameState, int playerIndex)
+void UCTMonteCarlo::playActionCard(GameState &gameState, int card, int playerIndex)
 {
-
+	switch (card)
+	{
+	case WOODCUTTER:
+		gameState.playerStates[playerIndex].playCard(cardManager, card);
+		gameState.playerStates[playerIndex].buys += 3;
+		break;
+	default:
+		break;
+	}
 }
 
 void UCTMonteCarlo::createAllChildren(Node* node)
@@ -184,7 +190,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		{
 			currentState.playerStates[currentlyPlaying].discard[cardIndex] += currentState.playerStates[currentlyPlaying].hand[cardIndex];
 			currentState.playerStates[currentlyPlaying].hand[cardIndex] = 0;
-			// TODO: move from inplay to discard
+			currentState.playerStates[currentlyPlaying].discard[cardIndex] += currentState.playerStates[currentlyPlaying].inPlay[cardIndex];
+			currentState.playerStates[currentlyPlaying].inPlay[cardIndex] = 0;
 		}
 
 		GameState copyState = currentState;
@@ -319,8 +326,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 				newActionNode->parentPtr = node;
 				newActionNode->currentState = currentState;
 				newActionNode->playerPlaying = currentlyPlaying;
-				// TODO: Play action.
-				// TODO: Move card from hand to inPlay.
+				playActionCard(newActionNode->currentState, newActionNode->opt.card, newActionNode->playerPlaying);
 				node->childrenPtrs.push_back(newActionNode);
 			}
 		}
