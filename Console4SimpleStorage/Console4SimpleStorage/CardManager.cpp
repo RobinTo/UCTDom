@@ -81,7 +81,7 @@ void CardManager::initialize()
 	cardIndexer[PROVINCE] = 5;
 	cardIndexer[CURSE] = 6;
 	cardIndexer[WOODCUTTER] = 7;
-	cardIndexer[GARDENS] = 7;
+	cardIndexer[GARDENS] = 8;
 
 	cardLookupByIndex[cardIndexer[COPPER]] = copper;
 	cardLookupByIndex[cardIndexer[SILVER]] = silver;

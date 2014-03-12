@@ -141,7 +141,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
 	{
-		double value = (double)root->childrenPtrs.at(i)->value + 10 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited));
+		double value = (double)root->childrenPtrs.at(i)->value + 10 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
 
 		if (value >= bestValue || bestValue == 0)
 		{
@@ -205,7 +205,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		{
 			cardCounter += copyState.playerStates[currentlyPlaying].deck[cardIndex];
 		}
-		std::array<int, INSUPPLY> guaranteedCards = {0, 0, 0, 0, 0, 0, 0, 0 }; // TODO: Not dynamic, must be manually set if INSUPPLY changes!
+		std::array<int, INSUPPLY> guaranteedCards = {0, 0, 0, 0, 0, 0, 0, 0, 0 }; // TODO: Not dynamic, must be manually set if INSUPPLY changes!
 		if (cardCounter < 5)
 		{
 			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
@@ -242,7 +242,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		{
 			double probability = 0, nkInCardComboPossibilities = 1, nkPossibilities = 1;
 
-			std::array<int, INSUPPLY> draw = { 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
+			std::array<int, INSUPPLY> draw = { 0, 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
 		
 			// This is the combinationString, containing a combination of cards.
 			std::string combinationString = std::string(s.begin(), s.begin() + k);
@@ -487,7 +487,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 700000;
+	int allocatedNodes = 1400000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
