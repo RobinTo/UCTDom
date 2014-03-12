@@ -80,6 +80,7 @@ void CardManager::initialize()
 	cardIndexer[DUCHY] = 4;
 	cardIndexer[PROVINCE] = 5;
 	cardIndexer[CURSE] = 6;
+	cardIndexer[WOODCUTTER] = 7;
 
 	cardLookupByIndex[cardIndexer[COPPER]] = copper;
 	cardLookupByIndex[cardIndexer[SILVER]] = silver;
@@ -88,4 +89,5 @@ void CardManager::initialize()
 	cardLookupByIndex[cardIndexer[DUCHY]] = duchy;
 	cardLookupByIndex[cardIndexer[PROVINCE]] = province;
 	cardLookupByIndex[cardIndexer[CURSE]] = curse;
+	cardLookupByIndex[cardIndexer[WOODCUTTER]] = woodcutter;
 }

@@ -27,6 +27,7 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 80;
 	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 80;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 100;
+	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 100;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
