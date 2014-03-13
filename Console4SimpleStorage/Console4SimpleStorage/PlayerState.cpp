@@ -118,7 +118,13 @@ void PlayerState::drawCards(int cards)
 	{
 		// If deck is empty, shuffle
 		if (countCards(deck) == 0)
-			shuffle();
+		{
+			// If discard too is empty, then don't draw more cards.
+			if (countCards(discard) == 0)
+				return;
+			else
+				shuffle();
+		}
 
 		// Pick a random card
 		int cardIndex = pickRandom(deck);

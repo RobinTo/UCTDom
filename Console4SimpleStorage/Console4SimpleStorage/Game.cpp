@@ -89,19 +89,19 @@ void Game::play()
 					// Clean-up cards
 					
 					gameState.playerStates[players[index].playerStateIndex].endTurn();
-					std::cout << "Ended turn " << std::endl;
+					std::cout << "------------Ended turn---------------------" << std::endl << std::endl;
 				}
 				else if (option.type == BUY)
 				{
 					gameState.playerStates[players[index].playerStateIndex].actions = 0;
 					gameState.playerStates[players[index].playerStateIndex].buyCard(cardManager, option.absoluteCardId);
 					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
-					std::cout << "Bought " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					std::cout << "---Bought " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
 				}
 				else if (option.type == ACTION)
 				{
 					gameState.playerStates[players[index].playerStateIndex].playCard(cardManager, option.absoluteCardId);
-					std::cout << "Played " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					std::cout << "---Played " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
 					switch (option.absoluteCardId)
 					{
 					case WOODCUTTER:
