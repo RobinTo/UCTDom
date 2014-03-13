@@ -28,7 +28,7 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;

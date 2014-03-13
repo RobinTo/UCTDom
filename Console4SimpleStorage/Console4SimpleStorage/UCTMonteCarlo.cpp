@@ -180,6 +180,10 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			gameState.playerStates[playerIndex].drawCards(3);
 		// Do nothing if in the UCT, because draw nodes are created in tree by probability calculating function.
 		break;
+	case VILLAGE:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		if (rollout)
+			gameState.playerStates[playerIndex].drawCards(1);
 	default:
 		break;
 	}
@@ -218,9 +222,19 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		createDrawNodes(node, currentState, currentlyPlaying, 5);
 		// TODO: Call new function
 	}
-	else if (node->opt.type == ACTION && node->opt.absoluteCardId == SMITHY)
+	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE))
 	{
-		createDrawNodes(node, currentState, currentlyPlaying, 3);
+		switch (node->opt.absoluteCardId)
+		{
+		case SMITHY:
+			createDrawNodes(node, currentState, currentlyPlaying, 3);
+			break;
+		case VILLAGE:
+			createDrawNodes(node, currentState, currentlyPlaying, 1);
+			break;
+		default:
+			break;
+		}
 	}
 	else
 	{
@@ -335,6 +349,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 	for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)  // Dynamic initialization
 		guaranteedCards[cardIndex] = 0;
 
+	// "Shuffle" after making current cards guaranteedcards.
 	if (cardCounter < numberOfCards)
 	{
 		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
@@ -464,6 +479,14 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		o.absoluteCardId = SMITHY;
 		actionOptions.push_back(o);
 	}
+
+	if (hand[cardManager.cardIndexer[VILLAGE]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = VILLAGE;
+		actionOptions.push_back(o);
+	}
 	return actionOptions;
 }
 
@@ -541,7 +564,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 1400000;
+	int allocatedNodes = 1000000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
