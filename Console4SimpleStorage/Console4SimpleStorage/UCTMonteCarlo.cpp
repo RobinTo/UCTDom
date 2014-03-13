@@ -182,6 +182,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		break;
 	case VILLAGE:
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].actions += 2;
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(1);
 	case MARKET:
