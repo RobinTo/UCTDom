@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include <unordered_map>
 #include <vector>
 
@@ -46,7 +47,7 @@ struct Card
 	int cost;
 	std::string name;
 	int id;
-
+	std::string charId;
 };
 // copper, silver, gold, estate, duchy, province, curse,
 //	thief, militia, spy, cellar, chapel, chancellor, workshop, feast, remodel, throneRoom, library, mine, moat,	// Choice cards
@@ -57,9 +58,10 @@ struct Card
 class CardManager
 {
 public:
-	std::unordered_map<int, int> cardIndexer;			//deck[cardIndexer[COPPER]]
-	std::unordered_map<int, Card> cardLookup;			//cardLookup[7] returns adventurer
-	std::unordered_map<int, Card> cardLookupByIndex;	//cardLookupByIndex[7] returns whatever is at index 7
+	std::unordered_map<int, int> cardIndexer;				//deck[cardIndexer[COPPER]]
+	std::unordered_map<int, Card> cardLookup;				//cardLookup[7] returns adventurer
+	std::unordered_map<int, Card> cardLookupByIndex;		//cardLookupByIndex[7] returns whatever is at index 7
+	std::map<std::string, int> cardLookupCharToIndex;	//cardLookupCharToInt['b'] returns whatever index the card with 'b' as charId has.
 
 	void initialize();
 };

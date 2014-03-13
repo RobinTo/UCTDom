@@ -27,14 +27,14 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
-	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 0;
 	gameState.supplyPiles[cardManager.cardIndexer[VILLAGE]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 0;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;

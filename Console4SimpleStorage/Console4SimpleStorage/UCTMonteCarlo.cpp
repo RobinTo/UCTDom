@@ -39,7 +39,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	//printTree(gameState.turnCounter, rootNode);
+	printTree(gameState.turnCounter, rootNode);
 	resetNodes();
 	return bestOption;
 }
@@ -186,6 +186,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		gameState.playerStates[playerIndex].actions += 2;
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(1);
+		break;
 	case MARKET:
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 1;
@@ -384,7 +385,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 	// Finding n and k for draw probability
 	int n = 0; // Total cards - those in guaranteedCards and discard. Possible cards to draw.
 	std::size_t k = numberOfCards;
-	// If <= than 5 in cardCounter, then draw fewer cards.
+	// If less than numberOfCards in cardCounter, then draw fewer cards.
 	if (cardCounter < numberOfCards)
 		k = numberOfCards - cardCounter;
 
@@ -394,7 +395,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 	{
 		for (int j = 0; j < copyState.playerStates[currentlyPlaying].deck[cardIndex]; j++)
 		{
-			s.append(std::to_string(static_cast<long long>(cardIndex)));
+			s.append(cardManager.cardLookupByIndex[cardIndex].charId);
 			n++;
 		}
 	}
@@ -418,8 +419,8 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 		for (int stringIndex = 0; stringIndex < k; stringIndex++)
 		{
 			// Convert letter to int, and add to draw
-			int cardNumber = atoi(std::string(combinationString.begin() + stringIndex, combinationString.begin() + stringIndex + 1).c_str());
-			draw[cardNumber]++;
+			std::string cardCharId = std::string(combinationString.begin() + stringIndex, combinationString.begin() + stringIndex + 1);
+			draw[cardManager.cardLookupCharToIndex[cardCharId]]++;
 		}
 
 		// Find possible ways to draw the draw
@@ -599,7 +600,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 1000000;
+	int allocatedNodes = 100000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
