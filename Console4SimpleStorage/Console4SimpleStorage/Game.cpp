@@ -33,6 +33,8 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[VILLAGE]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -126,6 +128,15 @@ void Game::play()
 					case VILLAGE:
 						gameState.playerStates[players[index].playerStateIndex].drawCards(1);
 						gameState.playerStates[players[index].playerStateIndex].actions += 2;
+						break;
+					case MARKET:
+						gameState.playerStates[players[index].playerStateIndex].drawCards(1);
+						gameState.playerStates[players[index].playerStateIndex].actions += 1;
+						gameState.playerStates[players[index].playerStateIndex].buys += 1;
+						break;
+					case LABORATORY:
+						gameState.playerStates[players[index].playerStateIndex].drawCards(2);
+						gameState.playerStates[players[index].playerStateIndex].actions += 1;
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;
