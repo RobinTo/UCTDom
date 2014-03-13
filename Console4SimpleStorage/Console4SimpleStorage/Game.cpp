@@ -28,10 +28,11 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[VILLAGE]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -121,6 +122,10 @@ void Game::play()
 						break;
 					case SMITHY:
 						gameState.playerStates[players[index].playerStateIndex].drawCards(3);
+						break;
+					case VILLAGE:
+						gameState.playerStates[players[index].playerStateIndex].drawCards(1);
+						gameState.playerStates[players[index].playerStateIndex].actions += 2;
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;

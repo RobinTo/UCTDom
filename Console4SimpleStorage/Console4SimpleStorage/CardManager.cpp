@@ -85,6 +85,7 @@ void CardManager::initialize()
 	cardIndexer[FESTIVAL] = 9;
 	cardIndexer[MONEYLENDER] = 10;
 	cardIndexer[SMITHY] = 11;
+	cardIndexer[VILLAGE] = 12;
 
 	cardLookupByIndex[cardIndexer[COPPER]] = copper;
 	cardLookupByIndex[cardIndexer[SILVER]] = silver;
@@ -98,4 +99,5 @@ void CardManager::initialize()
 	cardLookupByIndex[cardIndexer[FESTIVAL]] = festival;
 	cardLookupByIndex[cardIndexer[MONEYLENDER]] = moneylender;
 	cardLookupByIndex[cardIndexer[SMITHY]] = smithy;
+	cardLookupByIndex[cardIndexer[VILLAGE]] = village;
 }
