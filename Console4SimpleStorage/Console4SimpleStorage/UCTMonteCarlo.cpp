@@ -99,7 +99,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 			Option cardChosen = getCardPlayoutPolicy(gameState, currentPlayer);
 			if (cardChosen.type == ACTION)
 			{
-				playActionCard(gameState, cardChosen.absoluteCardId, currentPlayer);
+				playActionCard(gameState, cardChosen.absoluteCardId, currentPlayer, true);
 			}
 			else if (cardChosen.type == BUY)
 			{
@@ -153,7 +153,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	return bestNode;
 }
 
-void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int playerIndex)
+void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int playerIndex, bool rollout)
 {
 	switch (absoluteCardId)
 	{
@@ -261,7 +261,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 				newActionNode->parentPtr = node;
 				newActionNode->currentState = currentState;
 				newActionNode->playerPlaying = currentlyPlaying;
-				playActionCard(newActionNode->currentState, newActionNode->opt.absoluteCardId, newActionNode->playerPlaying);
+				playActionCard(newActionNode->currentState, newActionNode->opt.absoluteCardId, newActionNode->playerPlaying, false);
 				node->childrenPtrs.push_back(newActionNode);
 			}
 		}
