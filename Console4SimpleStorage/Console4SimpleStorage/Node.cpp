@@ -18,7 +18,7 @@ void Node::reset()
 	sum = 0;
 	probability = 0;
 	value = 0;
-	propagateCounter = 0;
+	//propagateCounter = 0;
 	childrenPtrs.clear();
 	parentPtr = nullptr;
 	untriedMoves.clear();

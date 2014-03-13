@@ -209,7 +209,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			currentState.playerStates[currentlyPlaying].inPlay[cardIndex] = 0;
 		}
 
-
 		GameState copyState = currentState;
 
 		// Check for shuffle
@@ -218,7 +217,10 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		{
 			cardCounter += copyState.playerStates[currentlyPlaying].deck[cardIndex];
 		}
-		std::array<int, INSUPPLY> guaranteedCards = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // TODO: Not dynamic, must be manually set if INSUPPLY changes!
+		std::array<int, INSUPPLY> guaranteedCards;// = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // TODO: Not dynamic, must be manually set if INSUPPLY changes!
+		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)  // Dynamic initialization
+			guaranteedCards[cardIndex] = 0;
+		
 		if (cardCounter < 5)
 		{
 			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
@@ -255,8 +257,10 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		{
 			double probability = 0, nkInCardComboPossibilities = 1, nkPossibilities = 1;
 
-			std::array<int, INSUPPLY> draw = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
-		
+			std::array<int, INSUPPLY> draw; // = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
+			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Dynamic initialization
+				draw[cardIndex] = 0;
+
 			// This is the combinationString, containing a combination of cards.
 			std::string combinationString = std::string(s.begin(), s.begin() + k);
 

@@ -5,7 +5,7 @@
 class Player
 {
 public:
-	int stateIndex;
+	int playerStateIndex;
 	Option getNextOption(GameState& currentState);
 	CardManager cardManager;
 	

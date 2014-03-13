@@ -33,6 +33,19 @@ void PlayerState::playCard(CardManager& cardManager, int absoluteCardId)
 	hand[cardManager.cardIndexer[absoluteCardId]]--;
 }
 
+std::string PlayerState::printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY])
+{
+	std::string textStringToReturn = "";
+	for (int index = 0; index < INSUPPLY; index++)
+	{
+		if (cardPile[index] > 0)
+			textStringToReturn += cardManager.cardLookupByIndex[index].name + ":" + std::to_string(cardPile[index]) + " ";
+	}
+	
+	return textStringToReturn + "\r\n";
+
+}
+
 int PlayerState::calculateVictoryPoints(CardManager& cardManager)
 {
 	int victoryPoints = 0;

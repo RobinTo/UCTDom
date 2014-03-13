@@ -1,6 +1,9 @@
 #pragma once
 
+#include <string>
+
 #include "CardManager.h"
+
 
 
 class PlayerState
@@ -20,7 +23,7 @@ public:
 	void endTurn();
 	int calculateVictoryPoints(CardManager& cardManager);
 	int calculateCurrentMoney(CardManager& cardManager);
-
+	std::string printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY]);
 	PlayerState();
 
 private:

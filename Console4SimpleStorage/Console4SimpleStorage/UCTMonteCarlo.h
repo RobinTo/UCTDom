@@ -12,7 +12,7 @@ public:
 	UCTMonteCarlo();
 	~UCTMonteCarlo();
 	CardManager cardManager;
-	Option doUCT(int maxSimulations, int playerTurn, GameState gameState);
+	Option doUCT(int maxSimulations, int UCTPlayer, GameState gameState);
 private:
 	// MC UCT
 	Node* select(Node* root);

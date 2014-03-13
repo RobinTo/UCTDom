@@ -18,7 +18,7 @@ public:
 	double probability;
 	int sum;
 	Option opt;
-	int propagateCounter;
+	//int propagateCounter;
 	std::vector<Node*> childrenPtrs;
 	std::vector<Option> untriedMoves;
 	Node* parentPtr;

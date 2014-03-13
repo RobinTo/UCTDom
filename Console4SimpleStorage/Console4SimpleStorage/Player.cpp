@@ -15,6 +15,6 @@ void Player::initialize(std::vector<Node*>& emptyNodes, CardManager& cardManager
 
 Option Player::getNextOption(GameState& currentState)
 {
-	Option option = uct.doUCT(numSims, stateIndex, currentState);
+	Option option = uct.doUCT(numSims, playerStateIndex, currentState);
 	return option;
 }
