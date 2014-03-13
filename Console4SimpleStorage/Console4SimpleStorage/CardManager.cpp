@@ -86,6 +86,8 @@ void CardManager::initialize()
 	cardIndexer[MONEYLENDER] = 10;
 	cardIndexer[SMITHY] = 11;
 	cardIndexer[VILLAGE] = 12;
+	cardIndexer[MARKET] = 13;
+	cardIndexer[LABORATORY] = 14;
 
 	cardLookupByIndex[cardIndexer[COPPER]] = copper;
 	cardLookupByIndex[cardIndexer[SILVER]] = silver;
@@ -100,4 +102,6 @@ void CardManager::initialize()
 	cardLookupByIndex[cardIndexer[MONEYLENDER]] = moneylender;
 	cardLookupByIndex[cardIndexer[SMITHY]] = smithy;
 	cardLookupByIndex[cardIndexer[VILLAGE]] = village;
+	cardLookupByIndex[cardIndexer[MARKET]] = market;
+	cardLookupByIndex[cardIndexer[LABORATORY]] = laboratory;
 }
