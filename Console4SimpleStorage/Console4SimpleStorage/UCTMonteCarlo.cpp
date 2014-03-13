@@ -164,6 +164,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 	case FESTIVAL:
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 2;
+		gameState.playerStates[playerIndex].actions += 2;
 		break;
 	case MONEYLENDER:
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
