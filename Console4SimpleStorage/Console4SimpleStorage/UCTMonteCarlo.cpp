@@ -184,6 +184,19 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(1);
+	case MARKET:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].buys += 1;
+		gameState.playerStates[playerIndex].actions += 1;
+		if (rollout)
+			gameState.playerStates[playerIndex].drawCards(1);
+		break;
+	case LABORATORY:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].actions += 1;
+		if (rollout)
+			gameState.playerStates[playerIndex].drawCards(2);
+		break;
 	default:
 		break;
 	}
@@ -221,7 +234,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		createDrawNodes(node, currentState, currentlyPlaying, 5);
 		// TODO: Call new function
 	}
-	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE))
+	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY))
 	{
 		switch (node->opt.absoluteCardId)
 		{
@@ -230,6 +243,12 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			break;
 		case VILLAGE:
 			createDrawNodes(node, currentState, currentlyPlaying, 1);
+			break;
+		case MARKET:
+			createDrawNodes(node, currentState, currentlyPlaying, 1);
+			break;
+		case LABORATORY:
+			createDrawNodes(node, currentState, currentlyPlaying, 2);
 			break;
 		default:
 			break;
@@ -317,6 +336,7 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, int playe
 	currentMoney += gameState->playerStates[playerIndex].hand[cardManager.cardIndexer[GOLD]] * 3;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[WOODCUTTER]] * 2;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[FESTIVAL]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[MARKET]] * 1;
 	currentMoney -= gameState->playerStates[playerIndex].spentMoney;
 
 	std::vector<Option> options;
@@ -484,6 +504,20 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = VILLAGE;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[MARKET]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = MARKET;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[LABORATORY]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = LABORATORY;
 		actionOptions.push_back(o);
 	}
 	return actionOptions;
