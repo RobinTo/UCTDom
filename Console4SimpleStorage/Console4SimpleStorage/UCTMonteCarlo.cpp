@@ -210,7 +210,10 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 				if (tempIndex >= gameState.playerStates.size())
 					tempIndex = 0;
 				if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+				{
 					gameState.playerStates[tempIndex].discard[cardManager.cardIndexer[CURSE]]++;
+					gameState.supplyPiles[cardManager.cardIndexer[CURSE]]--;
+				}
 			}
 		}
 		if (rollout)
