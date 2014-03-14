@@ -23,6 +23,7 @@ public:
 	void playCard(CardManager& cardManager, int absoluteCardId);
 	void drawCards(int cards);
 	void endTurn();
+	void addToTopOfDeck(int absoluteID);
 	int calculateVictoryPoints(CardManager& cardManager);
 	int calculateCurrentMoney(CardManager& cardManager);
 	std::string printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY]);
