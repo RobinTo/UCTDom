@@ -33,7 +33,7 @@ private:
 
 	// Tree printing
 	void printNode(Node* nodePtr, std::ofstream& file);
-	void printTree(int turnCounter, Node* rootNodePtr);
+	void printTree(int turnCounter, int player, Node* rootNodePtr);
 
 	// Node allocation
 	std::vector<Node*> emptyNodes;

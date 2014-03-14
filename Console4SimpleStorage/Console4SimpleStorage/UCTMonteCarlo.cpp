@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 2000000
+#define NODESTOALLOCATE 10000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
@@ -41,7 +41,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	//printTree(gameState.turnCounter, rootNode);
+	printTree(gameState.turnCounter, UCTPlayer, rootNode);
 	resetNodes();
 	return bestOption;
 }
@@ -143,7 +143,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
 	{
-		double value = (double)root->childrenPtrs.at(i)->value + 10 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
+		double value = (double)root->childrenPtrs.at(i)->value + 0 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
 
 		if (value >= bestValue || bestValue == 0)
 		{
@@ -206,16 +206,17 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		if (gameState.playerStates.size() > 1)
 		{
-			int tempIndex = playerIndex+1;
+			int tempIndex = (playerIndex == gameState.playerStates.size()-1 ? 0 : playerIndex+1);
 			while (tempIndex != playerIndex)
 			{
-				if (tempIndex >= gameState.playerStates.size())
-					tempIndex = 0;
 				if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
 				{
 					gameState.playerStates[tempIndex].discard[cardManager.cardIndexer[CURSE]]++;
 					gameState.supplyPiles[cardManager.cardIndexer[CURSE]]--;
 				}
+				tempIndex++;
+				if (tempIndex >= gameState.playerStates.size())
+					tempIndex = 0;
 			}
 		}
 		if (rollout)
@@ -232,7 +233,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 
 	int currentlyPlaying = node->playerPlaying;
 	GameState currentState = node->currentState;
-	if (node->opt.type == END_TURN)
+
+	if (node->opt.type == DRAW && node->parentPtr->opt.type == END_TURN)
 	{
 		currentlyPlaying++;
 		if (currentlyPlaying >= node->currentState.playerStates.size())
@@ -240,9 +242,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			currentlyPlaying = 0;
 			currentState.turnCounter++;
 		}
-		currentState.playerStates[currentlyPlaying].buys = 1;
-		currentState.playerStates[currentlyPlaying].actions = 1;
-		currentState.playerStates[currentlyPlaying].spentMoney = 0;
 	}
 
 	if (node->opt.type == END_TURN)
@@ -255,8 +254,12 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			currentState.playerStates[currentlyPlaying].discard[cardIndex] += currentState.playerStates[currentlyPlaying].inPlay[cardIndex];
 			currentState.playerStates[currentlyPlaying].inPlay[cardIndex] = 0;
 		}
+		currentState.playerStates[currentlyPlaying].buys = 1;
+		currentState.playerStates[currentlyPlaying].actions = 1;
+		currentState.playerStates[currentlyPlaying].spentMoney = 0;
+
 		createDrawNodes(node, currentState, currentlyPlaying, 5);
-		// TODO: Call new function
+
 	}	// If action and a card which contains +cards.
 	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY || node->opt.absoluteCardId == WITCH))
 	{
@@ -605,10 +608,10 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 }
 
 // Tree printing
-void UCTMonteCarlo::printTree(int turnCounter, Node* rootNodePtr)
+void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr)
 {
 	//std::cout << "Printing tree" << std::endl;
-	std::string fileName = std::to_string(turnCounter) + "uctTree.gv";
+	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "uctTree.gv";
 	remove(fileName.c_str());
 	std::ofstream file;
 	file.open(fileName, std::ios::app);
