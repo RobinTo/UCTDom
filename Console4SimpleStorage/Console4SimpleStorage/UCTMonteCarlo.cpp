@@ -39,7 +39,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	printTree(gameState.turnCounter, rootNode);
+	//printTree(gameState.turnCounter, rootNode);
 	resetNodes();
 	return bestOption;
 }
@@ -600,7 +600,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 100000;
+	int allocatedNodes = 2000000;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
