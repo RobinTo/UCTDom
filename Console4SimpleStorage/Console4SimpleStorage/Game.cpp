@@ -186,6 +186,9 @@ void Game::play()
 								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[GARDENS]] --;
 								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
 							}
+							tempIndex++;
+							if (tempIndex >= PLAYERS)
+								tempIndex = 0;
 						}
 						break;
 					default:

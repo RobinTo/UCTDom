@@ -122,7 +122,15 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 			gameState.turnCounter++;
 	}
 
-	propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager));
+	if (gameState.playerStates.size() == 2)
+	{
+		if (UCTPlayer == 0)
+			propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) - gameState.playerStates[1].calculateVictoryPoints(cardManager));
+		else
+			propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) - gameState.playerStates[0].calculateVictoryPoints(cardManager));
+	}
+	else
+		propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager));
 }
 
 void UCTMonteCarlo::propagate(Node* node, double score)
@@ -475,6 +483,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 
 	// While there are still new combinations of chars in string, create a new draw.
 	std::vector<std::array<int, INSUPPLY>> draws;
+	std::vector<double> probabilities;
 
 	// Create one draw if there are enough known cards to draw.
 	if (numberOfCards == 0)
@@ -483,9 +492,9 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Dynamic initialization
 			draw[cardIndex] = guaranteedCards[cardIndex];
 		draws.push_back(draw);
+		probabilities.push_back(1.0);
 	}
 
-	std::vector<double> probabilities;
 	do
 	{
 		double probability = 0, nkInCardComboPossibilities = 1, nkPossibilities = 1;
