@@ -168,3 +168,10 @@ void PlayerState::shuffle()
 		discard[index] = 0;
 	}
 }
+
+
+void PlayerState::addToTopOfDeck(int cardIndex)
+{
+	topOfDeckAsIndex.push(cardIndex);
+	deck[cardIndex]++;
+}

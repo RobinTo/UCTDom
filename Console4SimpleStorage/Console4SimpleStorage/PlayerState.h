@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <stack>
 
 #include "CardManager.h"
 
@@ -13,6 +14,7 @@ public:
 	int discard[INSUPPLY];
 	int hand[INSUPPLY];
 	int inPlay[INSUPPLY];
+	std::stack<int> topOfDeckAsIndex;
 	int buys;
 	int actions;
 	int spentMoney;

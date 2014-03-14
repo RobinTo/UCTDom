@@ -143,7 +143,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
 	{
-		double value = (double)root->childrenPtrs.at(i)->value + 0 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
+		double value = (double)root->childrenPtrs.at(i)->value + 10 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
 
 		if (value >= bestValue || bestValue == 0)
 		{
@@ -221,6 +221,35 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		}
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(2);
+		break;
+	case BUREAUCRAT:
+		if (gameState.supplyPiles[cardManager.cardIndexer(SILVER)] > 0)
+		{
+			gameState.playerStates[playerIndex].addToTopOfDeck(cardManager.cardIndexer(SILVER));
+			//gameState.playerStates[playerIndex].topOfDeckAsIndex.push(cardManager.cardIndexer(SILVER));
+			gameState.supplyPiles[cardManager.cardIndexer(SILVER)]--;
+		}
+		for (int i = 0; i < gameState.playerStates.size(); i++)
+		{
+			if (i != playerIndex)
+			{
+				if (gameState.playerStates[i].hand[cardManager.cardIndexer[ESTATE]] > 0)
+				{
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(ESTATE));
+					gameState.playerStates[i].hand[cardManager.cardIndexer[ESTATE]]--;
+				}
+				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[DUCHY]] > 0)
+				{
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(DUCHY));
+					gameState.playerStates[i].hand[cardManager.cardIndexer[DUCHY]]--;
+				}
+				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]] > 0)
+				{
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(PROVINCE));
+					gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]]--;
+				}
+			}
+		}
 		break;
 	default:
 		break;
@@ -398,6 +427,16 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 	for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)  // Dynamic initialization
 		guaranteedCards[cardIndex] = 0;
 
+	if (copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.size() > 0)
+	{
+		while (numberOfCards > 0)
+		{
+			numberOfCards--;
+			guaranteedCards[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top]++;
+			copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.pop();
+		}
+	}
+
 	// "Shuffle" after making current cards guaranteedcards.
 	if (cardCounter < numberOfCards)
 	{
@@ -430,6 +469,16 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 
 	// While there are still new combinations of chars in string, create a new draw.
 	std::vector<std::array<int, INSUPPLY>> draws;
+
+	// Create one draw if there are enough known cards to draw.
+	if (numberOfCards == 0)
+	{
+		std::array<int, INSUPPLY> draw; // = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
+		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Dynamic initialization
+			draw[cardIndex] = guaranteedCards[cardIndex];
+		draws.push_back(draw);
+	}
+
 	std::vector<double> probabilities;
 	do
 	{
@@ -555,6 +604,13 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = WITCH;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[BUREAUCRAT]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = BUREAUCRAT;
 		actionOptions.push_back(o);
 	}
 	return actionOptions;
