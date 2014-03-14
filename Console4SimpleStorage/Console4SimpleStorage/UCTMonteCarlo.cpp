@@ -248,6 +248,11 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(PROVINCE));
 					gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]]--;
 				}
+				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[GARDENS]] > 0)
+				{
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(GARDENS));
+					gameState.playerStates[i].hand[cardManager.cardIndexer[GARDENS]]--;
+				}
 			}
 		}
 		break;
@@ -432,7 +437,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 		while (numberOfCards > 0)
 		{
 			numberOfCards--;
-			guaranteedCards[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top]++;
+			guaranteedCards[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top()]++;
 			copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.pop();
 		}
 	}

@@ -89,6 +89,7 @@ void Game::play()
 				std::cout << "Player " << index << " with money:" << gameState.playerStates[players[index].playerStateIndex].calculateCurrentMoney(cardManager) << ", buys:" << gameState.playerStates[players[index].playerStateIndex].buys << ", actions:" << gameState.playerStates[players[index].playerStateIndex].actions << std::endl;
 				std::cout << "Hand: " << gameState.playerStates[players[index].playerStateIndex].printPile(cardManager, gameState.playerStates[players[index].playerStateIndex].hand);
 				option = players[index].getNextOption(gameState);
+				int tempIndex = 0;
 				if (option.type == END_TURN)
 				{
 					// Clean-up cards
@@ -144,7 +145,7 @@ void Game::play()
 						gameState.playerStates[players[index].playerStateIndex].drawCards(2);
 						if (PLAYERS > 1)
 						{
-							int tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 							while (tempIndex != players[index].playerStateIndex)
 							{
 								if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
@@ -157,23 +158,12 @@ void Game::play()
 									tempIndex = 0;
 							}
 						}
-
-						//for (int playerIndex = 0; playerIndex < PLAYERS; playerIndex++)
-						//{
-						//	if (playerIndex == players[index].playerStateIndex) //TODO: If more than two players, this does not handle order of curse distribution
-						//		continue;
-						//	if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
-						//	{
-						//		gameState.playerStates[playerIndex].discard[cardManager.cardIndexer[CURSE]] ++;
-						//		gameState.supplyPiles[cardManager.cardIndexer[CURSE]] --;
-						//	}
-						//}
 						break;
 					case BUREAUCRAT:
-						gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER])++;
+						gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
 						gameState.supplyPiles[cardManager.cardIndexer[SILVER]] --;
 
-						int tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+						tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 						while (tempIndex != players[index].playerStateIndex)
 						{
 							if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[ESTATE]] > 0)
@@ -181,10 +171,26 @@ void Game::play()
 								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[ESTATE]] --;
 								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
 							}
+							else if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[DUCHY]] > 0)
+							{
+								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[DUCHY]] --;
+								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[DUCHY]);
+							}
+							else if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[PROVINCE]] > 0)
+							{
+								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[PROVINCE]] --;
+								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[PROVINCE]);
+							}
+							else if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[GARDENS]] > 0)
+							{
+								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[GARDENS]] --;
+								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
+							}
 						}
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;
+						break;
 					}
 				}
 			} while (option.type != END_TURN);

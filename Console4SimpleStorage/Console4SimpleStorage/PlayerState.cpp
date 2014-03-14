@@ -120,7 +120,7 @@ void PlayerState::drawCards(int cards)
 		// If there are any top cards, draw them first
 		if (topOfDeckAsIndex.size() > 0)
 		{
-			hand[topOfDeckAsIndex.top]++;
+			hand[topOfDeckAsIndex.top()]++;
 			topOfDeckAsIndex.pop();
 		}
 		else
