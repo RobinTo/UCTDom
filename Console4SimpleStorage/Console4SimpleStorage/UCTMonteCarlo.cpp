@@ -200,6 +200,22 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(2);
 		break;
+	case WITCH:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		if (gameState.playerStates.size() > 1)
+		{
+			int tempIndex = playerIndex+1;
+			while (tempIndex != playerIndex)
+			{
+				if (tempIndex >= gameState.playerStates.size())
+					tempIndex = 0;
+				if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+					gameState.playerStates[tempIndex].discard[cardManager.cardIndexer[CURSE]]++;
+			}
+		}
+		if (rollout)
+			gameState.playerStates[playerIndex].drawCards(2);
+		break;
 	default:
 		break;
 	}
@@ -236,8 +252,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		}
 		createDrawNodes(node, currentState, currentlyPlaying, 5);
 		// TODO: Call new function
-	}
-	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY))
+	}	// If action and a card which contains +cards.
+	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY || node->opt.absoluteCardId == WITCH))
 	{
 		switch (node->opt.absoluteCardId)
 		{
@@ -251,6 +267,9 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			createDrawNodes(node, currentState, currentlyPlaying, 1);
 			break;
 		case LABORATORY:
+			createDrawNodes(node, currentState, currentlyPlaying, 2);
+			break;
+		case WITCH:
 			createDrawNodes(node, currentState, currentlyPlaying, 2);
 			break;
 		default:
@@ -521,6 +540,13 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = LABORATORY;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[WITCH]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = WITCH;
 		actionOptions.push_back(o);
 	}
 	return actionOptions;
