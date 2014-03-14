@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 10000
+#define NODESTOALLOCATE 2000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
@@ -223,11 +223,12 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			gameState.playerStates[playerIndex].drawCards(2);
 		break;
 	case BUREAUCRAT:
-		if (gameState.supplyPiles[cardManager.cardIndexer(SILVER)] > 0)
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		if (gameState.supplyPiles[cardManager.cardIndexer[SILVER]] > 0)
 		{
-			gameState.playerStates[playerIndex].addToTopOfDeck(cardManager.cardIndexer(SILVER));
+			gameState.playerStates[playerIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
 			//gameState.playerStates[playerIndex].topOfDeckAsIndex.push(cardManager.cardIndexer(SILVER));
-			gameState.supplyPiles[cardManager.cardIndexer(SILVER)]--;
+			gameState.supplyPiles[cardManager.cardIndexer[SILVER]]--;
 		}
 		for (int i = 0; i < gameState.playerStates.size(); i++)
 		{
@@ -235,22 +236,22 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			{
 				if (gameState.playerStates[i].hand[cardManager.cardIndexer[ESTATE]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(ESTATE));
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
 					gameState.playerStates[i].hand[cardManager.cardIndexer[ESTATE]]--;
 				}
 				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[DUCHY]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(DUCHY));
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[DUCHY]);
 					gameState.playerStates[i].hand[cardManager.cardIndexer[DUCHY]]--;
 				}
 				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(PROVINCE));
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[PROVINCE]);
 					gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]]--;
 				}
 				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[GARDENS]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer(GARDENS));
+					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
 					gameState.playerStates[i].hand[cardManager.cardIndexer[GARDENS]]--;
 				}
 			}
@@ -434,7 +435,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 
 	if (copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.size() > 0)
 	{
-		while (numberOfCards > 0)
+		while (numberOfCards > 0 && copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.size() > 0)
 		{
 			numberOfCards--;
 			guaranteedCards[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top()]++;
