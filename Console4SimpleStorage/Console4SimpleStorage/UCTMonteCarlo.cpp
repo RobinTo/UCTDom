@@ -3,6 +3,8 @@
 #include "CardManager.h"
 #include <array>
 
+#define NODESTOALLOCATE 2000000
+
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
 	// Create inital root node and its children.
@@ -629,7 +631,7 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = 2000000;
+	int allocatedNodes = NODESTOALLOCATE;
 	emptyNodes.reserve(allocatedNodes);
 	usedNodes.reserve(allocatedNodes);
 	for (int counter = 0; counter < allocatedNodes; counter++)
