@@ -99,6 +99,9 @@ void Game::play()
 				}
 				else if (option.type == BUY)
 				{
+					if (gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] <= 0)
+						std::cout << "---ERROR. No more cards in supply - " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+
 					gameState.playerStates[players[index].playerStateIndex].actions = 0;
 					gameState.playerStates[players[index].playerStateIndex].buyCard(cardManager, option.absoluteCardId);
 					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
@@ -160,9 +163,11 @@ void Game::play()
 						}
 						break;
 					case BUREAUCRAT:
-						gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
-						gameState.supplyPiles[cardManager.cardIndexer[SILVER]] --;
-
+						if (gameState.supplyPiles[cardManager.cardIndexer[SILVER]] > 0)
+						{
+							gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
+							gameState.supplyPiles[cardManager.cardIndexer[SILVER]] --;
+						}
 						tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 						while (tempIndex != players[index].playerStateIndex)
 						{
