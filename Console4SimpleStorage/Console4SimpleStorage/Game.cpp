@@ -36,6 +36,7 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -141,14 +142,44 @@ void Game::play()
 						break;
 					case WITCH:
 						gameState.playerStates[players[index].playerStateIndex].drawCards(2);
-						for (int playerIndex = 0; playerIndex < PLAYERS; playerIndex++)
+						if (PLAYERS > 1)
 						{
-							if (playerIndex == players[index].playerStateIndex) //TODO: If more than two players, this does not handle order of curse distribution
-								continue;
-							if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+							int tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+							while (tempIndex != players[index].playerStateIndex)
 							{
-								gameState.playerStates[playerIndex].discard[cardManager.cardIndexer[CURSE]] ++;
-								gameState.supplyPiles[cardManager.cardIndexer[CURSE]] --;
+								if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+								{
+									gameState.playerStates[players[tempIndex].playerStateIndex].discard[cardManager.cardIndexer[CURSE]]++;
+									gameState.supplyPiles[cardManager.cardIndexer[CURSE]]--;
+								}
+								tempIndex++;
+								if (tempIndex >= PLAYERS)
+									tempIndex = 0;
+							}
+						}
+
+						//for (int playerIndex = 0; playerIndex < PLAYERS; playerIndex++)
+						//{
+						//	if (playerIndex == players[index].playerStateIndex) //TODO: If more than two players, this does not handle order of curse distribution
+						//		continue;
+						//	if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+						//	{
+						//		gameState.playerStates[playerIndex].discard[cardManager.cardIndexer[CURSE]] ++;
+						//		gameState.supplyPiles[cardManager.cardIndexer[CURSE]] --;
+						//	}
+						//}
+						break;
+					case BUREAUCRAT:
+						gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER])++;
+						gameState.supplyPiles[cardManager.cardIndexer[SILVER]] --;
+
+						int tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+						while (tempIndex != players[index].playerStateIndex)
+						{
+							if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[ESTATE]] > 0)
+							{
+								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[ESTATE]] --;
+								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
 							}
 						}
 						break;

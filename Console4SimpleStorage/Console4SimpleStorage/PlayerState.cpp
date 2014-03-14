@@ -117,20 +117,29 @@ void PlayerState::drawCards(int cards)
 	// For each card to be drawn
 	for (int handCounter = 0; handCounter < cards; handCounter ++)
 	{
-		// If deck is empty, shuffle
-		if (countCards(deck) == 0)
+		// If there are any top cards, draw them first
+		if (topOfDeckAsIndex.size() > 0)
 		{
-			// If discard too is empty, then don't draw more cards.
-			if (countCards(discard) == 0)
-				return;
-			else
-				shuffle();
+			hand[topOfDeckAsIndex.top]++;
+			topOfDeckAsIndex.pop();
 		}
+		else
+		{
+			// If deck is empty, shuffle
+			if (countCards(deck) == 0)
+			{
+				// If discard too is empty, then don't draw more cards.
+				if (countCards(discard) == 0)
+					return;
+				else
+					shuffle();
+			}
 
-		// Pick a random card
-		int cardIndex = pickRandom(deck);
-		hand[cardIndex] += 1;
-		deck[cardIndex] -= 1;
+			// Pick a random card
+			int cardIndex = pickRandom(deck);
+			hand[cardIndex] += 1;
+			deck[cardIndex] -= 1;
+		}
 	}
 }
 

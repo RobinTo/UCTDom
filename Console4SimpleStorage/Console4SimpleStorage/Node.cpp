@@ -37,7 +37,7 @@ void Node::setOption(Option o)
 	opt = o;
 }
 
-void Node::printSelf(std::ofstream &file)
+void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each option, such as multiple action cards. (Print to multiple files)
 {
 	// For each child, print "counter self -> child"
 	std::string text = "";
