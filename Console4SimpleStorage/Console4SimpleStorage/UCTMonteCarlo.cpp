@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 2000000
+#define NODESTOALLOCATE 20000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
