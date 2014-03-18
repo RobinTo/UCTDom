@@ -127,13 +127,11 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 		if (UCTPlayer == 0)
 		{
 			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) > gameState.playerStates[1].calculateVictoryPoints(cardManager) ? 2 : -2;
-			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager);
 			propagate(node, score);
 		}
 		else
 		{
-			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) < gameState.playerStates[0].calculateVictoryPoints(cardManager) ? 2 : -2;
-			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager);
+			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) - gameState.playerStates[0].calculateVictoryPoints(cardManager) ? 2 : -2;
 			propagate(node, score);
 		}
 			
