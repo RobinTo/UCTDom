@@ -14,6 +14,8 @@ public:
 	CardManager cardManager;
 	Option doUCT(int maxSimulations, int UCTPlayer, GameState gameState);
 private:
+	Node* nodeAllocationPtr;
+	int handedOutNodes;
 	// MC UCT
 	Node* select(Node* root);
 	void expand(Node* node, int UCTPlayer);

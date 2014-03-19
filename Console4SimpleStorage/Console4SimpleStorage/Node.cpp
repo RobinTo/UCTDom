@@ -21,7 +21,6 @@ void Node::reset()
 	//propagateCounter = 0;
 	childrenPtrs.clear();
 	parentPtr = nullptr;
-	untriedMoves.clear();
 	playerPlaying = -1;
 	opt.absoluteCardId = -1;
 	opt.type = -1;

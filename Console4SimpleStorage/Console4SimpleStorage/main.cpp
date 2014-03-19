@@ -7,7 +7,7 @@
 #include "Game.h"
 //#include "NodePool.h"
 
-#define SIMULATIONS 50
+#define SIMULATIONS 25000
 #define NODES		8
 #define GAMES		1000
 #define MULTITHREAD 0
@@ -40,7 +40,6 @@ void run1Thread()
 		std::thread first1(playGame, std::ref(game));
 		first1.join();
 		game.writeToFile("log.txt");
-		
 	}
 }
 /*
@@ -134,8 +133,9 @@ int main()
 		run1Thread();*/
 	for (int counter = 0; counter < GAMES; counter++)
 	{
-		Game game;
-		playGame(game);
+		Game* game = new Game;
+		playGame(*game);
+		delete game;
 	}
 
 

@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 20000
+#define NODESTOALLOCATE 3500000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
@@ -714,52 +714,32 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 // Node allocation
 UCTMonteCarlo::UCTMonteCarlo()
 {
-	int allocatedNodes = NODESTOALLOCATE;
-	emptyNodes.reserve(allocatedNodes);
-	usedNodes.reserve(allocatedNodes);
-	for (int counter = 0; counter < allocatedNodes; counter++)
+	nodeAllocationPtr = new Node[NODESTOALLOCATE];
+	handedOutNodes = 0;
+	for (int counter = 0; counter < NODESTOALLOCATE; counter++)
 	{
-		Node* nodePtr = new Node();
-		nodePtr->id = allocatedNodes - counter;
-		emptyNodes.push_back(nodePtr);
+		nodeAllocationPtr[counter].reset();
 	}
 }
 UCTMonteCarlo::~UCTMonteCarlo()
 {
-	for (int counter = 0; counter < emptyNodes.size(); counter++)
-	{
-		delete emptyNodes[counter];
-	}
-	emptyNodes.clear();
-	//std::vector<Node*>().swap(emptyNodes);
-	for (int counter = 0; counter < usedNodes.size(); counter++)
-	{
-		delete usedNodes[counter];
-	}
-	usedNodes.clear();
+	delete[] nodeAllocationPtr;
 	//std::vector<Node*>().swap(usedNodes);
 }
 Node* UCTMonteCarlo::requestNewNode()
 {
-	//std::cout << "Requesting node" << std::endl;
-	if (emptyNodes.size() <= 0)
+	if (handedOutNodes >= NODESTOALLOCATE)
 		std::cout << "No more nodes!" << std::endl;
-
-	Node* returnNode = emptyNodes.back();
-	usedNodes.push_back(returnNode);
-	emptyNodes.pop_back();
-	//std::cout << "Done requesting node" << std::endl;
-	return returnNode;
+	handedOutNodes++;
+	return &nodeAllocationPtr[handedOutNodes-1];
 }
 void UCTMonteCarlo::resetNodes()
 {
-	//std::cout << "Resetting nodes" << std::endl;
-	for (std::vector<Node*>::iterator iterator = usedNodes.begin(); iterator != usedNodes.end(); ++iterator)
+	for (int counter = 0; counter < NODESTOALLOCATE; counter++)
 	{
-		(*iterator)->reset();
-		emptyNodes.push_back(*iterator);
+		nodeAllocationPtr[counter].reset();
 	}
-	usedNodes.clear();
+	handedOutNodes = 0;
 	//std::cout << "Done resetting nodes" << std::endl;
 }
 

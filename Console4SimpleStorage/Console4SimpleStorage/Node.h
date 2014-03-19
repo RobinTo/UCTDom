@@ -20,7 +20,6 @@ public:
 	Option opt;
 	//int propagateCounter;
 	std::vector<Node*> childrenPtrs;
-	std::vector<Option> untriedMoves;
 	Node* parentPtr;
 
 	void setOption(Option o);
