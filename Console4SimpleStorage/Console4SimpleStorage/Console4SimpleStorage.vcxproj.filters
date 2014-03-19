@@ -36,9 +36,6 @@
     <ClInclude Include="CardManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NodePool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="UCTMonteCarlo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -66,9 +63,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CardManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NodePool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UCTMonteCarlo.cpp">

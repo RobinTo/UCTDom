@@ -4,7 +4,7 @@ Player::Player()
 {
 }
 
-void Player::initialize(std::vector<Node*>& emptyNodes, CardManager& cardManagerRef, int simulations, int AIType2)
+void Player::initialize( CardManager& cardManagerRef, int simulations, int AIType2)
 {
 	//uct.setNodes(emptyNodes);
 	cardManager = cardManagerRef;

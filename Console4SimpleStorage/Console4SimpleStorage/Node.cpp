@@ -27,10 +27,10 @@ void Node::reset()
 	opt.type = -1;
 }
 
-void Node::setState(GameState state)
-{
-	currentState = state;
-}
+//void Node::setState(GameState state)
+//{
+//	currentState = state;
+//}
 
 void Node::setOption(Option o)
 {

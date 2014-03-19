@@ -13,7 +13,7 @@ Game::Game()
 
 }
 
-void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
+void Game::initialize(int simulations)
 {
 	srand((unsigned int)time(NULL));
 	gameState.initialize(PLAYERS);
@@ -65,8 +65,8 @@ void Game::initialize(std::vector<Node*>& emptyNodes, int simulations)
 		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
 		gameState.playerStates[index].endTurn();
 	}
-	players[0].initialize(emptyNodes, cardManager, simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
-	players[1].initialize(emptyNodes, cardManager, simulations, 1);
+	players[0].initialize( cardManager, simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
+	players[1].initialize( cardManager, simulations, 1);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }

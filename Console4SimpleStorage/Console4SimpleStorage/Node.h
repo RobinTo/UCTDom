@@ -24,7 +24,7 @@ public:
 	Node* parentPtr;
 
 	void setOption(Option o);
-	void setState(GameState gameState);
+	//void setState(GameState gameState);
 	Node();
 	~Node();
 	void reset();

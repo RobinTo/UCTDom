@@ -11,7 +11,7 @@ public:
 	Option getNextOption(GameState& currentState);
 	CardManager cardManager;
 	
-	void initialize(std::vector<Node*>& emptyNodes, CardManager& cardManagerRef, int simulations, int AIType2);
+	void initialize( CardManager& cardManagerRef, int simulations, int AIType2);
 
 	Player();
 	

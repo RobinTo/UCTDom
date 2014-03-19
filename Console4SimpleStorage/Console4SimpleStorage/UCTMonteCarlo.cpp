@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 2000000
+#define NODESTOALLOCATE 20000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
@@ -731,11 +731,13 @@ UCTMonteCarlo::~UCTMonteCarlo()
 		delete emptyNodes[counter];
 	}
 	emptyNodes.clear();
+	//std::vector<Node*>().swap(emptyNodes);
 	for (int counter = 0; counter < usedNodes.size(); counter++)
 	{
 		delete usedNodes[counter];
 	}
 	usedNodes.clear();
+	//std::vector<Node*>().swap(usedNodes);
 }
 Node* UCTMonteCarlo::requestNewNode()
 {

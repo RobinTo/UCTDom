@@ -15,7 +15,7 @@ public:
 	Player players[PLAYERS];
 	std::string logString;
 
-	void initialize(std::vector<Node*>& emptyNodes, int simulations);
+	void initialize( int simulations);
 	void play();
 	void writeToFile(std::string outputFileName);
 

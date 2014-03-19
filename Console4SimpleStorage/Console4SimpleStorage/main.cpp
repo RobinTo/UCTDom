@@ -5,16 +5,16 @@
 #include <fstream>
 
 #include "Game.h"
-#include "NodePool.h"
+//#include "NodePool.h"
 
-#define SIMULATIONS 25000
+#define SIMULATIONS 50
 #define NODES		8
-#define GAMES		1
+#define GAMES		1000
 #define MULTITHREAD 0
 
-void playGame(Game& game, std::vector<Node*>& emptyNodes)
+void playGame(Game& game)
 {
-	game.initialize(emptyNodes, SIMULATIONS);
+	game.initialize( SIMULATIONS);
 	game.play();
 	std::cout << "Game over" << std::endl;
 }
@@ -30,20 +30,20 @@ void run1Thread()
 	remove("log.txt");
 
 	// Allocate nodes
-	NodePool nodePool;
-	nodePool.allocateNodes(NODES);
+	//NodePool nodePool;
+	//nodePool.allocateNodes(NODES);
 
 	// Run GAMES runs
 	for (int counter = 0; counter < GAMES; counter++)
 	{
 		Game game;
-		std::thread first1(playGame, std::ref(game), nodePool.getRange(0, NODES - 1));
+		std::thread first1(playGame, std::ref(game));
 		first1.join();
 		game.writeToFile("log.txt");
-		nodePool.resetNodes();
+		
 	}
 }
-
+/*
 void run4Threads()
 {
 	// Delete the 4 temp logfiles.
@@ -53,8 +53,6 @@ void run4Threads()
 	remove("log4.txt");
 
 	// Allocate nodes
-	NodePool nodePool;
-	nodePool.allocateNodes(NODES);
 
 	// Run GAMES runs
 	for (int counter = 0; counter < GAMES / 4; counter++)
@@ -127,14 +125,18 @@ void run4Threads()
 
 	file.close();
 }
-
+*/
 int main()
 {
-	if (MULTITHREAD)
+	/*if (MULTITHREAD)
 		run4Threads();
 	else
-		run1Thread();
-	
+		run1Thread();*/
+	for (int counter = 0; counter < GAMES; counter++)
+	{
+		Game game;
+		playGame(game);
+	}
 
 
 	// Don't close console yet
