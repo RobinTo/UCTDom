@@ -7,11 +7,15 @@ Node::Node()
 
 Node::~Node()
 {
-
+	
 }
 
 void Node::reset()
 {
+	childrenPtrs.clear();
+	std::vector<Node*>().swap(childrenPtrs);
+	currentState.~currentState();
+
 	isRoot = false;
 	value = 0;
 	visited = 0;
@@ -19,7 +23,6 @@ void Node::reset()
 	probability = 0;
 	value = 0;
 	//propagateCounter = 0;
-	childrenPtrs.clear();
 	parentPtr = nullptr;
 	playerPlaying = -1;
 	opt.absoluteCardId = -1;

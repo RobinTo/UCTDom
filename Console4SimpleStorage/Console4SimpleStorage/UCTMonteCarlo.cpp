@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 3500000
+#define NODESTOALLOCATE 3000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
@@ -729,7 +729,10 @@ UCTMonteCarlo::~UCTMonteCarlo()
 Node* UCTMonteCarlo::requestNewNode()
 {
 	if (handedOutNodes >= NODESTOALLOCATE)
+	{
 		std::cout << "No more nodes!" << std::endl;
+		throw std::invalid_argument("No more nodes!");
+	}
 	handedOutNodes++;
 	return &nodeAllocationPtr[handedOutNodes-1];
 }

@@ -5,6 +5,11 @@ GameState::GameState()
 	turnCounter = 1;
 }
 
+GameState::~GameState()
+{
+	std::vector<PlayerState>().swap(playerStates);
+}
+
 void GameState::initialize(int players)
 {
 	for (int index = 0; index < INSUPPLY; index++)

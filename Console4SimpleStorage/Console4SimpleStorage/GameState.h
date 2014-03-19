@@ -21,4 +21,5 @@ public:
 	bool gameFinished();
 
 	GameState();
+	~GameState();
 };
