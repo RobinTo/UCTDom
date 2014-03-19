@@ -7,7 +7,6 @@ GameState::GameState()
 
 GameState::~GameState()
 {
-	std::vector<PlayerState>().swap(playerStates);
 }
 
 void GameState::initialize(int players)

@@ -731,7 +731,6 @@ Node* UCTMonteCarlo::requestNewNode()
 	if (handedOutNodes >= NODESTOALLOCATE)
 	{
 		std::cout << "No more nodes!" << std::endl;
-		throw std::invalid_argument("No more nodes!");
 	}
 	handedOutNodes++;
 	return &nodeAllocationPtr[handedOutNodes-1];

@@ -36,7 +36,7 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 0;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
