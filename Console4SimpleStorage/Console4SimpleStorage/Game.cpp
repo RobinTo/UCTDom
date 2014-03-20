@@ -36,7 +36,7 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 0;
+	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -173,25 +173,25 @@ void Game::play()
 						tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 						while (tempIndex != players[index].playerStateIndex)
 						{
-							if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[ESTATE]] > 0)
+							if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[ESTATE]] > 0)
 							{
-								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[ESTATE]] --;
-								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
+								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[ESTATE]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
 							}
-							else if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[DUCHY]] > 0)
+							else if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[DUCHY]] > 0)
 							{
-								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[DUCHY]] --;
-								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[DUCHY]);
+								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[DUCHY]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[DUCHY]);
 							}
-							else if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[PROVINCE]] > 0)
+							else if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[PROVINCE]] > 0)
 							{
-								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[PROVINCE]] --;
-								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[PROVINCE]);
+								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[PROVINCE]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[PROVINCE]);
 							}
-							else if (gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[GARDENS]] > 0)
+							else if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[GARDENS]] > 0)
 							{
-								gameState.playerStates[players[tempIndex].playerStateIndex].hand[cardManager.cardIndexer[GARDENS]] --;
-								gameState.playerStates[players[tempIndex].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
+								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[GARDENS]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
 							}
 							tempIndex++;
 							if (tempIndex >= PLAYERS)

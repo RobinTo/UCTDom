@@ -3,13 +3,12 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 3000000
+#define NODESTOALLOCATE 2000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
-	//Node* rootNode = new Node();
 	rootNode->isRoot = true;
 	rootNode->visited = 0;
 	rootNode->currentState = gameState;
@@ -52,7 +51,6 @@ Node* UCTMonteCarlo::select(Node* root)
 
 	while (currentNode->childrenPtrs.size() > 0 && getUntriedChildren(currentNode).size() == 0)
 	{
-		//currentNode->visited++;
 		currentNode = UCTSelectChild(currentNode);
 	}
 	return currentNode;
@@ -63,7 +61,6 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 	if (getUntriedChildren(node).size() > 0)
 	{
 		Node* randomNode = getRandomNode(getUntriedChildren(node));
-		//randomNode->visited++;
 		rollout(randomNode, randomNode->currentState, UCTPlayer);
 	}
 	else
@@ -77,7 +74,6 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 		{
 			createAllChildren(node);
 			Node* randomNode = getRandomNode(node->childrenPtrs);
-			//randomNode->visited++;
 			rollout(randomNode, randomNode->currentState, UCTPlayer);
 		}
 	}
@@ -140,6 +136,9 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	}
 	else
 		propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager));
+
+
+
 }
 
 void UCTMonteCarlo::propagate(Node* node, double score)
@@ -244,7 +243,6 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		if (gameState.supplyPiles[cardManager.cardIndexer[SILVER]] > 0)
 		{
 			gameState.playerStates[playerIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
-			//gameState.playerStates[playerIndex].topOfDeckAsIndex.push(cardManager.cardIndexer(SILVER));
 			gameState.supplyPiles[cardManager.cardIndexer[SILVER]]--;
 		}
 		for (int i = 0; i < gameState.playerStates.size(); i++)
@@ -340,7 +338,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	{
 		// Create end turn node to enable doing nothing.
 		Node* endTurnChild = requestNewNode();
-		//Node* endTurnChild = new Node();
 		Option o;
 		o.type = END_TURN;
 		o.absoluteCardId = -1;
@@ -357,7 +354,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			for (int i = 0; i < possibleActions.size(); i++)
 			{
 				Node* newActionNode = requestNewNode();
-				//Node* newBuyNode = new Node();
 				newActionNode->opt = possibleActions.at(i);
 				newActionNode->parentPtr = node;
 				newActionNode->currentState = currentState;
@@ -374,7 +370,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			for (int i = 0; i < possibleBuys.size(); i++)
 			{
 				Node* newBuyNode = requestNewNode();
-				//Node* newBuyNode = new Node();
 				newBuyNode->opt = possibleBuys.at(i);
 				newBuyNode->parentPtr = node;
 				newBuyNode->currentState = currentState;
@@ -438,7 +433,26 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, int playe
 
 void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, int currentlyPlaying, int numberOfCards)
 {
+	// Create as many draw nodes as there are combinations of cards, based on numberOfCards to draw, and the current deck.
+	// If there are cards on top, then draw as many of these needed first, before moving on to draw from deck.
+	// If deck does not have enough cards, then first draw the ones in draw, then shuffle and draw the rest.
+
 	GameState copyState = currentState;
+
+	std::array<int, INSUPPLY> guaranteedCards;
+	for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Initialize guaranteedCards array to zeroes.
+		guaranteedCards[cardIndex] = 0;
+
+	// If there are any cards on top, put them in guaranteed cards, and decrement numberOfCards.
+	// If numberOfCards reaches zero, then no more cards should be drawn.
+	while (numberOfCards > 0 && copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.size() > 0)
+	{
+		numberOfCards--; // Decrement number of cards for each draw, based on the number of guaranteed cards.
+		guaranteedCards[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top()]++;
+		copyState.playerStates[currentlyPlaying].deck[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top()]--;
+		copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.pop();
+	}
+	
 
 	// Check for shuffle
 	int cardCounter = 0;
@@ -446,107 +460,95 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 	{
 		cardCounter += copyState.playerStates[currentlyPlaying].deck[cardIndex];
 	}
-	std::array<int, INSUPPLY> guaranteedCards;// = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; // TODO: Not dynamic, must be manually set if INSUPPLY changes!
-	for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)  // Dynamic initialization
-		guaranteedCards[cardIndex] = 0;
-
-	if (copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.size() > 0)
-	{
-		while (numberOfCards > 0 && copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.size() > 0)
-		{
-			numberOfCards--;
-			guaranteedCards[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top()]++;
-			copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.pop();
-		}
-	}
-
 	// "Shuffle" after making current cards guaranteedcards.
 	if (cardCounter < numberOfCards)
 	{
+		// Put the remaining cards in deck over in guaranteedCards, put discard in deck and set discard to zero.
 		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
 		{
-			guaranteedCards[cardIndex] = copyState.playerStates[currentlyPlaying].deck[cardIndex];
+			guaranteedCards[cardIndex] += copyState.playerStates[currentlyPlaying].deck[cardIndex];
 			copyState.playerStates[currentlyPlaying].deck[cardIndex] = copyState.playerStates[currentlyPlaying].discard[cardIndex];
 			copyState.playerStates[currentlyPlaying].discard[cardIndex] = 0;
 		}
 	}
 
-	// Finding n and k for draw probability
-	int n = 0; // Total cards - those in guaranteedCards and discard. Possible cards to draw.
-	std::size_t k = numberOfCards;
-	// If less than numberOfCards in cardCounter, then draw fewer cards.
-	if (cardCounter < numberOfCards)
-		k = numberOfCards - cardCounter;
-
-	// Append each card in deck to string
-	std::string s = "";
-	for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
-	{
-		for (int j = 0; j < copyState.playerStates[currentlyPlaying].deck[cardIndex]; j++)
-		{
-			s.append(cardManager.cardLookupByIndex[cardIndex].charId);
-			n++;
-		}
-	}
-
-
-	// While there are still new combinations of chars in string, create a new draw.
 	std::vector<std::array<int, INSUPPLY>> draws;
 	std::vector<double> probabilities;
 
 	// Create one draw if there are enough known cards to draw.
 	if (numberOfCards == 0)
 	{
-		std::array<int, INSUPPLY> draw; // = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
-		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Dynamic initialization
-			draw[cardIndex] = guaranteedCards[cardIndex];
+		std::array<int, INSUPPLY> draw;
+		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
+			draw[cardIndex] = guaranteedCards[cardIndex]; // The draw is equal to each card in guaranteedCards
 		draws.push_back(draw);
 		probabilities.push_back(1.0);
 	}
-
-	do
+	else
 	{
-		double probability = 0, nkInCardComboPossibilities = 1, nkPossibilities = 1;
+		// Finding n and k for draw probability
+		int n = 0; // Total cards - those in guaranteedCards and discard. Possible cards to draw.
+		std::size_t k = numberOfCards;
+		// If less than numberOfCards in cardCounter, then draw fewer cards.
+		if (cardCounter < numberOfCards)
+			k = numberOfCards - cardCounter;
 
-		std::array<int, INSUPPLY> draw; // = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };// TODO: sNot dynamic, must be manually set if INSUPPLY changes!
-		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Dynamic initialization
-			draw[cardIndex] = 0;
-
-		// This is the combinationString, containing a combination of cards.
-		std::string combinationString = std::string(s.begin(), s.begin() + k);
-
-		// For each letter in the combinationString
-		for (int stringIndex = 0; stringIndex < k; stringIndex++)
-		{
-			// Convert letter to int, and add to draw
-			std::string cardCharId = std::string(combinationString.begin() + stringIndex, combinationString.begin() + stringIndex + 1);
-			draw[cardManager.cardLookupCharToIndex[cardCharId]]++;
-		}
-
-		// Find possible ways to draw the draw
+		// Append each card in deck to string
+		std::string s = "";
 		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
 		{
-			int nInCardCombo = copyState.playerStates[currentlyPlaying].deck[cardIndex];
-			int kInCardCombo = draw[cardIndex];
-			nkInCardComboPossibilities *= choose(nInCardCombo, kInCardCombo);
+			for (int j = 0; j < copyState.playerStates[currentlyPlaying].deck[cardIndex]; j++)
+			{
+				s.append(cardManager.cardLookupByIndex[cardIndex].charId);
+				n++;
+			}
 		}
 
-		// Add the guaranteedCards
-		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
+		do // While there are still new combinations of chars in string, create a new draw.
 		{
-			draw[cardIndex] += guaranteedCards[cardIndex];
-		}
+			double probability = 0, nkInCardComboPossibilities = 1, nkPossibilities = 1;
 
-		// Find the total possible outcomes
-		nkPossibilities = choose(n, k);
+			std::array<int, INSUPPLY> draw;
+			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++) // Dynamic initialization
+				draw[cardIndex] = 0;
 
-		// Calculate probability
-		probability = nkInCardComboPossibilities / nkPossibilities;
+			// This is the combinationString, containing a combination of cards.
+			std::string combinationString = std::string(s.begin(), s.begin() + k);
 
-		// Finally, add draw to collection of draws, and probability to collection of probabilities (associate a probability with each draw)
-		draws.push_back(draw);
-		probabilities.push_back(probability);
-	} while (next_combination(s.begin(), s.begin() + k, s.end()));
+			// For each letter in the combinationString
+			for (int stringIndex = 0; stringIndex < k; stringIndex++)
+			{
+				// Convert letter to int, and add to draw
+				std::string cardCharId = std::string(combinationString.begin() + stringIndex, combinationString.begin() + stringIndex + 1);
+				draw[cardManager.cardLookupCharToIndex[cardCharId]]++;
+			}
+
+			// Find possible ways to draw the draw
+			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
+			{
+				int nInCardCombo = copyState.playerStates[currentlyPlaying].deck[cardIndex];
+				int kInCardCombo = draw[cardIndex];
+				nkInCardComboPossibilities *= choose(nInCardCombo, kInCardCombo);
+			}
+
+			// Add the guaranteedCards
+			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
+			{
+				draw[cardIndex] += guaranteedCards[cardIndex];
+			}
+
+			// Find the total possible outcomes
+			nkPossibilities = choose(n, k);
+
+			// Calculate probability
+			probability = nkInCardComboPossibilities / nkPossibilities;
+
+			// Finally, add draw to collection of draws, and probability to collection of probabilities (associate a probability with each draw)
+			draws.push_back(draw);
+			probabilities.push_back(probability);
+		} while (next_combination(s.begin(), s.begin() + k, s.end()));
+	}
+
 
 	// For each draw, create child node
 	for (int drawCounter = 0; drawCounter < draws.size(); drawCounter++)
@@ -557,10 +559,11 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
 		{
 			newNodePtr->currentState.playerStates[currentlyPlaying].hand[cardIndex] += draws[drawCounter][cardIndex];
-			newNodePtr->currentState.playerStates[currentlyPlaying].deck[cardIndex] = copyState.playerStates[currentlyPlaying].deck[cardIndex] - draws[drawCounter][cardIndex] + guaranteedCards[cardIndex];
+			newNodePtr->currentState.playerStates[currentlyPlaying].deck[cardIndex] = copyState.playerStates[currentlyPlaying].deck[cardIndex] + guaranteedCards[cardIndex] - draws[drawCounter][cardIndex];
 			newNodePtr->currentState.playerStates[currentlyPlaying].discard[cardIndex] = copyState.playerStates[currentlyPlaying].discard[cardIndex];
 			newNodePtr->currentState.supplyPiles[cardIndex] = copyState.supplyPiles[cardIndex];
 		}
+		newNodePtr->currentState.playerStates[currentlyPlaying].topOfDeckAsIndex = copyState.playerStates[currentlyPlaying].topOfDeckAsIndex;
 		parentNode->childrenPtrs.push_back(newNodePtr);
 		newNodePtr->parentPtr = parentNode;
 		newNodePtr->playerPlaying = currentlyPlaying;
@@ -690,7 +693,6 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 // Tree printing
 void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr)
 {
-	//std::cout << "Printing tree" << std::endl;
 	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "uctTree.gv";
 	remove(fileName.c_str());
 	std::ofstream file;
@@ -701,7 +703,6 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr)
 	text = "\r\n }";
 	file << text << std::endl;
 	file.close();
-	//std::cout << "Done printing tree" << std::endl;
 }
 void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 {
@@ -742,7 +743,6 @@ void UCTMonteCarlo::resetNodes()
 		nodeAllocationPtr[counter].reset();
 	}
 	handedOutNodes = 0;
-	//std::cout << "Done resetting nodes" << std::endl;
 }
 
 unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long long k)

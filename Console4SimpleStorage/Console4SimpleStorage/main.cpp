@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include "Game.h"
-//#include "NodePool.h"
 
 #define SIMULATIONS 5000
 #define NODES		8
@@ -23,7 +22,7 @@ void writeToFile(Game& game, std::string outputFileName)
 {
 	game.writeToFile(outputFileName);
 }
-
+/*
 void run1Thread()
 {
 	// Delete the old logfile
@@ -42,7 +41,7 @@ void run1Thread()
 		game.writeToFile("log.txt");
 	}
 }
-/*
+
 void run4Threads()
 {
 	// Delete the 4 temp logfiles.
@@ -131,10 +130,13 @@ int main()
 		run4Threads();
 	else
 		run1Thread();*/
+
+	remove("log.txt");
 	for (int counter = 0; counter < GAMES; counter++)
 	{
 		Game* game = new Game;
 		playGame(*game);
+		game->writeToFile("log.txt");
 		delete game;
 	}
 

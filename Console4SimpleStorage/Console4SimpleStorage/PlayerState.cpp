@@ -15,6 +15,12 @@ PlayerState::PlayerState()
 		hand[index] = 0;
 		inPlay[index] = 0;
 	}
+
+	std::stack<int>().swap(topOfDeckAsIndex);
+}
+
+PlayerState::~PlayerState()
+{
 }
 
 void PlayerState::buyCard(CardManager& cardManager, int absoluteCardId)
