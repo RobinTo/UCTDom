@@ -219,13 +219,14 @@ void Game::play()
 
 void Game::writeToFile(std::string outputFileName)
 {
+	std::ofstream file;
+	file.open(outputFileName, std::ios::app);
+	file << "----------" << std::endl;
 	for (int index = 0; index < PLAYERS; index++)
 	{
 		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints(cardManager) << std::endl;
+		file << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints(cardManager) << std::endl;
 	}
-
-	std::ofstream file;
-	file.open(outputFileName, std::ios::app);
 	file << logString << std::endl;
 	file << gameState.turnCounter - 1 << ":" << "2:" << gameState.playerStates[players[0].playerStateIndex].calculateVictoryPoints(cardManager) << std::endl;
 

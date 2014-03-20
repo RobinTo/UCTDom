@@ -3,7 +3,7 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 2000000
+#define NODESTOALLOCATE 12000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
 {
@@ -664,6 +664,10 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 					highestCost = cardManager.cardLookup[(*iter).absoluteCardId].cost;
 					cardToReturn.type = ACTION;
 					cardToReturn.absoluteCardId = (*iter).absoluteCardId;
+
+					// If has an action card which gives +actions, play it.
+					if (cardToReturn.absoluteCardId == MARKET || cardToReturn.absoluteCardId == LABORATORY || cardToReturn.absoluteCardId == VILLAGE || cardToReturn.absoluteCardId == FESTIVAL)
+						return cardToReturn;
 				}
 			}
 
