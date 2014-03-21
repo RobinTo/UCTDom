@@ -3,7 +3,7 @@
 #include "UCTMonteCarlo.h"
 #include "CardManager.h"
 
-#define NODESTOALLOCATE 2000000
+#define NODESTOALLOCATE 12000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
@@ -16,16 +16,18 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	rootNode->currentState = gameState;
 	rootNode->playerPlaying = UCTPlayer;
 
-	Move lastMove = moveHistory.back();
-	int size = moveHistory.size();
-	if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL)		// Time to trash a card from remodel.
+	if (moveHistory.size() > 2)
 	{
-		rootNode->opt.type = ACTION;
-		rootNode->opt.absoluteCardId = REMODEL;
+		Move lastMove = moveHistory.back();
+		int size = moveHistory.size();
+		if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL)		// Time to trash a card from remodel.
+		{
+			rootNode->opt.type = ACTION;
+			rootNode->opt.absoluteCardId = REMODEL;
+		}
+		else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL) // Time to gain a card from remodel.
+			rootNode->flags = REMODELFLAG;
 	}
-	else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL) // Time to gain a card from remodel.
-		rootNode->flags = REMODELFLAG;
-
 
 	createAllChildren(rootNode);
 
@@ -285,6 +287,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		}
 		break;
 	case REMODEL:
+		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
 		if (rollout)
 		{
 			if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[CURSE]] > 0 && gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] > 0)
@@ -735,6 +738,13 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = BUREAUCRAT;
+		actionOptions.push_back(o);
+	}
+	if (hand[cardManager.cardIndexer[REMODEL]] > 0)
+	{
+		Option o;
+		o.type = ACTION;
+		o.absoluteCardId = REMODEL;
 		actionOptions.push_back(o);
 	}
 	return actionOptions;
