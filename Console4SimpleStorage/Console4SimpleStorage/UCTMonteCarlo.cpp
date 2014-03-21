@@ -7,14 +7,7 @@
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	Move lastMove = moveHistory.back();
-	int size = moveHistory.size();
-	if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL)
-		int n = 0;
-		// Trash with remodel
-	else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL)
-		int n = 0;
-		// Gain with remodel
+	
 
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
@@ -22,6 +15,18 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	rootNode->visited = 0;
 	rootNode->currentState = gameState;
 	rootNode->playerPlaying = UCTPlayer;
+
+	Move lastMove = moveHistory.back();
+	int size = moveHistory.size();
+	if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL)		// Time to trash a card from remodel.
+	{
+		rootNode->opt.type = ACTION;
+		rootNode->opt.absoluteCardId = REMODEL;
+	}
+	else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL) // Time to gain a card from remodel.
+		rootNode->flags = REMODELFLAG;
+
+
 	createAllChildren(rootNode);
 
 	if (rootNode->childrenPtrs.size() == 1)
@@ -381,7 +386,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		std::vector<Option> possibleGains = getBuyOptions(&currentState, cost+2);
 		if (possibleGains.size() == 0)
 		{
-			// TODO: May need a "pass but don't skip me" node here?
+			node->flags = NOFLAG;
 		}
 		for (int i = 0; i < possibleGains.size(); i++)
 		{
