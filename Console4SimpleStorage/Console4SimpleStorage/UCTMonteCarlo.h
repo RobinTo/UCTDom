@@ -27,11 +27,13 @@ private:
 	std::vector<Node*> getUntriedChildren(Node* parent);
 
 	// Dominion-specific
-	std::vector<Option> getBuyOptions(GameState* gameState, int playerIndex);
+	std::vector<Option> getBuyOptions(GameState* gameState, int money);
 	std::vector<Option> getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY]);
 	Option getCardPlayoutPolicy(GameState& gameState, int playerIndex);
 	void playActionCard(GameState &gameState, int card, int playerIndex, bool rollout);
 	void createDrawNodes(Node* parentNode, GameState& currentState, int currentlyPlaying, int numberOfCards);
+	void createTrashNodes(Node* parentNode, GameState& currentState, int currentlyPlaying);
+	int getCurrentMoney(GameState* gameState, int playerIndex);
 
 	// Tree printing
 	void printNode(Node* nodePtr, std::ofstream& file);

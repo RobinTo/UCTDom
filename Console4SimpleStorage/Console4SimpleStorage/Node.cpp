@@ -27,6 +27,8 @@ void Node::reset()
 	playerPlaying = -1;
 	opt.absoluteCardId = -1;
 	opt.type = -1;
+
+	flags = 0;
 }
 
 //void Node::setState(GameState state)

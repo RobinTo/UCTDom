@@ -6,6 +6,9 @@
 #include "GameState.h"
 #include "Option.h"
 
+// Flags
+#define REMODELFLAG		1
+
 class Node
 {
 public:
@@ -21,6 +24,8 @@ public:
 	//int propagateCounter;
 	std::vector<Node*> childrenPtrs;
 	Node* parentPtr;
+
+	int flags;
 
 	void setOption(Option o);
 	//void setState(GameState gameState);
