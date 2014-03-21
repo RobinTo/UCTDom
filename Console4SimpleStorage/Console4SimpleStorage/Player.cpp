@@ -15,11 +15,11 @@ void Player::initialize( CardManager& cardManagerRef, int simulations, int AITyp
 }
 
 
-Option Player::getNextOption(GameState& currentState)
+Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHistory)
 {
 	Option option;
 	if (AIType == 0)
-		option = uct.doUCT(numSims, playerStateIndex, currentState);
+		option = uct.doUCT(numSims, playerStateIndex, currentState, moveHistory);
 	else
 		option = bmai.getNextOption(currentState, playerStateIndex);
 

@@ -3,10 +3,19 @@
 #include "CardManager.h"
 #include <array>
 
-#define NODESTOALLOCATE 12000000
+#define NODESTOALLOCATE 2000000
 
-Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState)
+Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
+	Move lastMove = moveHistory.back();
+	int size = moveHistory.size();
+	if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL)
+		int n = 0;
+		// Trash with remodel
+	else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL)
+		int n = 0;
+		// Gain with remodel
+
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
 	rootNode->isRoot = true;
@@ -849,3 +858,5 @@ unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long lon
 // TODO: Score on the last turn is wrong, because the UCT simulates on too many turns, after moving of turncounter incrementation.
 // TODO: Bureaucrat cheats!
 // TODO: Visited:1 Cases are weird
+// TODO: Only one cardManager
+// TODO: Possibly use const & instead of copying gamestates, where we do not change them. To increase speed.

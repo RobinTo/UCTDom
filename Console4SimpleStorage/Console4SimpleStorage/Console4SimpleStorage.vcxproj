@@ -115,6 +115,8 @@
     <ClInclude Include="CardManager.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="GardensAI.h" />
+    <ClInclude Include="Move.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="Option.h" />
     <ClInclude Include="Player.h" />
@@ -126,6 +128,7 @@
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="GardensAI.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Player.cpp" />

@@ -90,6 +90,7 @@ void CardManager::initialize()
 	cardIndexer[LABORATORY] = 14;
 	cardIndexer[WITCH] = 15;
 	cardIndexer[BUREAUCRAT] = 16;
+	cardIndexer[REMODEL] = 17;
 
 	cardLookup[COPPER] = copper;
 	cardLookup[SILVER] = silver;
@@ -108,6 +109,7 @@ void CardManager::initialize()
 	cardLookup[LABORATORY] = laboratory;
 	cardLookup[WITCH] = witch;
 	cardLookup[BUREAUCRAT] = bureaucrat;
+	cardLookup[REMODEL] = remodel;
 
 	cardLookupByIndex[cardIndexer[COPPER]] = copper;
 	cardLookupByIndex[cardIndexer[SILVER]] = silver;
@@ -126,6 +128,7 @@ void CardManager::initialize()
 	cardLookupByIndex[cardIndexer[LABORATORY]] = laboratory;
 	cardLookupByIndex[cardIndexer[WITCH]] = witch;
 	cardLookupByIndex[cardIndexer[BUREAUCRAT]] = bureaucrat;
+	cardLookupByIndex[cardIndexer[REMODEL]] = remodel;
 
 	cardLookupCharToIndex[cardLookup[COPPER].charId] = cardIndexer[COPPER];
 	cardLookupCharToIndex[cardLookup[SILVER].charId] = cardIndexer[SILVER];
@@ -144,4 +147,5 @@ void CardManager::initialize()
 	cardLookupCharToIndex[cardLookup[LABORATORY].charId] = cardIndexer[LABORATORY];
 	cardLookupCharToIndex[cardLookup[WITCH].charId] = cardIndexer[WITCH];
 	cardLookupCharToIndex[cardLookup[BUREAUCRAT].charId] = cardIndexer[BUREAUCRAT];
+	cardLookupCharToIndex[cardLookup[REMODEL].charId] = cardIndexer[REMODEL];
 }

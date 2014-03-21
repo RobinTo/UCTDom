@@ -28,7 +28,7 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
+	//gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;
@@ -37,6 +37,7 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[REMODEL]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -90,7 +91,7 @@ void Game::play()
 			{
 				std::cout << "Player " << index << " with money:" << gameState.playerStates[players[index].playerStateIndex].calculateCurrentMoney(cardManager) << ", buys:" << gameState.playerStates[players[index].playerStateIndex].buys << ", actions:" << gameState.playerStates[players[index].playerStateIndex].actions << std::endl;
 				std::cout << "Hand: " << gameState.playerStates[players[index].playerStateIndex].printPile(cardManager, gameState.playerStates[players[index].playerStateIndex].hand);
-				option = players[index].getNextOption(gameState);
+				option = players[index].getNextOption(gameState, moveHistory);
 				int tempIndex = 0;
 				if (option.type == END_TURN)
 				{
@@ -108,6 +109,27 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].buyCard(cardManager, option.absoluteCardId);
 					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
 					std::cout << "---Bought " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+				}
+				else if (option.type == TRASH)
+				{
+					if (gameState.playerStates[players[index].playerStateIndex].hand[cardManager.cardIndexer[option.absoluteCardId]] <= 0)
+						std::cout << "---ERROR. Card not in hand - " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+
+					gameState.playerStates[players[index].playerStateIndex].hand[cardManager.cardIndexer[option.absoluteCardId]]--;
+					gameState.trash[cardManager.cardIndexer[option.absoluteCardId]]++;
+
+					std::cout << "---Trashed " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+				}
+				else if (option.type == GAIN)
+				{
+					if (gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] <= 0)
+						std::cout << "---ERROR. No more cards in supply - " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+
+					gameState.playerStates[players[index].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] ++;
+					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] --;
+
+					std::cout << "---Gained " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+
 				}
 				else if (option.type == ACTION)
 				{
@@ -197,6 +219,10 @@ void Game::play()
 							if (tempIndex >= PLAYERS)
 								tempIndex = 0;
 						}
+						break;
+					case REMODEL:
+						// Could add some security, that next option must be a trash option (if more cards in hand)
+						// XOR could add that instead of asking getnextoption, we ask, get trashoption.
 						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;
