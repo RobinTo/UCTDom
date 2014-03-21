@@ -3,7 +3,7 @@
 #include "UCTMonteCarlo.h"
 #include "CardManager.h"
 
-#define NODESTOALLOCATE 2000000
+#define NODESTOALLOCATE 12000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
@@ -476,6 +476,7 @@ void UCTMonteCarlo::createTrashNodes(Node* parentNode, GameState& currentState, 
 			newNode->currentState = copyState;
 			newNode->parentPtr = parentNode;
 			newNode->flags = REMODELFLAG;
+			newNode->playerPlaying = currentlyPlaying;
 			parentNode->childrenPtrs.push_back(newNode);
 		}
 	}
