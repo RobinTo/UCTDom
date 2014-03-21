@@ -29,7 +29,7 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
-	//gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
+	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
 	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;
@@ -37,7 +37,7 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 0;
 	gameState.supplyPiles[cardManager.cardIndexer[REMODEL]] = 10;
 
 	// Randomize ten cards for the supply

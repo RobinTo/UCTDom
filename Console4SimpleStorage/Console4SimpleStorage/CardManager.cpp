@@ -89,8 +89,8 @@ void CardManager::initialize()
 	cardIndexer[MARKET] = 13;
 	cardIndexer[LABORATORY] = 14;
 	cardIndexer[WITCH] = 15;
-	cardIndexer[BUREAUCRAT] = 16;
-	cardIndexer[REMODEL] = 17;
+	cardIndexer[REMODEL] = 16;
+	cardIndexer[BUREAUCRAT] = 17;
 
 	cardLookup[COPPER] = copper;
 	cardLookup[SILVER] = silver;

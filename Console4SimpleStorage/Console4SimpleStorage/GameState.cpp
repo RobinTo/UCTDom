@@ -36,7 +36,7 @@ bool GameState::gameFinished()
 		}
 	}
 
-	if (supplyPiles[PROVINCE] == 0 || emptyCounter >= 3 || turnCounter >= 40+1) // Check for game end
+	if (supplyPiles[PROVINCE] == 0 || emptyCounter >= 4 || turnCounter >= 40+1) // Check for game end
 		return true;
 	else
 		return false;
