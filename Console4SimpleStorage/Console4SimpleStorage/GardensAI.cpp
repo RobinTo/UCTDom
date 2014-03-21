@@ -67,7 +67,7 @@ Option GardensAI::getNextOption(GameState gameState, int playerIndex)
 
 Card GardensAI::findBestAction(GameState gameState, int playerIndex)
 {
-
+	return Card();
 }
 
 Card GardensAI::findBestBuy(GameState gameState, int playerIndex)
@@ -79,6 +79,7 @@ Card GardensAI::findBestBuy(GameState gameState, int playerIndex)
 	{
 		cardToBuy = cardManager.cardLookup[GARDENS];
 	}
+	return Card();
 }
 
 

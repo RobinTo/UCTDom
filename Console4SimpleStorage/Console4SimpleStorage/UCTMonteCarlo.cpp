@@ -3,7 +3,7 @@
 #include "UCTMonteCarlo.h"
 #include "CardManager.h"
 
-#define NODESTOALLOCATE 12000000
+#define NODESTOALLOCATE 2000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
@@ -20,12 +20,12 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	{
 		Move lastMove = moveHistory.back();
 		int size = moveHistory.size();
-		if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL)		// Time to trash a card from remodel.
+		if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL && lastMove.type == ACTION)		// Time to trash a card from remodel.
 		{
 			rootNode->opt.type = ACTION;
 			rootNode->opt.absoluteCardId = REMODEL;
 		}
-		else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL) // Time to gain a card from remodel.
+		else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL && lastMove.type == TRASH) // Time to gain a card from remodel.
 			rootNode->flags = REMODELFLAG;
 	}
 
@@ -876,3 +876,4 @@ unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long lon
 // TODO: Visited:1 Cases are weird
 // TODO: Only one cardManager
 // TODO: Possibly use const & instead of copying gamestates, where we do not change them. To increase speed.
+// TODO: Accomodate for all cards
