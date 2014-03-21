@@ -20,7 +20,7 @@ void Game::initialize(int simulations)
 	gameState.initialize(PLAYERS);
 	cardManager.initialize();
 
-	// Always in supply
+	// Supply
 	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 46;
 	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
 	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;

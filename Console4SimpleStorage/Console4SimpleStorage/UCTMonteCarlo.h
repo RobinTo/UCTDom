@@ -1,11 +1,14 @@
 #pragma once
 
+#include <algorithm>
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "Option.h"
 #include "Node.h"
 #include "Move.h"
+#include "CardManager.h"
+//#include "Option.h"
+
 
 class UCTMonteCarlo
 {

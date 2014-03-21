@@ -1,14 +1,11 @@
 #include <iostream>
 #include <array>
 #include "UCTMonteCarlo.h"
-#include "CardManager.h"
 
 #define NODESTOALLOCATE 2000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	
-
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
 	rootNode->isRoot = true;

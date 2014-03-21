@@ -2,9 +2,9 @@
 
 #include <vector>
 #include "Player.h"
-#include "GameState.h"
-#include "CardManager.h"
-#include "Move.h"
+//#include "GameState.h"
+//#include "CardManager.h"
+//#include "Move.h"
 
 #define PLAYERS		2
 
