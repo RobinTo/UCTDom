@@ -130,6 +130,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="GardensAI.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Move.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerState.cpp" />

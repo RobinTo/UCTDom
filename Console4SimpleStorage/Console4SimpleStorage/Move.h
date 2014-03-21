@@ -10,4 +10,6 @@ public:
 	std::string moveString;
 	int player;
 
+	Move();
+	Move(Option option, int playerr);
 };

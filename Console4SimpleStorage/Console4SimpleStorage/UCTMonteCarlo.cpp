@@ -1,7 +1,7 @@
-#include "UCTMonteCarlo.h"
 #include <iostream>
-#include "CardManager.h"
 #include <array>
+#include "UCTMonteCarlo.h"
+#include "CardManager.h"
 
 #define NODESTOALLOCATE 2000000
 

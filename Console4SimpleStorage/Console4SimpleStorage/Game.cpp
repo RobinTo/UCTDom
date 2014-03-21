@@ -15,6 +15,7 @@ Game::Game()
 
 void Game::initialize(int simulations)
 {
+	moveHistory.reserve(1000);
 	srand((unsigned int)time(NULL));
 	gameState.initialize(PLAYERS);
 	cardManager.initialize();
@@ -95,10 +96,12 @@ void Game::play()
 				int tempIndex = 0;
 				if (option.type == END_TURN)
 				{
-					// Clean-up cards
-					
 					gameState.playerStates[players[index].playerStateIndex].endTurn();
-					std::cout << "------------Ended turn---------------------" << std::endl << std::endl;
+
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "----Player" + std::to_string(players[index].playerStateIndex) + "-Ended-turn" + std::to_string(gameState.turnCounter) + "------------------";
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == BUY)
 				{
@@ -108,7 +111,11 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].actions = 0;
 					gameState.playerStates[players[index].playerStateIndex].buyCard(cardManager, option.absoluteCardId);
 					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
-					std::cout << "---Bought " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + cardManager.cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == TRASH)
 				{
@@ -118,7 +125,10 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].hand[cardManager.cardIndexer[option.absoluteCardId]]--;
 					gameState.trash[cardManager.cardIndexer[option.absoluteCardId]]++;
 
-					std::cout << "---Trashed " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + cardManager.cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == GAIN)
 				{
@@ -128,13 +138,21 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] ++;
 					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] --;
 
-					std::cout << "---Gained " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Gained " + cardManager.cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
 
 				}
 				else if (option.type == ACTION)
 				{
 					gameState.playerStates[players[index].playerStateIndex].playCard(cardManager, option.absoluteCardId);
-					std::cout << "---Played " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + cardManager.cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
+
 					switch (option.absoluteCardId)
 					{
 					case WOODCUTTER:
