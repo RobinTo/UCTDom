@@ -58,7 +58,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
 	{
 		std::cout << rootNode->childrenPtrs.at(i)->opt.type;
-		std::cout << cardManager.cardLookup[rootNode->childrenPtrs.at(i)->opt.absoluteCardId].name;
+		std::cout << CardManager::cardLookup[rootNode->childrenPtrs.at(i)->opt.absoluteCardId].name;
 		std::cout << " visited: " << rootNode->childrenPtrs.at(i)->visited;
 		std::cout << " score: " << rootNode->childrenPtrs.at(i)->value << std::endl;
 
@@ -130,8 +130,8 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 			else if (cardChosen.type == BUY)
 			{
 				gameState.playerStates[currentPlayer].actions = 0; // Can not perform more actions after entering buy phase.
-				gameState.playerStates[currentPlayer].buyCard(cardManager, cardChosen.absoluteCardId);
-				gameState.supplyPiles[cardManager.cardIndexer[cardChosen.absoluteCardId]] -= 1;
+				gameState.playerStates[currentPlayer].buyCard(cardChosen.absoluteCardId);
+				gameState.supplyPiles[CardManager::cardIndexer[cardChosen.absoluteCardId]] -= 1;
 			}
 			else if (cardChosen.type == END_TURN)
 			{
@@ -150,20 +150,20 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	{
 		if (UCTPlayer == 0)
 		{
-			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) > gameState.playerStates[1].calculateVictoryPoints(cardManager) ? 2 : -2;
-			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager);
+			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints() ? 2 : -2;
+			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
 			propagate(node, score);
 		}
 		else
 		{
-			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager) < gameState.playerStates[0].calculateVictoryPoints(cardManager) ? 2 : -2;
-			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager);
+			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints() ? 2 : -2;
+			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
 			propagate(node, score);
 		}
 			
 	}
 	else
-		propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints(cardManager));
+		propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints());
 
 }
 
@@ -202,50 +202,50 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 	switch (absoluteCardId)
 	{
 	case WOODCUTTER:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 1;
 		break;
 	case FESTIVAL:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 2;
 		gameState.playerStates[playerIndex].actions += 2;
 		break;
 	case MONEYLENDER:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
-		if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]] > 0)
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
+		if (gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]] > 0)
 		{
-			gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]]--;
-			gameState.trash[cardManager.cardIndexer[COPPER]]++;
+			gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]]--;
+			gameState.trash[CardManager::cardIndexer[COPPER]]++;
 			gameState.playerStates[playerIndex].spentMoney -= 3;	// Take away 3 spent money to give money if trashed. TODO: Use less hacky way
 		}
 		break;
 	case SMITHY:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(3);
 		// Do nothing if in the UCT, because draw nodes are created in tree by probability calculating function.
 		break;
 	case VILLAGE:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].actions += 2;
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(1);
 		break;
 	case MARKET:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 1;
 		gameState.playerStates[playerIndex].actions += 1;
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(1);
 		break;
 	case LABORATORY:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].actions += 1;
 		if (rollout)
 			gameState.playerStates[playerIndex].drawCards(2);
 		break;
 	case THIEF:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		if (rollout)
 		{
 			int enemyIndex = 0;
@@ -254,16 +254,16 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			if (playerIndex == 0)
 				enemyIndex = 1;
 			
-			gameState.playerStates[enemyIndex].flipThiefCards(cardManager, card1Turned, card2Turned);
+			gameState.playerStates[enemyIndex].flipThiefCards(card1Turned, card2Turned);
 			if (card1Turned == GOLD || card2Turned == GOLD)
 			{
-				gameState.playerStates[playerIndex].discard[cardManager.cardIndexer[GOLD]]++;
-				gameState.playerStates[enemyIndex].discard[cardManager.cardIndexer[GOLD]]--;
+				gameState.playerStates[playerIndex].discard[CardManager::cardIndexer[GOLD]]++;
+				gameState.playerStates[enemyIndex].discard[CardManager::cardIndexer[GOLD]]--;
 			}
 			else if (card1Turned == SILVER || card2Turned == SILVER)
 			{
-				gameState.playerStates[playerIndex].discard[cardManager.cardIndexer[SILVER]]++;
-				gameState.playerStates[enemyIndex].discard[cardManager.cardIndexer[SILVER]]--;
+				gameState.playerStates[playerIndex].discard[CardManager::cardIndexer[SILVER]]++;
+				gameState.playerStates[enemyIndex].discard[CardManager::cardIndexer[SILVER]]--;
 			}
 		}
 		else
@@ -272,16 +272,16 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		}
 		break;
 	case WITCH:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		if (gameState.playerStates.size() > 1)
 		{
 			int tempIndex = (playerIndex == gameState.playerStates.size()-1 ? 0 : playerIndex+1);
 			while (tempIndex != playerIndex)
 			{
-				if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+				if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
 				{
-					gameState.playerStates[tempIndex].discard[cardManager.cardIndexer[CURSE]]++;
-					gameState.supplyPiles[cardManager.cardIndexer[CURSE]]--;
+					gameState.playerStates[tempIndex].discard[CardManager::cardIndexer[CURSE]]++;
+					gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
 				}
 				tempIndex++;
 				if (tempIndex >= gameState.playerStates.size())
@@ -292,66 +292,66 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			gameState.playerStates[playerIndex].drawCards(2);
 		break;
 	case BUREAUCRAT:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
-		if (gameState.supplyPiles[cardManager.cardIndexer[SILVER]] > 0)
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
+		if (gameState.supplyPiles[CardManager::cardIndexer[SILVER]] > 0)
 		{
-			gameState.playerStates[playerIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
-			gameState.supplyPiles[cardManager.cardIndexer[SILVER]]--;
+			gameState.playerStates[playerIndex].addToTopOfDeck(CardManager::cardIndexer[SILVER]);
+			gameState.supplyPiles[CardManager::cardIndexer[SILVER]]--;
 		}
 		for (int i = 0; i < gameState.playerStates.size(); i++)
 		{
 			if (i != playerIndex)
 			{
-				if (gameState.playerStates[i].hand[cardManager.cardIndexer[ESTATE]] > 0)
+				if (gameState.playerStates[i].hand[CardManager::cardIndexer[ESTATE]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
-					gameState.playerStates[i].hand[cardManager.cardIndexer[ESTATE]]--;
+					gameState.playerStates[i].addToTopOfDeck(CardManager::cardIndexer[ESTATE]);
+					gameState.playerStates[i].hand[CardManager::cardIndexer[ESTATE]]--;
 				}
-				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[DUCHY]] > 0)
+				else if (gameState.playerStates[i].hand[CardManager::cardIndexer[DUCHY]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[DUCHY]);
-					gameState.playerStates[i].hand[cardManager.cardIndexer[DUCHY]]--;
+					gameState.playerStates[i].addToTopOfDeck(CardManager::cardIndexer[DUCHY]);
+					gameState.playerStates[i].hand[CardManager::cardIndexer[DUCHY]]--;
 				}
-				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]] > 0)
+				else if (gameState.playerStates[i].hand[CardManager::cardIndexer[PROVINCE]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[PROVINCE]);
-					gameState.playerStates[i].hand[cardManager.cardIndexer[PROVINCE]]--;
+					gameState.playerStates[i].addToTopOfDeck(CardManager::cardIndexer[PROVINCE]);
+					gameState.playerStates[i].hand[CardManager::cardIndexer[PROVINCE]]--;
 				}
-				else if (gameState.playerStates[i].hand[cardManager.cardIndexer[GARDENS]] > 0)
+				else if (gameState.playerStates[i].hand[CardManager::cardIndexer[GARDENS]] > 0)
 				{
-					gameState.playerStates[i].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
-					gameState.playerStates[i].hand[cardManager.cardIndexer[GARDENS]]--;
+					gameState.playerStates[i].addToTopOfDeck(CardManager::cardIndexer[GARDENS]);
+					gameState.playerStates[i].hand[CardManager::cardIndexer[GARDENS]]--;
 				}
 			}
 		}
 		break;
 	case REMODEL:
-		gameState.playerStates[playerIndex].playCard(cardManager, absoluteCardId);
+		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		if (rollout)
 		{
-			if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[CURSE]] > 0 && gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] > 0)
+			if (gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[CURSE]] > 0 && gameState.supplyPiles[CardManager::cardIndexer[ESTATE]] > 0)
 			{
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[CURSE]]--;
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[ESTATE]]++;
-				gameState.trash[cardManager.cardIndexer[CURSE]]++;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[CURSE]]--;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[ESTATE]]++;
+				gameState.trash[CardManager::cardIndexer[CURSE]]++;
 			}
-			else if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]] > 0 && gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] > 0)
+			else if (gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]] > 0 && gameState.supplyPiles[CardManager::cardIndexer[ESTATE]] > 0)
 			{
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]]--;
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[ESTATE]]++;
-				gameState.trash[cardManager.cardIndexer[COPPER]]++;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]]--;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[ESTATE]]++;
+				gameState.trash[CardManager::cardIndexer[COPPER]]++;
 			}
-			else if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[SILVER]] > 0 && gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] > 0)
+			else if (gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[SILVER]] > 0 && gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] > 0)
 			{
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[SILVER]]--;
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[DUCHY]]++;
-				gameState.trash[cardManager.cardIndexer[SILVER]]++;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[SILVER]]--;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[DUCHY]]++;
+				gameState.trash[CardManager::cardIndexer[SILVER]]++;
 			}
-			else if (gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[GOLD]] > 0 && gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] > 0)
+			else if (gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[GOLD]] > 0 && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] > 0)
 			{
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[GOLD]]--;
-				gameState.playerStates[playerIndex].hand[cardManager.cardIndexer[PROVINCE]]++;
-				gameState.trash[cardManager.cardIndexer[GOLD]]++;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[GOLD]]--;
+				gameState.playerStates[playerIndex].hand[CardManager::cardIndexer[PROVINCE]]++;
+				gameState.trash[CardManager::cardIndexer[GOLD]]++;
 			}
 		}
 		// Do nothing when played in tree, trashnodes will be created beneath.
@@ -430,18 +430,18 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		if (enemyPlayer == 0)
 			currentlyPlaying = 1;	// Currently playing is not the one set as "player" when drawing for thief.
 		
-		if (node->opt.absoluteCardId == cardManager.cardLookup[GOLD].id || node->opt.absoluteExtraCardId == cardManager.cardLookup[GOLD].id)
+		if (node->opt.absoluteCardId == CardManager::cardLookup[GOLD].id || node->opt.absoluteExtraCardId == CardManager::cardLookup[GOLD].id)
 		{
 			Node* newNode = requestNewNode();
 			newNode->currentState = currentState;
-			newNode->currentState.playerStates[enemyPlayer].deck[cardManager.cardIndexer[GOLD]]--;
-			if (node->opt.absoluteCardId == cardManager.cardLookup[GOLD].id)
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteExtraCardId]]++;
+			newNode->currentState.playerStates[enemyPlayer].deck[CardManager::cardIndexer[GOLD]]--;
+			if (node->opt.absoluteCardId == CardManager::cardLookup[GOLD].id)
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteExtraCardId]]++;
 			else
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
-			newNode->currentState.trash[cardManager.cardIndexer[GOLD]]++;
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteCardId]]++;
+			newNode->currentState.trash[CardManager::cardIndexer[GOLD]]++;
 			newNode->opt.type = THIEFTRASH;
-			newNode->opt.absoluteCardId = cardManager.cardLookup[GOLD].id;
+			newNode->opt.absoluteCardId = CardManager::cardLookup[GOLD].id;
 			newNode->parentPtr = node;
 			node->childrenPtrs.push_back(newNode);
 			newNode->playerPlaying = currentlyPlaying;
@@ -449,31 +449,31 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 
 			Node* newGainNode = requestNewNode();
 			newGainNode->currentState = currentState;
-			newGainNode->currentState.playerStates[enemyPlayer].deck[cardManager.cardIndexer[GOLD]]--;
-			if (node->opt.absoluteCardId == cardManager.cardLookup[GOLD].id)
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteExtraCardId]]++;
+			newGainNode->currentState.playerStates[enemyPlayer].deck[CardManager::cardIndexer[GOLD]]--;
+			if (node->opt.absoluteCardId == CardManager::cardLookup[GOLD].id)
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteExtraCardId]]++;
 			else
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
-			newGainNode->currentState.playerStates[currentlyPlaying].discard[cardManager.cardIndexer[GOLD]]++;
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteCardId]]++;
+			newGainNode->currentState.playerStates[currentlyPlaying].discard[CardManager::cardIndexer[GOLD]]++;
 			newGainNode->opt.type = THIEFGAIN;
-			newGainNode->opt.absoluteCardId = cardManager.cardLookup[GOLD].id;
+			newGainNode->opt.absoluteCardId = CardManager::cardLookup[GOLD].id;
 			newGainNode->parentPtr = node;
 			node->childrenPtrs.push_back(newGainNode);
 			newGainNode->playerPlaying = currentlyPlaying;
 			newGainNode->flags = NOFLAG;
 		}
-		if (node->opt.absoluteCardId == cardManager.cardLookup[SILVER].id || node->opt.absoluteExtraCardId == cardManager.cardLookup[SILVER].id)
+		if (node->opt.absoluteCardId == CardManager::cardLookup[SILVER].id || node->opt.absoluteExtraCardId == CardManager::cardLookup[SILVER].id)
 		{
 			Node* newNode = requestNewNode();
 			newNode->currentState = currentState;
-			newNode->currentState.playerStates[enemyPlayer].deck[cardManager.cardIndexer[SILVER]]--;
-			if (node->opt.absoluteCardId == cardManager.cardLookup[SILVER].id)
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteExtraCardId]]++;
+			newNode->currentState.playerStates[enemyPlayer].deck[CardManager::cardIndexer[SILVER]]--;
+			if (node->opt.absoluteCardId == CardManager::cardLookup[SILVER].id)
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteExtraCardId]]++;
 			else
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
-			newNode->currentState.trash[cardManager.cardIndexer[SILVER]]++;
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteCardId]]++;
+			newNode->currentState.trash[CardManager::cardIndexer[SILVER]]++;
 			newNode->opt.type = THIEFTRASH;
-			newNode->opt.absoluteCardId = cardManager.cardLookup[SILVER].id;
+			newNode->opt.absoluteCardId = CardManager::cardLookup[SILVER].id;
 			newNode->parentPtr = node;
 			node->childrenPtrs.push_back(newNode);
 			newNode->playerPlaying = currentlyPlaying;
@@ -481,31 +481,31 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 
 			Node* newGainNode = requestNewNode();
 			newGainNode->currentState = currentState;
-			newGainNode->currentState.playerStates[enemyPlayer].deck[cardManager.cardIndexer[SILVER]]--;
-			if (node->opt.absoluteCardId == cardManager.cardLookup[SILVER].id)
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteExtraCardId]]++;
+			newGainNode->currentState.playerStates[enemyPlayer].deck[CardManager::cardIndexer[SILVER]]--;
+			if (node->opt.absoluteCardId == CardManager::cardLookup[SILVER].id)
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteExtraCardId]]++;
 			else
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
-			newGainNode->currentState.playerStates[currentlyPlaying].discard[cardManager.cardIndexer[SILVER]]++;
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteCardId]]++;
+			newGainNode->currentState.playerStates[currentlyPlaying].discard[CardManager::cardIndexer[SILVER]]++;
 			newGainNode->opt.type = THIEFGAIN;
-			newGainNode->opt.absoluteCardId = cardManager.cardLookup[SILVER].id;
+			newGainNode->opt.absoluteCardId = CardManager::cardLookup[SILVER].id;
 			newGainNode->parentPtr = node;
 			node->childrenPtrs.push_back(newGainNode);
 			newGainNode->playerPlaying = currentlyPlaying;
 			newGainNode->flags = NOFLAG;
 		}
-		if (node->opt.absoluteCardId == cardManager.cardLookup[COPPER].id || node->opt.absoluteExtraCardId == cardManager.cardLookup[COPPER].id)
+		if (node->opt.absoluteCardId == CardManager::cardLookup[COPPER].id || node->opt.absoluteExtraCardId == CardManager::cardLookup[COPPER].id)
 		{
 			Node* newNode = requestNewNode();
 			newNode->currentState = currentState;
-			newNode->currentState.playerStates[enemyPlayer].deck[cardManager.cardIndexer[COPPER]]--;
-			if (node->opt.absoluteCardId == cardManager.cardLookup[COPPER].id)
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteExtraCardId]]++;
+			newNode->currentState.playerStates[enemyPlayer].deck[CardManager::cardIndexer[COPPER]]--;
+			if (node->opt.absoluteCardId == CardManager::cardLookup[COPPER].id)
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteExtraCardId]]++;
 			else
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
-			newNode->currentState.trash[cardManager.cardIndexer[COPPER]]++;
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteCardId]]++;
+			newNode->currentState.trash[CardManager::cardIndexer[COPPER]]++;
 			newNode->opt.type = THIEFTRASH;
-			newNode->opt.absoluteCardId = cardManager.cardLookup[COPPER].id;
+			newNode->opt.absoluteCardId = CardManager::cardLookup[COPPER].id;
 			newNode->parentPtr = node;
 			node->childrenPtrs.push_back(newNode);
 			newNode->playerPlaying = currentlyPlaying;
@@ -513,14 +513,14 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 
 			Node* newGainNode = requestNewNode();
 			newGainNode->currentState = currentState;
-			newGainNode->currentState.playerStates[enemyPlayer].deck[cardManager.cardIndexer[COPPER]]--;
-			if (node->opt.absoluteCardId == cardManager.cardLookup[COPPER].id)
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteExtraCardId]]++;
+			newGainNode->currentState.playerStates[enemyPlayer].deck[CardManager::cardIndexer[COPPER]]--;
+			if (node->opt.absoluteCardId == CardManager::cardLookup[COPPER].id)
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteExtraCardId]]++;
 			else
-				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
-			newGainNode->currentState.playerStates[currentlyPlaying].discard[cardManager.cardIndexer[COPPER]]++;
+				node->currentState.playerStates[enemyPlayer].discard[CardManager::cardIndexer[node->opt.absoluteCardId]]++;
+			newGainNode->currentState.playerStates[currentlyPlaying].discard[CardManager::cardIndexer[COPPER]]++;
 			newGainNode->opt.type = THIEFGAIN;
-			newGainNode->opt.absoluteCardId = cardManager.cardLookup[COPPER].id;
+			newGainNode->opt.absoluteCardId = CardManager::cardLookup[COPPER].id;
 			newGainNode->parentPtr = node;
 			node->childrenPtrs.push_back(newGainNode);
 			newGainNode->playerPlaying = currentlyPlaying;
@@ -535,7 +535,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	}
 	else if (node->flags == REMODELFLAG)
 	{
-		int cost = cardManager.cardLookup[node->opt.absoluteCardId].cost;
+		int cost = CardManager::cardLookup[node->opt.absoluteCardId].cost;
 
 		std::vector<Option> possibleGains = getBuyOptions(&currentState, cost+2);
 		if (possibleGains.size() == 0)
@@ -554,8 +554,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			newGainNode->playerPlaying = currentlyPlaying;
 			newGainNode->currentState.playerStates[currentlyPlaying].actions = 0;
 
-			newGainNode->currentState.playerStates[currentlyPlaying].hand[cardManager.cardIndexer[newGainNode->opt.absoluteCardId]]++;
-			newGainNode->currentState.supplyPiles[cardManager.cardIndexer[newGainNode->opt.absoluteCardId]] -= 1;
+			newGainNode->currentState.playerStates[currentlyPlaying].hand[CardManager::cardIndexer[newGainNode->opt.absoluteCardId]]++;
+			newGainNode->currentState.supplyPiles[CardManager::cardIndexer[newGainNode->opt.absoluteCardId]] -= 1;
 
 			node->childrenPtrs.push_back(newGainNode);
 		}
@@ -603,8 +603,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 				newBuyNode->playerPlaying = currentlyPlaying;
 				newBuyNode->currentState.playerStates[currentlyPlaying].actions = 0;
 				// Perform the buy action of this node.
-				newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(cardManager, newBuyNode->opt.absoluteCardId);
-				newBuyNode->currentState.supplyPiles[cardManager.cardIndexer[newBuyNode->opt.absoluteCardId]] -= 1;
+				newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(newBuyNode->opt.absoluteCardId);
+				newBuyNode->currentState.supplyPiles[CardManager::cardIndexer[newBuyNode->opt.absoluteCardId]] -= 1;
 				node->childrenPtrs.push_back(newBuyNode);
 			}
 		}
@@ -622,7 +622,7 @@ void UCTMonteCarlo::createTrashNodes(Node* parentNode, GameState& currentState, 
 			Node* newNode = requestNewNode();
 			Option o;
 			o.type = TRASH;
-			o.absoluteCardId = cardManager.cardLookupByIndex[i].id;
+			o.absoluteCardId = CardManager::cardLookupByIndex[i].id;
 			copyState.playerStates[currentlyPlaying].hand[i]--;
 			copyState.trash[i]++;
 			newNode->opt = o;
@@ -658,12 +658,12 @@ std::vector<Node*> UCTMonteCarlo::getUntriedChildren(Node* parent)
 int UCTMonteCarlo::getCurrentMoney(GameState* gameState, int playerIndex)
 {
 	int currentMoney = 0;
-	currentMoney += gameState->playerStates[playerIndex].hand[cardManager.cardIndexer[COPPER]];
-	currentMoney += gameState->playerStates[playerIndex].hand[cardManager.cardIndexer[SILVER]] * 2;
-	currentMoney += gameState->playerStates[playerIndex].hand[cardManager.cardIndexer[GOLD]] * 3;
-	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[WOODCUTTER]] * 2;
-	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[FESTIVAL]] * 2;
-	currentMoney += gameState->playerStates[playerIndex].inPlay[cardManager.cardIndexer[MARKET]] * 1;
+	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]];
+	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[SILVER]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[GOLD]] * 3;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[WOODCUTTER]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[FESTIVAL]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[MARKET]] * 1;
 	currentMoney -= gameState->playerStates[playerIndex].spentMoney;
 	return currentMoney;
 }
@@ -673,11 +673,11 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, int curre
 	std::vector<Option> options;
 	for (int i = 0; i < INSUPPLY; i++)
 	{
-		if (cardManager.cardLookupByIndex[i].cost <= currentMoney && gameState->supplyPiles[i] > 0)
+		if (CardManager::cardLookupByIndex[i].cost <= currentMoney && gameState->supplyPiles[i] > 0)
 		{
 			Option o;
 			o.type = BUY;
-			o.absoluteCardId = cardManager.cardLookupByIndex[i].id;
+			o.absoluteCardId = CardManager::cardLookupByIndex[i].id;
 			options.push_back(o);
 		}
 	}
@@ -753,7 +753,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 		{
 			for (int j = 0; j < copyState.playerStates[currentlyPlaying].deck[cardIndex]; j++)
 			{
-				s.append(cardManager.cardLookupByIndex[cardIndex].charId);
+				s.append(CardManager::cardLookupByIndex[cardIndex].charId);
 				n++;
 			}
 		}
@@ -774,7 +774,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 			{
 				// Convert letter to int, and add to draw
 				std::string cardCharId = std::string(combinationString.begin() + stringIndex, combinationString.begin() + stringIndex + 1);
-				draw[cardManager.cardLookupCharToIndex[cardCharId]]++;
+				draw[CardManager::cardLookupCharToIndex[cardCharId]]++;
 			}
 
 			// Find possible ways to draw the draw
@@ -816,9 +816,9 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 			for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
 			{
 				if (newNodePtr->opt.absoluteCardId == 0 && draws[drawCounter][cardIndex] > 0)
-					newNodePtr->opt.absoluteCardId = cardManager.cardLookupByIndex[cardIndex].id;
+					newNodePtr->opt.absoluteCardId = CardManager::cardLookupByIndex[cardIndex].id;
 				else if (draws[drawCounter][cardIndex] > 0)
-					newNodePtr->opt.absoluteExtraCardId = cardManager.cardLookupByIndex[cardIndex].id;
+					newNodePtr->opt.absoluteExtraCardId = CardManager::cardLookupByIndex[cardIndex].id;
 
 				newNodePtr->currentState.playerStates[currentlyPlaying].deck[cardIndex] = copyState.playerStates[currentlyPlaying].deck[cardIndex] + guaranteedCards[cardIndex];
 				newNodePtr->currentState.playerStates[currentlyPlaying].discard[cardIndex] = copyState.playerStates[currentlyPlaying].discard[cardIndex];
@@ -862,28 +862,28 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY])
 {
 	std::vector<Option> actionOptions;
-	if (hand[cardManager.cardIndexer[WOODCUTTER]] > 0)
+	if (hand[CardManager::cardIndexer[WOODCUTTER]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = WOODCUTTER;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[FESTIVAL]] > 0)
+	if (hand[CardManager::cardIndexer[FESTIVAL]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = FESTIVAL;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[MONEYLENDER]] > 0)
+	if (hand[CardManager::cardIndexer[MONEYLENDER]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = MONEYLENDER;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[SMITHY]] > 0)
+	if (hand[CardManager::cardIndexer[SMITHY]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
@@ -891,49 +891,49 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 		actionOptions.push_back(o);
 	}
 
-	if (hand[cardManager.cardIndexer[VILLAGE]] > 0)
+	if (hand[CardManager::cardIndexer[VILLAGE]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = VILLAGE;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[MARKET]] > 0)
+	if (hand[CardManager::cardIndexer[MARKET]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = MARKET;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[LABORATORY]] > 0)
+	if (hand[CardManager::cardIndexer[LABORATORY]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = LABORATORY;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[WITCH]] > 0)
+	if (hand[CardManager::cardIndexer[WITCH]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = WITCH;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[BUREAUCRAT]] > 0)
+	if (hand[CardManager::cardIndexer[BUREAUCRAT]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = BUREAUCRAT;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[REMODEL]] > 0)
+	if (hand[CardManager::cardIndexer[REMODEL]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
 		o.absoluteCardId = REMODEL;
 		actionOptions.push_back(o);
 	}
-	if (hand[cardManager.cardIndexer[THIEF]] > 0)
+	if (hand[CardManager::cardIndexer[THIEF]] > 0)
 	{
 		Option o;
 		o.type = ACTION;
@@ -959,9 +959,9 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 		{
 			for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
 			{
-				if (cardManager.cardLookup[(*iter).absoluteCardId].cost > highestCost || highestCost == 0)
+				if (CardManager::cardLookup[(*iter).absoluteCardId].cost > highestCost || highestCost == 0)
 				{
-					highestCost = cardManager.cardLookup[(*iter).absoluteCardId].cost;
+					highestCost = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 					cardToReturn.type = ACTION;
 					cardToReturn.absoluteCardId = (*iter).absoluteCardId;
 
@@ -982,9 +982,9 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 
 		for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
 		{
-			if (cardManager.cardLookup[(*iter).absoluteCardId].cost > highestCost || highestCost == 0 && cardManager.cardLookup[(*iter).absoluteCardId].name != "Curse")
+			if (CardManager::cardLookup[(*iter).absoluteCardId].cost > highestCost || highestCost == 0 && CardManager::cardLookup[(*iter).absoluteCardId].name != "Curse")
 			{
-				highestCost = cardManager.cardLookup[(*iter).absoluteCardId].cost;
+				highestCost = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 				cardToReturn.absoluteCardId = (*iter).absoluteCardId;
 				cardToReturn.type = BUY;
 			}

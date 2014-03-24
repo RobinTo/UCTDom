@@ -21,25 +21,25 @@ void Game::initialize(int simulations)
 	cardManager.initialize();
 
 	// Supply
-	gameState.supplyPiles[cardManager.cardIndexer[COPPER]] = 46;
-	gameState.supplyPiles[cardManager.cardIndexer[SILVER]] = 40;
-	gameState.supplyPiles[cardManager.cardIndexer[GOLD]] = 30;
-	gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] = 8;
-	gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] = 8;
-	gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] = 8;
-	gameState.supplyPiles[cardManager.cardIndexer[CURSE]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[WOODCUTTER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] = 8;
-	gameState.supplyPiles[cardManager.cardIndexer[FESTIVAL]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[MONEYLENDER]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[SMITHY]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[VILLAGE]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 0;
-	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 0;
-	gameState.supplyPiles[cardManager.cardIndexer[REMODEL]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[THIEF]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[COPPER]] = 46;
+	gameState.supplyPiles[CardManager::cardIndexer[SILVER]] = 40;
+	gameState.supplyPiles[CardManager::cardIndexer[GOLD]] = 30;
+	gameState.supplyPiles[CardManager::cardIndexer[ESTATE]] = 8;
+	gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] = 8;
+	gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] = 8;
+	gameState.supplyPiles[CardManager::cardIndexer[CURSE]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[WOODCUTTER]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[GARDENS]] = 8;
+	gameState.supplyPiles[CardManager::cardIndexer[FESTIVAL]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[MONEYLENDER]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[SMITHY]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[VILLAGE]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[MARKET]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[LABORATORY]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[WITCH]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[BUREAUCRAT]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[REMODEL]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[THIEF]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -52,8 +52,8 @@ void Game::initialize(int simulations)
 	int currentIndex = 7;
 	for (std::set<int>::iterator iterator = cardIndexes.begin(); iterator != cardIndexes.end(); ++iterator)
 	{
-		cardManager.cardIndexer[*iterator] = currentIndex;
-		cardManager.cardLookupByIndex[currentIndex] = cardManager.cardLookup[*iterator];
+		CardManager::cardIndexer[*iterator] = currentIndex;
+		CardManager::cardLookupByIndex[currentIndex] = CardManager::cardLookup[*iterator];
 		if (*iterator == GARDENS)
 			gameState.supplyPiles[currentIndex] = 12;
 		else
@@ -70,8 +70,8 @@ void Game::initialize(int simulations)
 		gameState.playerStates[index].deck[cardManager.cardIndexer[THIEF]] = 10;
 		gameState.playerStates[index].endTurn();
 	}
-	players[0].initialize( cardManager, simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
-	players[1].initialize( cardManager, simulations, 1);
+	players[0].initialize(simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
+	players[1].initialize(simulations, 1);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }
@@ -92,8 +92,8 @@ void Game::play()
 			Option option;
 			do
 			{
-				std::cout << "Player " << index << " with money:" << gameState.playerStates[players[index].playerStateIndex].calculateCurrentMoney(cardManager) << ", buys:" << gameState.playerStates[players[index].playerStateIndex].buys << ", actions:" << gameState.playerStates[players[index].playerStateIndex].actions << std::endl;
-				std::cout << "Hand: " << gameState.playerStates[players[index].playerStateIndex].printPile(cardManager, gameState.playerStates[players[index].playerStateIndex].hand);
+				std::cout << "Player " << index << " with money:" << gameState.playerStates[players[index].playerStateIndex].calculateCurrentMoney() << ", buys:" << gameState.playerStates[players[index].playerStateIndex].buys << ", actions:" << gameState.playerStates[players[index].playerStateIndex].actions << std::endl;
+				std::cout << "Hand: " << gameState.playerStates[players[index].playerStateIndex].printPile( gameState.playerStates[players[index].playerStateIndex].hand);
 				option = players[index].getNextOption(gameState, moveHistory);
 				int tempIndex = 0;
 				if (option.type == END_TURN)
@@ -107,51 +107,54 @@ void Game::play()
 				}
 				else if (option.type == BUY)
 				{
-					if (gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] <= 0)
-						std::cout << "---ERROR. No more cards in supply - " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					if (gameState.supplyPiles[CardManager::cardIndexer[option.absoluteCardId]] <= 0)
+						std::cout << "---ERROR. No more cards in supply - " << CardManager::cardLookup[option.absoluteCardId].name << std::endl;
 
 					gameState.playerStates[players[index].playerStateIndex].actions = 0;
-					gameState.playerStates[players[index].playerStateIndex].buyCard(cardManager, option.absoluteCardId);
-					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
+					gameState.playerStates[players[index].playerStateIndex].buyCard( option.absoluteCardId);
+					gameState.supplyPiles[CardManager::cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + cardManager.cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + CardManager::cardLookup[move.absoluteCardId].name;
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == TRASH)
 				{
-					if (gameState.playerStates[players[index].playerStateIndex].hand[cardManager.cardIndexer[option.absoluteCardId]] <= 0)
-						std::cout << "---ERROR. Card not in hand - " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					if (gameState.playerStates[players[index].playerStateIndex].hand[CardManager::cardIndexer[option.absoluteCardId]] <= 0)
+						std::cout << "---ERROR. Card not in hand - " << CardManager::cardLookup[option.absoluteCardId].name << std::endl;
 
-					gameState.playerStates[players[index].playerStateIndex].hand[cardManager.cardIndexer[option.absoluteCardId]]--;
-					gameState.trash[cardManager.cardIndexer[option.absoluteCardId]]++;
+					gameState.playerStates[players[index].playerStateIndex].hand[CardManager::cardIndexer[option.absoluteCardId]]--;
+					gameState.trash[CardManager::cardIndexer[option.absoluteCardId]]++;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + cardManager.cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + CardManager::cardLookup[move.absoluteCardId].name;
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == GAIN)
 				{
-					if (gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] <= 0)
-						std::cout << "---ERROR. No more cards in supply - " << cardManager.cardLookup[option.absoluteCardId].name << std::endl;
+					if (gameState.supplyPiles[CardManager::cardIndexer[option.absoluteCardId]] <= 0)
+						std::cout << "---ERROR. No more cards in supply - " << CardManager::cardLookup[option.absoluteCardId].name << std::endl;
 
-					gameState.playerStates[players[index].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] ++;
-					gameState.supplyPiles[cardManager.cardIndexer[option.absoluteCardId]] --;
+					gameState.playerStates[players[index].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] ++;
+					gameState.supplyPiles[CardManager::cardIndexer[option.absoluteCardId]] --;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Gained " + cardManager.cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Gained " + CardManager::cardLookup[move.absoluteCardId].name;
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 
 				}
 				else if (option.type == ACTION)
 				{
-					gameState.playerStates[players[index].playerStateIndex].playCard(cardManager, option.absoluteCardId);
+					gameState.playerStates[players[index].playerStateIndex].playCard( option.absoluteCardId);
 
 					Move move(option, players[index].playerStateIndex);
-					
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
+
 					switch (option.absoluteCardId)
 					{
 					case WOODCUTTER:
@@ -162,10 +165,10 @@ void Game::play()
 						gameState.playerStates[players[index].playerStateIndex].actions += 2;
 						break;
 					case MONEYLENDER:
-						if (cardManager.cardIndexer[COPPER] > 0)
+						if (CardManager::cardIndexer[COPPER] > 0)
 						{
-							gameState.playerStates[players[index].playerStateIndex].hand[cardManager.cardIndexer[COPPER]] --;
-							gameState.trash[cardManager.cardIndexer[COPPER]] ++;
+							gameState.playerStates[players[index].playerStateIndex].hand[CardManager::cardIndexer[COPPER]] --;
+							gameState.trash[CardManager::cardIndexer[COPPER]] ++;
 							gameState.playerStates[players[index].playerStateIndex].spentMoney -= 3; // TODO: Careful here. This is a hack.
 						}
 						break;
@@ -192,10 +195,10 @@ void Game::play()
 							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 							while (tempIndex != players[index].playerStateIndex)
 							{
-								if (gameState.supplyPiles[cardManager.cardIndexer[CURSE]] > 0)
+								if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
 								{
-									gameState.playerStates[players[tempIndex].playerStateIndex].discard[cardManager.cardIndexer[CURSE]]++;
-									gameState.supplyPiles[cardManager.cardIndexer[CURSE]]--;
+									gameState.playerStates[players[tempIndex].playerStateIndex].discard[CardManager::cardIndexer[CURSE]]++;
+									gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
 								}
 								tempIndex++;
 								if (tempIndex >= PLAYERS)
@@ -204,33 +207,33 @@ void Game::play()
 						}
 						break;
 					case BUREAUCRAT:
-						if (gameState.supplyPiles[cardManager.cardIndexer[SILVER]] > 0)
+						if (gameState.supplyPiles[CardManager::cardIndexer[SILVER]] > 0)
 						{
-							gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(cardManager.cardIndexer[SILVER]);
-							gameState.supplyPiles[cardManager.cardIndexer[SILVER]] --;
+							gameState.playerStates[players[index].playerStateIndex].addToTopOfDeck(CardManager::cardIndexer[SILVER]);
+							gameState.supplyPiles[CardManager::cardIndexer[SILVER]] --;
 						}
 						tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 						while (tempIndex != players[index].playerStateIndex)
 						{
-							if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[ESTATE]] > 0)
+							if (gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[ESTATE]] > 0)
 							{
-								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[ESTATE]] --;
-								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[ESTATE]);
+								gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[ESTATE]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(CardManager::cardIndexer[ESTATE]);
 							}
-							else if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[DUCHY]] > 0)
+							else if (gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[DUCHY]] > 0)
 							{
-								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[DUCHY]] --;
-								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[DUCHY]);
+								gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[DUCHY]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(CardManager::cardIndexer[DUCHY]);
 							}
-							else if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[PROVINCE]] > 0)
+							else if (gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[PROVINCE]] > 0)
 							{
-								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[PROVINCE]] --;
-								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[PROVINCE]);
+								gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[PROVINCE]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(CardManager::cardIndexer[PROVINCE]);
 							}
-							else if (gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[GARDENS]] > 0)
+							else if (gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[GARDENS]] > 0)
 							{
-								gameState.playerStates[tempIndex].hand[cardManager.cardIndexer[GARDENS]] --;
-								gameState.playerStates[tempIndex].addToTopOfDeck(cardManager.cardIndexer[GARDENS]);
+								gameState.playerStates[tempIndex].hand[CardManager::cardIndexer[GARDENS]] --;
+								gameState.playerStates[tempIndex].addToTopOfDeck(CardManager::cardIndexer[GARDENS]);
 							}
 							tempIndex++;
 							if (tempIndex >= PLAYERS)
@@ -248,7 +251,7 @@ void Game::play()
 							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 							while (tempIndex != players[index].playerStateIndex)
 							{
-								gameState.playerStates[tempIndex].flipThiefCards(cardManager, move.absoluteCardId, move.absoluteExtraCardId);
+								gameState.playerStates[tempIndex].flipThiefCards( move.absoluteCardId, move.absoluteExtraCardId);
 
 								tempIndex++;
 								if (tempIndex >= PLAYERS)
@@ -261,37 +264,34 @@ void Game::play()
 						std::cout << "Error, no action card found" << std::endl;
 						break;
 					}
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + cardManager.cardLookup[move.absoluteCardId].name;
-					moveHistory.push_back(move);
-					std::cout << move.moveString << std::endl << std::endl;
 
 				}
 				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
 				{
 					int otherPlayer = (index == 0) ? 1 : 0;
-					gameState.trash[cardManager.cardIndexer[option.absoluteCardId]] ++;
-					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] --;
+					gameState.trash[CardManager::cardIndexer[option.absoluteCardId]] ++;
+					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] --;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + cardManager.cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + CardManager::cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == THIEFGAIN) // TODO: Support for more than two players
 				{
 					int otherPlayer = (index == 0) ? 1 : 0;
-					gameState.playerStates[players[index].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] ++;
-					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] --;
+					gameState.playerStates[players[index].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] ++;
+					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] --;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Stole " + cardManager.cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Stole " + CardManager::cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
 				
 			} while (option.type != END_TURN);
 			
-			logString += std::to_string(static_cast<long long>(gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints(cardManager)));
+			logString += std::to_string(static_cast<long long>(gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints()));
 			logString += ":";
 			
 		}
@@ -310,11 +310,11 @@ void Game::writeToFile(std::string outputFileName)
 	file << "----------" << std::endl;
 	for (int index = 0; index < PLAYERS; index++)
 	{
-		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints(cardManager) << std::endl;
-		file << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints(cardManager) << std::endl;
+		std::cout << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints() << std::endl;
+		file << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints() << std::endl;
 	}
 	file << logString << std::endl;
-	file << gameState.turnCounter - 1 << ":" << "2:" << gameState.playerStates[players[0].playerStateIndex].calculateVictoryPoints(cardManager) << std::endl;
+	file << gameState.turnCounter - 1 << ":" << "2:" << gameState.playerStates[players[0].playerStateIndex].calculateVictoryPoints() << std::endl;
 
 	file.close();
 }

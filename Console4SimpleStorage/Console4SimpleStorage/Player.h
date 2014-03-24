@@ -11,9 +11,8 @@ public:
 	int AIType;
 	int playerStateIndex;
 	Option getNextOption(GameState& currentState, std::vector<Move> moveHistory);
-	CardManager cardManager;
 	
-	void initialize( CardManager& cardManagerRef, int simulations, int AIType2);
+	void initialize(int simulations, int AIType2);
 
 	Player();
 	

@@ -1,5 +1,9 @@
 #include "CardManager.h"
 
+std::unordered_map<int, int> CardManager::cardIndexer;
+std::unordered_map<int, Card> CardManager::cardLookup;
+std::unordered_map<int, Card> CardManager::cardLookupByIndex;
+std::map<std::string, int> CardManager::cardLookupCharToIndex;
 
 void CardManager::initialize()
 {
