@@ -2,7 +2,7 @@
 #include <array>
 #include "UCTMonteCarlo.h"
 
-#define NODESTOALLOCATE 12000000
+#define NODESTOALLOCATE 20000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
@@ -526,6 +526,12 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			newGainNode->playerPlaying = currentlyPlaying;
 			newGainNode->flags = NOFLAG;
 		}
+		if (node->childrenPtrs.size() <= 0)
+		{
+			node->flags = NOFLAG;
+			createAllChildren(node);
+			return;
+		}
 	}
 	else if (node->flags == REMODELFLAG)
 	{
@@ -535,6 +541,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		if (possibleGains.size() == 0)
 		{
 			node->flags = NOFLAG;
+			createAllChildren(node);
+			return;
 		}
 		for (int i = 0; i < possibleGains.size(); i++)
 		{

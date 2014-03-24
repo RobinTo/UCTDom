@@ -67,6 +67,7 @@ void Game::initialize(int simulations)
 		// Set initial deck.
 		gameState.playerStates[index].deck[cardManager.cardIndexer[COPPER]] = 7;
 		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
+		gameState.playerStates[index].deck[cardManager.cardIndexer[THIEF]] = 10;
 		gameState.playerStates[index].endTurn();
 	}
 	players[0].initialize( cardManager, simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
@@ -150,10 +151,7 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].playCard(cardManager, option.absoluteCardId);
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + cardManager.cardLookup[move.absoluteCardId].name;
-					moveHistory.push_back(move);
-					std::cout << move.moveString << std::endl << std::endl;
-
+					
 					switch (option.absoluteCardId)
 					{
 					case WOODCUTTER:
@@ -263,6 +261,10 @@ void Game::play()
 						std::cout << "Error, no action card found" << std::endl;
 						break;
 					}
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + cardManager.cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
+
 				}
 				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
 				{
