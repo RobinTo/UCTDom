@@ -150,9 +150,6 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].playCard( option.absoluteCardId);
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name;
-					moveHistory.push_back(move);
-					std::cout << move.moveString << std::endl << std::endl;
 
 					switch (option.absoluteCardId)
 					{
@@ -263,6 +260,12 @@ void Game::play()
 						std::cout << "Error, no action card found" << std::endl;
 						break;
 					}
+
+
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
+
 				}
 				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
 				{
@@ -314,5 +317,23 @@ void Game::writeToFile(std::string outputFileName)
 	file << logString << std::endl;
 	file << gameState.turnCounter - 1 << ":" << "2:" << gameState.playerStates[players[0].playerStateIndex].calculateVictoryPoints() << std::endl;
 
+	file.close();
+}
+
+void Game::writeMoveHistoryToFile(std::string outputFileName)
+{
+	std::ofstream file;
+	file.open(outputFileName, std::ios::app);
+	file << "----------" << std::endl;
+	// Write moves
+	for (std::vector<Move>::iterator it = moveHistory.begin(); it != moveHistory.end(); ++it)
+	{
+		file << it->moveString << std::endl;
+	}
+	// Write end scores
+	for (int index = 0; index < PLAYERS; index++)
+	{
+		file << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints() << std::endl;
+	}
 	file.close();
 }

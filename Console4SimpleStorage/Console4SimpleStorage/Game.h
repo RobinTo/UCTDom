@@ -21,6 +21,7 @@ public:
 	void initialize( int simulations);
 	void play();
 	void writeToFile(std::string outputFileName);
+	void writeMoveHistoryToFile(std::string outputFileName);
 
 	Game();
 };
