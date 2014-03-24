@@ -4,12 +4,8 @@ Player::Player()
 {
 }
 
-void Player::initialize( CardManager& cardManagerRef, int simulations, int AIType2)
+void Player::initialize(int simulations, int AIType2)
 {
-	//uct.setNodes(emptyNodes);
-	cardManager = cardManagerRef;
-	uct.cardManager = cardManagerRef;
-	bmai.cardManager = cardManagerRef;
 	numSims = simulations;
 	AIType = AIType2;
 }

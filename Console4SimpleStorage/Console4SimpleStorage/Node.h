@@ -23,18 +23,15 @@ public:
 	double probability;
 	int sum;
 	Option opt;
-	//int propagateCounter;
 	std::vector<Node*> childrenPtrs;
 	Node* parentPtr;
 
 	int flags;
 
 	void setOption(Option o);
-	//void setState(GameState gameState);
 	Node();
 	~Node();
 	void reset();
 
-	//void findMoves(CardManager cardManager);
 	void printSelf(std::ofstream& file);
 };

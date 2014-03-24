@@ -23,73 +23,73 @@ PlayerState::~PlayerState()
 {
 }
 
-void PlayerState::buyCard(CardManager& cardManager, int absoluteCardId)
+void PlayerState::buyCard(int absoluteCardId)
 {
 	buys--;											
-	discard[cardManager.cardIndexer[absoluteCardId]] += 1;
-	spentMoney += cardManager.cardLookup[absoluteCardId].cost;
+	discard[CardManager::cardIndexer[absoluteCardId]] += 1;
+	spentMoney += CardManager::cardLookup[absoluteCardId].cost;
 	spentMoney = spentMoney;
 
 }
 
-void PlayerState::playCard(CardManager& cardManager, int absoluteCardId)
+void PlayerState::playCard(int absoluteCardId)
 {
 	actions--;
-	inPlay[cardManager.cardIndexer[absoluteCardId]]++;
-	hand[cardManager.cardIndexer[absoluteCardId]]--;
+	inPlay[CardManager::cardIndexer[absoluteCardId]]++;
+	hand[CardManager::cardIndexer[absoluteCardId]]--;
 }
 
-std::string PlayerState::printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY])
+std::string PlayerState::printPile(const int(&cardPile)[INSUPPLY])
 {
 	std::string textStringToReturn = "";
 	for (int index = 0; index < INSUPPLY; index++)
 	{
 		if (cardPile[index] > 0)
-			textStringToReturn += cardManager.cardLookupByIndex[index].name + ":" + std::to_string(cardPile[index]) + " ";
+			textStringToReturn += CardManager::cardLookupByIndex[index].name + ":" + std::to_string(cardPile[index]) + " ";
 	}
 	
 	return textStringToReturn + "\r\n";
 
 }
 
-int PlayerState::calculateVictoryPoints(CardManager& cardManager)
+int PlayerState::calculateVictoryPoints()
 {
 	int victoryPoints = 0;
-	victoryPoints += 1 * deck[cardManager.cardIndexer[ESTATE]];
-	victoryPoints += 3 * deck[cardManager.cardIndexer[DUCHY]];
-	victoryPoints += 6 * deck[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * deck[cardManager.cardIndexer[CURSE]];
-	victoryPoints += 1 * deck[cardManager.cardIndexer[GARDENS]] * (countCards() / 10);
+	victoryPoints += 1 * deck[CardManager::cardIndexer[ESTATE]];
+	victoryPoints += 3 * deck[CardManager::cardIndexer[DUCHY]];
+	victoryPoints += 6 * deck[CardManager::cardIndexer[PROVINCE]];
+	victoryPoints -= 1 * deck[CardManager::cardIndexer[CURSE]];
+	victoryPoints += 1 * deck[CardManager::cardIndexer[GARDENS]] * (countCards() / 10);
 
-	victoryPoints += 1 * hand[cardManager.cardIndexer[ESTATE]];
-	victoryPoints += 3 * hand[cardManager.cardIndexer[DUCHY]];
-	victoryPoints += 6 * hand[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * hand[cardManager.cardIndexer[CURSE]];
-	victoryPoints += 1 * hand[cardManager.cardIndexer[GARDENS]] * (countCards()/10);
+	victoryPoints += 1 * hand[CardManager::cardIndexer[ESTATE]];
+	victoryPoints += 3 * hand[CardManager::cardIndexer[DUCHY]];
+	victoryPoints += 6 * hand[CardManager::cardIndexer[PROVINCE]];
+	victoryPoints -= 1 * hand[CardManager::cardIndexer[CURSE]];
+	victoryPoints += 1 * hand[CardManager::cardIndexer[GARDENS]] * (countCards()/10);
 
-	victoryPoints += 1 * discard[cardManager.cardIndexer[ESTATE]];
-	victoryPoints += 3 * discard[cardManager.cardIndexer[DUCHY]];
-	victoryPoints += 6 * discard[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * discard[cardManager.cardIndexer[CURSE]];
-	victoryPoints += 1 * discard[cardManager.cardIndexer[GARDENS]] * (countCards() / 10);
+	victoryPoints += 1 * discard[CardManager::cardIndexer[ESTATE]];
+	victoryPoints += 3 * discard[CardManager::cardIndexer[DUCHY]];
+	victoryPoints += 6 * discard[CardManager::cardIndexer[PROVINCE]];
+	victoryPoints -= 1 * discard[CardManager::cardIndexer[CURSE]];
+	victoryPoints += 1 * discard[CardManager::cardIndexer[GARDENS]] * (countCards() / 10);
 
-	victoryPoints += 1 * inPlay[cardManager.cardIndexer[ESTATE]];
-	victoryPoints += 3 * inPlay[cardManager.cardIndexer[DUCHY]];
-	victoryPoints += 6 * inPlay[cardManager.cardIndexer[PROVINCE]];
-	victoryPoints -= 1 * inPlay[cardManager.cardIndexer[CURSE]];
-	victoryPoints += 1 * inPlay[cardManager.cardIndexer[GARDENS]] * (countCards() / 10);
+	victoryPoints += 1 * inPlay[CardManager::cardIndexer[ESTATE]];
+	victoryPoints += 3 * inPlay[CardManager::cardIndexer[DUCHY]];
+	victoryPoints += 6 * inPlay[CardManager::cardIndexer[PROVINCE]];
+	victoryPoints -= 1 * inPlay[CardManager::cardIndexer[CURSE]];
+	victoryPoints += 1 * inPlay[CardManager::cardIndexer[GARDENS]] * (countCards() / 10);
 	return victoryPoints;
 }
 
-int PlayerState::calculateCurrentMoney(CardManager& cardManager)
+int PlayerState::calculateCurrentMoney()
 {
 	int currentMoney = 0;
-	currentMoney += hand[cardManager.cardIndexer[COPPER]];
-	currentMoney += hand[cardManager.cardIndexer[SILVER]] * 2;
-	currentMoney += hand[cardManager.cardIndexer[GOLD]] * 3;
-	currentMoney += inPlay[cardManager.cardIndexer[WOODCUTTER]] * 2;
-	currentMoney += inPlay[cardManager.cardIndexer[FESTIVAL]] * 2;
-	currentMoney += inPlay[cardManager.cardIndexer[MARKET]] * 1;
+	currentMoney += hand[CardManager::cardIndexer[COPPER]];
+	currentMoney += hand[CardManager::cardIndexer[SILVER]] * 2;
+	currentMoney += hand[CardManager::cardIndexer[GOLD]] * 3;
+	currentMoney += inPlay[CardManager::cardIndexer[WOODCUTTER]] * 2;
+	currentMoney += inPlay[CardManager::cardIndexer[FESTIVAL]] * 2;
+	currentMoney += inPlay[CardManager::cardIndexer[MARKET]] * 1;
 
 	currentMoney -= spentMoney;
 	return currentMoney;
@@ -192,7 +192,7 @@ void PlayerState::addToTopOfDeck(int cardIndex)
 	deck[cardIndex]++;
 }
 
-int PlayerState::flipThiefCards(CardManager cardManager, int& absoluteCardId, int& extraCardId)
+int PlayerState::flipThiefCards(int& absoluteCardId, int& extraCardId)
 {
 	// For each card to be flipped
 	for (int index = 0; index < 2; index++)
@@ -203,9 +203,9 @@ int PlayerState::flipThiefCards(CardManager cardManager, int& absoluteCardId, in
 			deck[topOfDeckAsIndex.top()]--;
 			discard[topOfDeckAsIndex.top()]++;
 			if (index == 0)
-				absoluteCardId = cardManager.cardLookupByIndex[topOfDeckAsIndex.top()].id;
+				absoluteCardId = CardManager::cardLookupByIndex[topOfDeckAsIndex.top()].id;
 			else
-				extraCardId = cardManager.cardLookupByIndex[topOfDeckAsIndex.top()].id;
+				extraCardId = CardManager::cardLookupByIndex[topOfDeckAsIndex.top()].id;
 			topOfDeckAsIndex.pop();
 		}
 		else
@@ -222,9 +222,9 @@ int PlayerState::flipThiefCards(CardManager cardManager, int& absoluteCardId, in
 
 			int cardIndex = pickRandom(deck);
 			if (index == 0)
-				absoluteCardId = cardManager.cardLookupByIndex[cardIndex].id;
+				absoluteCardId = CardManager::cardLookupByIndex[cardIndex].id;
 			else
-				extraCardId = cardManager.cardLookupByIndex[cardIndex].id;
+				extraCardId = CardManager::cardLookupByIndex[cardIndex].id;
 			deck[cardIndex]--;
 			discard[cardIndex]++;
 		}

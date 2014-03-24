@@ -39,7 +39,7 @@
 #define WORKSHOP	31
 
 #define TOTALCARDS	32
-#define INSUPPLY	19 // Plus one
+#define INSUPPLY	19 // Plus two
 
 
 struct Card
@@ -58,10 +58,10 @@ struct Card
 class CardManager
 {
 public:
-	std::unordered_map<int, int> cardIndexer;				//deck[cardIndexer[COPPER]]
-	std::unordered_map<int, Card> cardLookup;				//cardLookup[7] returns adventurer
-	std::unordered_map<int, Card> cardLookupByIndex;		//cardLookupByIndex[7] returns whatever is at index 7
-	std::map<std::string, int> cardLookupCharToIndex;		//cardLookupCharToInt['b'] returns whatever index the card with 'b' as charId has.
+	static std::unordered_map<int, int> cardIndexer;				//deck[cardIndexer[COPPER]]
+	static std::unordered_map<int, Card> cardLookup;				//cardLookup[7] returns adventurer
+	static std::unordered_map<int, Card> cardLookupByIndex;			//cardLookupByIndex[7] returns whatever is at index 7
+	static std::map<std::string, int> cardLookupCharToIndex;		//cardLookupCharToInt['b'] returns whatever index the card with 'b' as charId has.
 
 	void initialize();
 };

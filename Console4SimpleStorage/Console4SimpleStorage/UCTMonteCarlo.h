@@ -15,7 +15,6 @@ class UCTMonteCarlo
 public:
 	UCTMonteCarlo();
 	~UCTMonteCarlo();
-	CardManager cardManager;
 	Option doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
 private:
 	Node* nodeAllocationPtr;

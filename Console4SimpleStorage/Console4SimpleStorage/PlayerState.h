@@ -19,15 +19,15 @@ public:
 	int actions;
 	int spentMoney;
 
-	void buyCard(CardManager& cardManager, int absoluteCardId);
-	void playCard(CardManager& cardManager, int absoluteCardId);
+	void buyCard(int absoluteCardId);
+	void playCard(int absoluteCardId);
 	void drawCards(int cards);
 	void endTurn();
 	void addToTopOfDeck(int cardIndex);
-	int calculateVictoryPoints(CardManager& cardManager);
-	int calculateCurrentMoney(CardManager& cardManager);
-	int flipThiefCards(CardManager cardManager, int& absoluteCardId, int& extraCardId);
-	std::string printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY]);
+	int calculateVictoryPoints();
+	int calculateCurrentMoney();
+	int flipThiefCards(int& absoluteCardId, int& extraCardId);
+	std::string printPile(const int(&cardPile)[INSUPPLY]);
 	PlayerState();
 	~PlayerState();
 	void shuffle();

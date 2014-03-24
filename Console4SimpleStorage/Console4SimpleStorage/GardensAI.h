@@ -6,8 +6,6 @@
 
 class GardensAI{
 public:
-	CardManager cardManager;
-
 	GardensAI();
 	~GardensAI();
 	Option getNextOption(GameState gameState, int playerIndex);

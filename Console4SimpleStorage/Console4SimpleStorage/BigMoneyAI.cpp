@@ -19,26 +19,26 @@ Option BigMoneyAI::getNextOption(GameState gameState, int playerIndex)
 		return o;
 	}
 
-	int money = gameState.playerStates[playerIndex].calculateCurrentMoney(cardManager);
+	int money = gameState.playerStates[playerIndex].calculateCurrentMoney();
 	Option o;
 	o.type = BUY;
 	if (gameState.turnCounter > 15)
 	{
-		if (money >= 8 && gameState.supplyPiles[cardManager.cardIndexer[PROVINCE]] > 0)
+		if (money >= 8 && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] > 0)
 		{
-			o.absoluteCardId = cardManager.cardLookup[PROVINCE].id;
+			o.absoluteCardId = CardManager::cardLookup[PROVINCE].id;
 		}
-		else if (money >= 4 && gameState.supplyPiles[cardManager.cardIndexer[GARDENS]] > 0)
+		else if (money >= 4 && gameState.supplyPiles[CardManager::cardIndexer[GARDENS]] > 0)
 		{
-			o.absoluteCardId = cardManager.cardLookup[GARDENS].id;
+			o.absoluteCardId = CardManager::cardLookup[GARDENS].id;
 		}
-		else if (money >= 5 && gameState.supplyPiles[cardManager.cardIndexer[DUCHY]] > 0)
+		else if (money >= 5 && gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] > 0)
 		{
-			o.absoluteCardId = cardManager.cardLookup[DUCHY].id;
+			o.absoluteCardId = CardManager::cardLookup[DUCHY].id;
 		}
-		else if (money >= 2 && gameState.supplyPiles[cardManager.cardIndexer[ESTATE]] > 0)
+		else if (money >= 2 && gameState.supplyPiles[CardManager::cardIndexer[ESTATE]] > 0)
 		{
-			o.absoluteCardId = cardManager.cardLookup[ESTATE].id;
+			o.absoluteCardId = CardManager::cardLookup[ESTATE].id;
 		}
 		else
 		{
@@ -48,13 +48,13 @@ Option BigMoneyAI::getNextOption(GameState gameState, int playerIndex)
 	}
 	else
 	{
-		if (money >= 6 && gameState.supplyPiles[cardManager.cardIndexer[GOLD]] > 0)
+		if (money >= 6 && gameState.supplyPiles[CardManager::cardIndexer[GOLD]] > 0)
 		{
-			o.absoluteCardId = cardManager.cardLookup[GOLD].id;
+			o.absoluteCardId = CardManager::cardLookup[GOLD].id;
 		}
-		else if (money >= 3 && gameState.supplyPiles[cardManager.cardIndexer[SILVER]] > 0)
+		else if (money >= 3 && gameState.supplyPiles[CardManager::cardIndexer[SILVER]] > 0)
 		{
-			o.absoluteCardId = cardManager.cardLookup[SILVER].id;
+			o.absoluteCardId = CardManager::cardLookup[SILVER].id;
 		}
 		else
 		{
