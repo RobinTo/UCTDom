@@ -246,14 +246,20 @@ void Game::play()
 						if (PLAYERS > 1)
 						{
 							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+							Move thiefMove(option, players[index].playerStateIndex);
 							while (tempIndex != players[index].playerStateIndex)
 							{
-								gameState.playerStates[tempIndex].flipThiefCards( move.absoluteCardId, move.absoluteExtraCardId);
+								gameState.playerStates[tempIndex].flipThiefCards(thiefMove.absoluteCardId, thiefMove.absoluteExtraCardId);
 
 								tempIndex++;
 								if (tempIndex >= PLAYERS)
 									tempIndex = 0;
 							}
+
+							
+							thiefMove.moveString = "Player" + std::to_string(thiefMove.player) + "-Flipped " + CardManager::cardLookup[thiefMove.absoluteCardId].name + " and " + CardManager::cardLookup[thiefMove.absoluteExtraCardId].name;
+							moveHistory.push_back(thiefMove);
+							std::cout << thiefMove.moveString << std::endl << std::endl;
 						}
 
 						break;
@@ -261,6 +267,10 @@ void Game::play()
 						std::cout << "Error, no action card found" << std::endl;
 						break;
 					}
+
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + CardManager::cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
 				{
