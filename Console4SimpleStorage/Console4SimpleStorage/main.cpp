@@ -131,12 +131,18 @@ int main()
 	else
 		run1Thread();*/
 
-	remove("log.txt");
+	
 	for (int counter = 0; counter < GAMES; counter++)
 	{
+		std::string logFile = "log" + std::to_string(counter) + ".txt";
+		std::string moveHistoryFile = "moveHistory" + std::to_string(counter) + ".txt";
+		remove(logFile.c_str());
+		remove(moveHistoryFile.c_str());
+
 		Game* game = new Game;
 		playGame(*game);
-		game->writeToFile("log.txt");
+		game->writeToFile(logFile);
+		game->writeMoveHistoryToFile(moveHistoryFile);
 		delete game;
 	}
 
