@@ -9,6 +9,7 @@
 // Flags
 #define NOFLAG			0
 #define REMODELFLAG		1
+#define THIEFDRAW		2
 
 class Node
 {

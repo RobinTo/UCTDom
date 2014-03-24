@@ -6,10 +6,13 @@
 #define DRAW		3
 #define TRASH		4
 #define GAIN		5
+#define THIEFTHRASH 6
+#define THIEFGAIN	7
 
 class Option
 {
 public:
 	int type;
 	int absoluteCardId;
+	int absoluteExtraCardId;
 };

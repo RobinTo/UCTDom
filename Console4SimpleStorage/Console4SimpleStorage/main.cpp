@@ -6,7 +6,7 @@
 
 #include "Game.h"
 
-#define SIMULATIONS 10000
+#define SIMULATIONS 100
 #define NODES		8
 #define GAMES		1000
 #define MULTITHREAD 0

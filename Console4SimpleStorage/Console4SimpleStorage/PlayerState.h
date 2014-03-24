@@ -30,9 +30,9 @@ public:
 	std::string printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY]);
 	PlayerState();
 	~PlayerState();
+	void shuffle();
 private:
 	int countCards();
 	int countCards(const int (&cardPile)[INSUPPLY]);
 	int pickRandom(const int (&cardPile)[INSUPPLY]);
-	void shuffle();
 };
