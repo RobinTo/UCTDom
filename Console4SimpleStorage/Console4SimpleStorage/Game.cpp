@@ -36,9 +36,10 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[cardManager.cardIndexer[VILLAGE]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[MARKET]] = 10;
 	gameState.supplyPiles[cardManager.cardIndexer[LABORATORY]] = 10;
-	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[WITCH]] = 0;
 	gameState.supplyPiles[cardManager.cardIndexer[BUREAUCRAT]] = 0;
 	gameState.supplyPiles[cardManager.cardIndexer[REMODEL]] = 10;
+	gameState.supplyPiles[cardManager.cardIndexer[THIEF]] = 10;
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -83,7 +84,6 @@ void Game::play()
 		// For each player, play turn
 		for (int index = 0; index < PLAYERS; index++)
 		{
-			
 			if (gameState.gameFinished())
 				break;
 			// While player's turn is not finished, keep playing
@@ -242,11 +242,50 @@ void Game::play()
 						// Could add some security, that next option must be a trash option (if more cards in hand)
 						// XOR could add that instead of asking getnextoption, we ask, get trashoption.
 						break;
+					case THIEF:
+						// Do the following for all enemy players
+						if (PLAYERS > 1)
+						{
+							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+							while (tempIndex != players[index].playerStateIndex)
+							{
+								gameState.playerStates[tempIndex].flipThiefCards(cardManager, move.absoluteCardId, move.extraCardId);
+
+								tempIndex++;
+								if (tempIndex >= PLAYERS)
+									tempIndex = 0;
+							}
+						}
+
+						break;
 					default:
 						std::cout << "Error, no action card found" << std::endl;
 						break;
 					}
 				}
+				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
+				{
+					int otherPlayer = (index == 0) ? 1 : 0;
+					gameState.trash[cardManager.cardIndexer[option.absoluteCardId]] ++;
+					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] --;
+
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + cardManager.cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
+				}
+				else if (option.type == THIEFGAIN) // TODO: Support for more than two players
+				{
+					int otherPlayer = (index == 0) ? 1 : 0;
+					gameState.playerStates[players[index].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] ++;
+					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[cardManager.cardIndexer[option.absoluteCardId]] --;
+
+					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Stole " + cardManager.cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
+				}
+				
 			} while (option.type != END_TURN);
 			
 			logString += std::to_string(static_cast<long long>(gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints(cardManager)));

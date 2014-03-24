@@ -26,6 +26,7 @@ public:
 	void addToTopOfDeck(int cardIndex);
 	int calculateVictoryPoints(CardManager& cardManager);
 	int calculateCurrentMoney(CardManager& cardManager);
+	int flipThiefCards(CardManager cardManager, int& absoluteCardId, int& extraCardId);
 	std::string printPile(CardManager& cardManager, const int(&cardPile)[INSUPPLY]);
 	PlayerState();
 	~PlayerState();

@@ -53,7 +53,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	//printTree(gameState.turnCounter, UCTPlayer, rootNode);
+	printTree(gameState.turnCounter, UCTPlayer, rootNode);
 	resetNodes();
 	return bestOption;
 }
@@ -874,3 +874,4 @@ unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long lon
 // TODO: Only one cardManager
 // TODO: Possibly use const & instead of copying gamestates, where we do not change them. To increase speed.
 // TODO: Accomodate for all cards
+// TODO: Support for not drawing more cards, if both discard and deck is empty.

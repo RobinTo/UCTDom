@@ -191,3 +191,43 @@ void PlayerState::addToTopOfDeck(int cardIndex)
 	topOfDeckAsIndex.push(cardIndex);
 	deck[cardIndex]++;
 }
+
+int PlayerState::flipThiefCards(CardManager cardManager, int& absoluteCardId, int& extraCardId)
+{
+	// For each card to be flipped
+	for (int index = 0; index < 2; index++)
+	{
+		// If there are any top cards, flip them first
+		if (topOfDeckAsIndex.size() > 0)
+		{
+			deck[topOfDeckAsIndex.top()]--;
+			discard[topOfDeckAsIndex.top()]++;
+			if (index == 0)
+				absoluteCardId = cardManager.cardLookupByIndex[topOfDeckAsIndex.top()].id;
+			else
+				extraCardId = cardManager.cardLookupByIndex[topOfDeckAsIndex.top()].id;
+			topOfDeckAsIndex.pop();
+		}
+		else
+		{
+			// If deck is empty, shuffle
+			if (countCards(deck) == 0)
+			{
+				// If discard too is empty, then don't draw more cards.
+				if (countCards(discard) == 0)
+					return index;
+				else
+					shuffle();
+			}
+
+			int cardIndex = pickRandom(deck);
+			if (index == 0)
+				absoluteCardId = cardManager.cardLookupByIndex[cardIndex].id;
+			else
+				extraCardId = cardManager.cardLookupByIndex[cardIndex].id;
+			deck[cardIndex]--;
+			discard[cardIndex]++;
+		}
+	}
+	return 2;
+}
