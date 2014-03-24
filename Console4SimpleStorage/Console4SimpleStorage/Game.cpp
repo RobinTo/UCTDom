@@ -250,7 +250,7 @@ void Game::play()
 							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
 							while (tempIndex != players[index].playerStateIndex)
 							{
-								gameState.playerStates[tempIndex].flipThiefCards(cardManager, move.absoluteCardId, move.extraCardId);
+								gameState.playerStates[tempIndex].flipThiefCards(cardManager, move.absoluteCardId, move.absoluteExtraCardId);
 
 								tempIndex++;
 								if (tempIndex >= PLAYERS)

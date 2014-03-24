@@ -6,7 +6,7 @@
 #define DRAW		3
 #define TRASH		4
 #define GAIN		5
-#define THIEFTHRASH 6
+#define THIEFTRASH 6
 #define THIEFGAIN	7
 
 class Option

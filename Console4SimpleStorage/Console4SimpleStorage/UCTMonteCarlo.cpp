@@ -2,7 +2,7 @@
 #include <array>
 #include "UCTMonteCarlo.h"
 
-#define NODESTOALLOCATE 20000
+#define NODESTOALLOCATE 12000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
@@ -395,7 +395,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		createDrawNodes(node, currentState, currentlyPlaying, 5, false);
 
 	}	// If action and a card which wants to create new nodes beneath.
-	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY || node->opt.absoluteCardId == WITCH || node->opt.absoluteCardId == || node->opt.absoluteCardId == THIEF))
+	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY || node->opt.absoluteCardId == WITCH || node->opt.absoluteCardId == REMODEL || node->opt.absoluteCardId == THIEF))
 	{
 		switch (node->opt.absoluteCardId)
 		{
@@ -440,7 +440,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			else
 				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
 			newNode->currentState.trash[cardManager.cardIndexer[GOLD]]++;
-			newNode->opt.type = THIEFTHRASH;
+			newNode->opt.type = THIEFTRASH;
 			newNode->opt.absoluteCardId = cardManager.cardLookup[GOLD].id;
 			newNode->parentPtr = node;
 			node->childrenPtrs.push_back(newNode);
@@ -472,7 +472,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			else
 				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
 			newNode->currentState.trash[cardManager.cardIndexer[SILVER]]++;
-			newNode->opt.type = THIEFTHRASH;
+			newNode->opt.type = THIEFTRASH;
 			newNode->opt.absoluteCardId = cardManager.cardLookup[SILVER].id;
 			newNode->parentPtr = node;
 			node->childrenPtrs.push_back(newNode);
@@ -504,7 +504,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			else
 				node->currentState.playerStates[enemyPlayer].discard[cardManager.cardIndexer[node->opt.absoluteCardId]]++;
 			newNode->currentState.trash[cardManager.cardIndexer[COPPER]]++;
-			newNode->opt.type = THIEFTHRASH;
+			newNode->opt.type = THIEFTRASH;
 			newNode->opt.absoluteCardId = cardManager.cardLookup[COPPER].id;
 			newNode->parentPtr = node;
 			node->childrenPtrs.push_back(newNode);
