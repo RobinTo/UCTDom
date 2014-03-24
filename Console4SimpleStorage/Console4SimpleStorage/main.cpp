@@ -8,7 +8,7 @@
 
 #define SIMULATIONS 100
 #define NODES		8
-#define GAMES		1000
+#define GAMES		1
 #define MULTITHREAD 0
 
 void playGame(Game& game)

@@ -11,7 +11,10 @@ void CardManager::initialize()
 	thief, militia, spy, cellar, chapel, chancellor, workshop, feast, remodel, throneRoom, library, mine, moat,
 	councilRoom, moneylender, adventurer, bureaucrat, witch,													
 	market, laboratory, festival, village, smithy, woodcutter,													
-	gardens;	
+	gardens,
+	nullcard;	
+
+	nullcard.cost = -1; nullcard.name = "NoCard"; nullcard.id = -1; nullcard.charId = "z";
 
 	copper.cost = 0; copper.name = "Copper"; copper.id = COPPER; copper.charId = "0";
 
@@ -97,6 +100,7 @@ void CardManager::initialize()
 	cardIndexer[BUREAUCRAT] = 17;
 	cardIndexer[THIEF] = 18;
 
+	cardLookup[-1] = nullcard;
 	cardLookup[COPPER] = copper;
 	cardLookup[SILVER] = silver;
 	cardLookup[GOLD] = gold;

@@ -22,7 +22,6 @@ void Node::reset()
 	sum = 0;
 	probability = 0;
 	value = 0;
-	//propagateCounter = 0;
 	parentPtr = nullptr;
 	playerPlaying = -1;
 	opt.absoluteCardId = -1;
@@ -55,7 +54,10 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 		text += std::to_string(id);
 
 		// Append self
-		if (opt.absoluteCardId == COPPER)
+		text += " Type:" + std::to_string(opt.type);
+		text += CardManager::cardLookup[opt.absoluteCardId].name;
+
+		/*if (opt.absoluteCardId == COPPER)
 			text += "Copper";
 		else if (opt.absoluteCardId == SILVER)
 			text += "Silver";
@@ -90,16 +92,25 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 		else if (opt.type == DRAW)
 			text += "DrawCards";
 		else
-			text += "EndTurn";
+			text += "EndTurn";*/
 		
-		text += "C:" + std::to_string(currentState.playerStates[playerPlaying].hand[COPPER]) +
+		for (int index = 0; index < INSUPPLY; index++)
+		{
+			int cardsOfType = currentState.playerStates[playerPlaying].hand[index];
+			if (cardsOfType > 0)
+			{
+				text += " " + CardManager::cardLookupByIndex[index].name + ":" + std::to_string(cardsOfType);
+			}
+		}
+
+		/*text += "C:" + std::to_string(currentState.playerStates[playerPlaying].hand[COPPER]) +
 			", E:" + std::to_string(currentState.playerStates[playerPlaying].hand[ESTATE]) +
 			", S:" + std::to_string(currentState.playerStates[playerPlaying].hand[SILVER]) +
 			", D:" + std::to_string(currentState.playerStates[playerPlaying].hand[DUCHY]) +
 			", G:" + std::to_string(currentState.playerStates[playerPlaying].hand[GOLD]) +
 			", P:" + std::to_string(currentState.playerStates[playerPlaying].hand[PROVINCE]) +
 			", Cur:" + std::to_string(currentState.playerStates[playerPlaying].hand[CURSE]);
-
+*/
 		// Append visited
 		text += " Vis:" + std::to_string(visited);
 
@@ -122,51 +133,61 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 		text += std::to_string((*iterator)->id);
 
 		// Append child text
-		if ((*iterator)->opt.absoluteCardId == COPPER)
-			text += "Copper";
-		else if ((*iterator)->opt.absoluteCardId == SILVER)
-			text += "Silver";
-		else if ((*iterator)->opt.absoluteCardId == GOLD)
-			text += "Gold";
-		else if ((*iterator)->opt.absoluteCardId == ESTATE)
-			text += "Estate";
-		else if ((*iterator)->opt.absoluteCardId == DUCHY)
-			text += "Duchy";
-		else if ((*iterator)->opt.absoluteCardId == PROVINCE)
-			text += "Province";
-		else if ((*iterator)->opt.absoluteCardId == CURSE)
-			text += "Curse";
-		else if ((*iterator)->opt.absoluteCardId == MARKET)
-			text += "Market";
-		else if ((*iterator)->opt.absoluteCardId == VILLAGE)
-			text += "Village";
-		else if ((*iterator)->opt.absoluteCardId == LABORATORY)
-			text += "Laboratory";
-		else if ((*iterator)->opt.absoluteCardId == SMITHY)
-			text += "Smithy";
-		else if ((*iterator)->opt.absoluteCardId == WOODCUTTER)
-			text += "Woodcutter";
-		else if ((*iterator)->opt.absoluteCardId == WITCH)
-			text += "Witch";
-		else if ((*iterator)->opt.absoluteCardId == MONEYLENDER)
-			text += "Moneylender";
-		else if ((*iterator)->opt.absoluteCardId == FESTIVAL)
-			text += "Festival";
-		else if ((*iterator)->opt.absoluteCardId == GARDENS)
-			text += "Gardens";
-		else if ((*iterator)->opt.type == DRAW)
-			text += "DrawCards";
-		else
-			text += "EndTurn";
-		
-		text += "C:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[COPPER]) +
+		text += " Type:" + std::to_string((*iterator)->opt.type);
+		text += CardManager::cardLookup[(*iterator)->opt.absoluteCardId].name;
+		//if ((*iterator)->opt.absoluteCardId == COPPER)
+		//	text += "Copper";
+		//else if ((*iterator)->opt.absoluteCardId == SILVER)
+		//	text += "Silver";
+		//else if ((*iterator)->opt.absoluteCardId == GOLD)
+		//	text += "Gold";
+		//else if ((*iterator)->opt.absoluteCardId == ESTATE)
+		//	text += "Estate";
+		//else if ((*iterator)->opt.absoluteCardId == DUCHY)
+		//	text += "Duchy";
+		//else if ((*iterator)->opt.absoluteCardId == PROVINCE)
+		//	text += "Province";
+		//else if ((*iterator)->opt.absoluteCardId == CURSE)
+		//	text += "Curse";
+		//else if ((*iterator)->opt.absoluteCardId == MARKET)
+		//	text += "Market";
+		//else if ((*iterator)->opt.absoluteCardId == VILLAGE)
+		//	text += "Village";
+		//else if ((*iterator)->opt.absoluteCardId == LABORATORY)
+		//	text += "Laboratory";
+		//else if ((*iterator)->opt.absoluteCardId == SMITHY)
+		//	text += "Smithy";
+		//else if ((*iterator)->opt.absoluteCardId == WOODCUTTER)
+		//	text += "Woodcutter";
+		//else if ((*iterator)->opt.absoluteCardId == WITCH)
+		//	text += "Witch";
+		//else if ((*iterator)->opt.absoluteCardId == MONEYLENDER)
+		//	text += "Moneylender";
+		//else if ((*iterator)->opt.absoluteCardId == FESTIVAL)
+		//	text += "Festival";
+		//else if ((*iterator)->opt.absoluteCardId == GARDENS)
+		//	text += "Gardens";
+		//else if ((*iterator)->opt.type == DRAW)
+		//	text += "DrawCards";
+		//else
+		//	text += "EndTurn";
+
+		/*text += "C:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[COPPER]) +
 			", E:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[ESTATE]) +
 			", S:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[SILVER]) +
 			", D:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[DUCHY]) +
 			", G:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[GOLD]) +
 			", P:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[PROVINCE]) +
 			", Cur:" + std::to_string((*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[CURSE]);
-
+*/
+		for (int index = 0; index < INSUPPLY; index++)
+		{
+			int cardsOfType = (*iterator)->currentState.playerStates[playerPlaying].hand[index];
+			if (cardsOfType > 0)
+			{
+				text += " " + CardManager::cardLookupByIndex[index].name + ":" + std::to_string(cardsOfType);
+			}
+		}
 		
 		// Append visited
 		text += " Vis:" + std::to_string((*iterator)->visited);

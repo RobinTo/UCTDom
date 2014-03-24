@@ -50,6 +50,8 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 	for (int i = 0; i < maxSimulations; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
+		/*if (i > 7 && i < 20)
+			printTree(i, UCTPlayer, rootNode);*/
 	}
 
 	// Return best option
@@ -1023,6 +1025,7 @@ UCTMonteCarlo::UCTMonteCarlo()
 	handedOutNodes = 0;
 	for (int counter = 0; counter < NODESTOALLOCATE; counter++)
 	{
+		nodeAllocationPtr[counter].id = counter;
 		nodeAllocationPtr[counter].reset();
 	}
 }

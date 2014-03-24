@@ -67,7 +67,6 @@ void Game::initialize(int simulations)
 		// Set initial deck.
 		gameState.playerStates[index].deck[cardManager.cardIndexer[COPPER]] = 7;
 		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
-		gameState.playerStates[index].deck[cardManager.cardIndexer[THIEF]] = 10;
 		gameState.playerStates[index].endTurn();
 	}
 	players[0].initialize(simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
@@ -151,6 +150,9 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].playCard( option.absoluteCardId);
 
 					Move move(option, players[index].playerStateIndex);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name;
+					moveHistory.push_back(move);
+					std::cout << move.moveString << std::endl << std::endl;
 
 					switch (option.absoluteCardId)
 					{
@@ -246,7 +248,7 @@ void Game::play()
 						if (PLAYERS > 1)
 						{
 							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
-							Move thiefMove(option, players[index].playerStateIndex);
+							Move thiefMove(option, players[tempIndex].playerStateIndex);
 							while (tempIndex != players[index].playerStateIndex)
 							{
 								gameState.playerStates[tempIndex].flipThiefCards(thiefMove.absoluteCardId, thiefMove.absoluteExtraCardId);
@@ -256,7 +258,6 @@ void Game::play()
 									tempIndex = 0;
 							}
 
-							
 							thiefMove.moveString = "Player" + std::to_string(thiefMove.player) + "-Flipped " + CardManager::cardLookup[thiefMove.absoluteCardId].name + " and " + CardManager::cardLookup[thiefMove.absoluteExtraCardId].name;
 							moveHistory.push_back(thiefMove);
 							std::cout << thiefMove.moveString << std::endl << std::endl;
@@ -268,9 +269,6 @@ void Game::play()
 						break;
 					}
 
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + CardManager::cardLookup[move.absoluteCardId].name;
-					moveHistory.push_back(move);
-					std::cout << move.moveString << std::endl << std::endl;
 				}
 				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
 				{
