@@ -2,7 +2,7 @@
 #include <array>
 #include "UCTMonteCarlo.h"
 
-#define NODESTOALLOCATE 20000
+#define NODESTOALLOCATE 12000000
 
 Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
@@ -33,9 +33,10 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			rootNode->opt.type = ACTION;
 			rootNode->opt.absoluteCardId = THIEF;
 		}
-		else if (lastMove.player != UCTPlayer && moveHistory[size - 2].absoluteCardId == THIEF && lastMove.type == DRAW)
+		else if (lastMove.player != UCTPlayer && moveHistory[size - 2].absoluteCardId == THIEF && lastMove.type == THIEFFLIP)
 		{
 			rootNode->flags = THIEFDRAW;
+			rootNode->opt.type = THIEFFLIP;
 			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
 			rootNode->opt.absoluteExtraCardId = lastMove.absoluteExtraCardId;
 		}
@@ -828,7 +829,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 			parentNode->childrenPtrs.push_back(newNodePtr);
 			newNodePtr->parentPtr = parentNode;
 			newNodePtr->playerPlaying = currentlyPlaying;
-			newNodePtr->opt.type = DRAW;
+			newNodePtr->opt.type = THIEFFLIP;
 			newNodePtr->flags = THIEFDRAW;
 			newNodePtr->probability = probabilities[drawCounter];
 		}
