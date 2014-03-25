@@ -13,7 +13,7 @@ public:
 	int playerStateIndex;
 	Option getNextOption(GameState& currentState, std::vector<Move> moveHistory);
 	
-	void initialize(int simulations, int AIType2);
+	void initialize(int AIType2);
 
 	Player();
 	
@@ -23,5 +23,4 @@ private:
 	UCTMonteCarlo uct;
 	BigMoneyAI bmai;
 	HumanInputAI humanAI;
-	int numSims;
 };

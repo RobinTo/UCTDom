@@ -13,16 +13,38 @@ Game::Game()
 
 }
 
-void Game::initialize(int simulations)
+void Game::initialize()
 {
 	moveHistory.reserve(1000);
 	srand((unsigned int)time(NULL));
-	gameState.initialize(PLAYERS);
+	gameState.initialize();
 	cardManager.initialize();
 
 	std::vector<Card> cardsInGame;
-
-
+	if (BUREAUCRATINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[BUREAUCRAT]);
+	if (FESTIVALINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[FESTIVAL]);
+	if (GARDENSINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[GARDENS]);
+	if (LABORATORYINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[LABORATORY]);
+	if (MARKETINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[MARKET]);
+	if (MONEYLENDERINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[MONEYLENDER]);
+	if (REMODELINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[REMODEL]);
+	if (SMITHYINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[SMITHY]);
+	if (THIEFINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[THIEF]);
+	if (VILLAGEINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[VILLAGE]);
+	if (WITCHINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[WITCH]);
+	if (WOODCUTTERINGAME)
+		cardsInGame.push_back(CardManager::cardLookup[WOODCUTTER]);
 
 	// Supply
 	gameState.supplyPiles[CardManager::cardIndexer[COPPER]] = 46;
@@ -32,18 +54,29 @@ void Game::initialize(int simulations)
 	gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] = 8;
 	gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[CardManager::cardIndexer[CURSE]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[WOODCUTTER]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[GARDENS]] = 8;
-	gameState.supplyPiles[CardManager::cardIndexer[FESTIVAL]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[MONEYLENDER]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[SMITHY]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[VILLAGE]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[MARKET]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[LABORATORY]] = 10;
+	// Initialization to zero
+	gameState.supplyPiles[CardManager::cardIndexer[WOODCUTTER]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[GARDENS]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[FESTIVAL]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[MONEYLENDER]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[SMITHY]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[VILLAGE]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[MARKET]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[LABORATORY]] = 0;
 	gameState.supplyPiles[CardManager::cardIndexer[WITCH]] = 0;
 	gameState.supplyPiles[CardManager::cardIndexer[BUREAUCRAT]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[REMODEL]] = 10;
-	gameState.supplyPiles[CardManager::cardIndexer[THIEF]] = 10;
+	gameState.supplyPiles[CardManager::cardIndexer[REMODEL]] = 0;
+	gameState.supplyPiles[CardManager::cardIndexer[THIEF]] = 0;
+
+
+	for (std::vector<Card>::iterator it = cardsInGame.begin(); it != cardsInGame.end(); ++it)
+	{
+		if (it->id != GARDENS)
+			gameState.supplyPiles[CardManager::cardIndexer[it->id]] = 10;
+		else
+			gameState.supplyPiles[CardManager::cardIndexer[it->id]] = 8;
+	}
+
 
 	// Randomize ten cards for the supply
 	/*std::set<int> cardIndexes;
@@ -73,8 +106,9 @@ void Game::initialize(int simulations)
 		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
 		gameState.playerStates[index].endTurn();
 	}
-	players[0].initialize(simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
-	players[1].initialize(simulations, 2);
+
+	players[0].initialize(0);	// TODO: More dynamic/flexible way of setting playerAI
+	players[1].initialize(2);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }

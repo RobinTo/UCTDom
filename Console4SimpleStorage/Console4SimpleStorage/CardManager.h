@@ -4,6 +4,8 @@
 #include <map>
 #include <unordered_map>
 #include <vector>
+#include "Configurations.h"
+
 
 #define COPPER		0
 #define SILVER		1
@@ -39,7 +41,7 @@
 #define WORKSHOP	31
 
 #define TOTALCARDS	32
-#define INSUPPLY	19 // Plus two
+#define INSUPPLY	19
 
 
 struct Card

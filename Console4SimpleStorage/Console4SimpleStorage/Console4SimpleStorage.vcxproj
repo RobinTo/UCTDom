@@ -113,6 +113,7 @@
   <ItemGroup>
     <ClInclude Include="BigMoneyAI.h" />
     <ClInclude Include="CardManager.h" />
+    <ClInclude Include="Configurations.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="GardensAI.h" />

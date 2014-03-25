@@ -4,9 +4,8 @@ Player::Player()
 {
 }
 
-void Player::initialize(int simulations, int AIType2)
+void Player::initialize(int AIType2)
 {
-	numSims = simulations;
 	AIType = AIType2;
 }
 
@@ -15,7 +14,7 @@ Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHist
 {
 	Option option;
 	if (AIType == 0)
-		option = uct.doUCT(numSims, playerStateIndex, currentState, moveHistory);
+		option = uct.doUCT(playerStateIndex, currentState, moveHistory);
 	else if (AIType == 1)
 		option = bmai.getNextOption(currentState, playerStateIndex);
 	else if (AIType == 2)

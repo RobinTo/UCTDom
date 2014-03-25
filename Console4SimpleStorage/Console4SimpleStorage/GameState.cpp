@@ -10,7 +10,7 @@ GameState::~GameState()
 	std::vector<PlayerState>().swap(playerStates);
 }
 
-void GameState::initialize(int players)
+void GameState::initialize()
 {
 	for (int index = 0; index < INSUPPLY; index++)
 	{
@@ -18,10 +18,11 @@ void GameState::initialize(int players)
 		trash[index] = 0;
 	}
 
-	for (int index = 0; index < players; index++)
+	for (int index = 0; index < PLAYERS; index++)
 	{
 		playerStates.push_back(PlayerState());
 	}
+
 }
 
 bool GameState::gameFinished()
@@ -36,7 +37,7 @@ bool GameState::gameFinished()
 		}
 	}
 
-	if (supplyPiles[PROVINCE] == 0 || emptyCounter >= 5 || turnCounter >= 40+1) // Check for game end
+	if (supplyPiles[CardManager::cardIndexer[PROVINCE]] == 0 || emptyCounter >= SUPPLYPILESTOGO || turnCounter >= MAXTURNS+1) // Check for game end
 		return true;
 	else
 		return false;

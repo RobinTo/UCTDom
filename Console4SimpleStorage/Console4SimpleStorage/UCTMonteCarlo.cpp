@@ -2,9 +2,9 @@
 #include <array>
 #include "UCTMonteCarlo.h"
 
-#define NODESTOALLOCATE 2000000
 
-Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+
+Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
@@ -48,7 +48,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 		return rootNode->childrenPtrs.at(0)->opt;
 
 	// Perform UCT
-	for (int i = 0; i < maxSimulations; i++)
+	for (int i = 0; i < SIMULATIONS; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
 	}

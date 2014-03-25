@@ -2,12 +2,6 @@
 
 #include <vector>
 #include "Player.h"
-//#include "GameState.h"
-//#include "CardManager.h"
-//#include "Move.h"
-
-#define PLAYERS		2
-
 
 class Game
 {
@@ -18,7 +12,7 @@ public:
 	std::string logString;
 	std::vector<Move> moveHistory;
 
-	void initialize( int simulations);
+	void initialize();
 	void play();
 	void writeToFile(std::string outputFileName);
 	void writeMoveHistoryToFile(std::string outputFileName);
