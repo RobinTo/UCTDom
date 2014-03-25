@@ -3,6 +3,7 @@
 #include <vector>
 #include "UCTMonteCarlo.h"
 #include "BigMoneyAI.h"
+#include "HumanInputAI.h"
 //#include "Move.h"
 
 class Player
@@ -21,5 +22,6 @@ public:
 private:
 	UCTMonteCarlo uct;
 	BigMoneyAI bmai;
+	HumanInputAI humanAI;
 	int numSims;
 };

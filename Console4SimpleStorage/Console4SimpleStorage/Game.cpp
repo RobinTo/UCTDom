@@ -67,11 +67,10 @@ void Game::initialize(int simulations)
 		// Set initial deck.
 		gameState.playerStates[index].deck[cardManager.cardIndexer[COPPER]] = 7;
 		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
-		gameState.playerStates[index].deck[cardManager.cardIndexer[THIEF]] = 10;
 		gameState.playerStates[index].endTurn();
 	}
 	players[0].initialize(simulations, 0);	// TODO: More dynamic/flexible way of setting playerAI
-	players[1].initialize(simulations, 1);
+	players[1].initialize(simulations, 2);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }
