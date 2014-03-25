@@ -20,6 +20,10 @@ void Game::initialize(int simulations)
 	gameState.initialize(PLAYERS);
 	cardManager.initialize();
 
+	std::vector<Card> cardsInGame;
+
+
+
 	// Supply
 	gameState.supplyPiles[CardManager::cardIndexer[COPPER]] = 46;
 	gameState.supplyPiles[CardManager::cardIndexer[SILVER]] = 40;
