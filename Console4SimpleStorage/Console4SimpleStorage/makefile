@@ -1,9 +1,9 @@
-CC=g++
-CXXFLAGS=-g -std=c++11 -Wall -pedantic
+CXX=g++
+CXXFLAGS= -std=c++0x -Wall -pedantic
 LDFLAGS=
-SOURCES=main.cpp BigMoneyAI.cpp CardManager.cpp Game.cpp GameState.cpp Move.cpp Node.cpp Player.cpp PlayerState.cpp UCTMonteCarlo.cpp
+SOURCES=main.cpp BigMoneyAI.cpp CardManager.cpp Game.cpp GameState.cpp HumanInputAI.cpp Move.cpp Node.cpp Player.cpp PlayerState.cpp UCTMonteCarlo.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=uct
+EXECUTABLE=dominionuct
 
 all: $(SOURCES) $(EXECUTABLE)
 	

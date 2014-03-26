@@ -21,7 +21,7 @@ public:
 	bool isRoot;
 	double value;
 	double probability;
-	int sum;
+	double sum;
 	Option opt;
 	std::vector<Node*> childrenPtrs;
 	Node* parentPtr;

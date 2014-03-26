@@ -127,7 +127,6 @@ int main()
 		run4Threads();
 	else
 		run1Thread();*/
-
 	
 	for (int counter = 0; counter < GAMES; counter++)
 	{

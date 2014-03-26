@@ -192,10 +192,6 @@ void Game::play()
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name;
-					moveHistory.push_back(move);
-					std::cout << move.moveString << std::endl << std::endl;
-
 					switch (option.absoluteCardId)
 					{
 					case WOODCUTTER:

@@ -149,24 +149,24 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 			gameState.turnCounter++;
 	}
 
+	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
 		if (UCTPlayer == 0)
 		{
-			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints() ? 2 : -2;
-			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
-			propagate(node, score);
+			score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
+			score +=((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? 1 : 0);
 		}
 		else
 		{
-			double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints() ? 2 : -2;
-			//double score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
-			propagate(node, score);
+			score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
+			score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? 1 : 0);
 		}
-			
 	}
 	else
-		propagate(node, gameState.playerStates[UCTPlayer].calculateVictoryPoints());
+		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
+
+	propagate(node, score);
 
 }
 
@@ -174,7 +174,7 @@ void UCTMonteCarlo::propagate(Node* node, double score)
 {
 	node->sum += score;
 	node->visited++;
-	node->value = (double)node->sum / (double)node->visited;
+	node->value = double(node->sum) / double(node->visited);
 	if (node->opt.type == DRAW)
 		node->value *= node->probability;
 	if (!node->isRoot)
@@ -188,7 +188,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
 	{
-		double value = (double)root->childrenPtrs.at(i)->value + 2 * sqrt(log((double)root->visited / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
+		double value = double(root->childrenPtrs.at(i)->value) + 0.8 * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
 
 		if (value >= bestValue || bestValue == 0)
 		{
