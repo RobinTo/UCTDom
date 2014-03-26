@@ -14,10 +14,9 @@ public:
 	std::vector<PlayerState> playerStates;
 	int supplyPiles[INSUPPLY];
 	int trash[INSUPPLY];
-
 	int turnCounter;
 
-	void initialize(int players);
+	void initialize();
 	bool gameFinished();
 
 	GameState();

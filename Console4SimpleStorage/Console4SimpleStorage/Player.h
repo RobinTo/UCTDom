@@ -3,6 +3,7 @@
 #include <vector>
 #include "UCTMonteCarlo.h"
 #include "BigMoneyAI.h"
+#include "HumanInputAI.h"
 //#include "Move.h"
 
 class Player
@@ -12,7 +13,7 @@ public:
 	int playerStateIndex;
 	Option getNextOption(GameState& currentState, std::vector<Move> moveHistory);
 	
-	void initialize(int simulations, int AIType2);
+	void initialize(int AIType2);
 
 	Player();
 	
@@ -21,5 +22,5 @@ public:
 private:
 	UCTMonteCarlo uct;
 	BigMoneyAI bmai;
-	int numSims;
+	HumanInputAI humanAI;
 };

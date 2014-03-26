@@ -8,6 +8,7 @@
 #define GAIN		5
 #define THIEFTRASH	6
 #define THIEFGAIN	7
+#define THIEFFLIP	8
 
 class Option
 {

@@ -7,7 +7,6 @@
 #include "Node.h"
 #include "Move.h"
 #include "CardManager.h"
-//#include "Option.h"
 
 
 class UCTMonteCarlo
@@ -15,7 +14,7 @@ class UCTMonteCarlo
 public:
 	UCTMonteCarlo();
 	~UCTMonteCarlo();
-	Option doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
+	Option doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
 private:
 	Node* nodeAllocationPtr;
 	int handedOutNodes;

@@ -2,9 +2,9 @@
 #include <array>
 #include "UCTMonteCarlo.h"
 
-#define NODESTOALLOCATE 20000
 
-Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+
+Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
@@ -33,9 +33,10 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 			rootNode->opt.type = ACTION;
 			rootNode->opt.absoluteCardId = THIEF;
 		}
-		else if (lastMove.player != UCTPlayer && moveHistory[size - 2].absoluteCardId == THIEF && lastMove.type == DRAW)
+		else if (lastMove.player != UCTPlayer && moveHistory[size - 2].absoluteCardId == THIEF && lastMove.type == THIEFFLIP)
 		{
 			rootNode->flags = THIEFDRAW;
+			rootNode->opt.type = THIEFFLIP;
 			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
 			rootNode->opt.absoluteExtraCardId = lastMove.absoluteExtraCardId;
 		}
@@ -47,7 +48,7 @@ Option UCTMonteCarlo::doUCT(int maxSimulations, int UCTPlayer, GameState gameSta
 		return rootNode->childrenPtrs.at(0)->opt;
 
 	// Perform UCT
-	for (int i = 0; i < maxSimulations; i++)
+	for (int i = 0; i < SIMULATIONS; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
 		/*if (i > 7 && i < 20)
@@ -830,7 +831,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 			parentNode->childrenPtrs.push_back(newNodePtr);
 			newNodePtr->parentPtr = parentNode;
 			newNodePtr->playerPlaying = currentlyPlaying;
-			newNodePtr->opt.type = DRAW;
+			newNodePtr->opt.type = THIEFFLIP;
 			newNodePtr->flags = THIEFDRAW;
 			newNodePtr->probability = probabilities[drawCounter];
 		}
@@ -1069,7 +1070,6 @@ unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long lon
 // TODO: Score on the last turn is wrong, because the UCT simulates on too many turns, after moving of turncounter incrementation.
 // TODO: Bureaucrat cheats!
 // TODO: Visited:1 Cases are weird
-// TODO: Only one cardManager
 // TODO: Possibly use const & instead of copying gamestates, where we do not change them. To increase speed.
 // TODO: Accomodate for all cards
 // TODO: Support for not drawing more cards, if both discard and deck is empty.

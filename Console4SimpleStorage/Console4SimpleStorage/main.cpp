@@ -6,14 +6,11 @@
 
 #include "Game.h"
 
-#define SIMULATIONS 100
-#define NODES		8
-#define GAMES		1
-#define MULTITHREAD 0
+
 
 void playGame(Game& game)
 {
-	game.initialize( SIMULATIONS);
+	game.initialize();
 	game.play();
 	std::cout << "Game over" << std::endl;
 }
