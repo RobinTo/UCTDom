@@ -1,5 +1,6 @@
 // Testing
 #define GAMES				1000
+#define PRINTTREE			0
 
 // Dominion
 #define PLAYERS				2
@@ -23,3 +24,4 @@
 // UCT
 #define NODESTOALLOCATE		2300000
 #define SIMULATIONS			10000
+#define C					0.8

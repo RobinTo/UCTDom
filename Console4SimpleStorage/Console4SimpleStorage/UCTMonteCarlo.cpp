@@ -71,7 +71,8 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	printTree(gameState.turnCounter, UCTPlayer, rootNode);
+	if (PRINTTREE)
+		printTree(gameState.turnCounter, UCTPlayer, rootNode);
 	resetNodes();
 	return bestOption;
 }
@@ -188,7 +189,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
 	{
-		double value = double(root->childrenPtrs.at(i)->value) + 0.8 * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited)); // CCCCCCCCC
+		double value = double(root->childrenPtrs.at(i)->value) + C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));
 
 		if (value >= bestValue || bestValue == 0)
 		{
@@ -857,6 +858,8 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 			newNodePtr->playerPlaying = currentlyPlaying;
 			newNodePtr->opt.absoluteCardId = -2;
 			newNodePtr->opt.type = DRAW;
+			newNodePtr->visited = 1;
+			newNodePtr->value = probabilities[drawCounter];
 			newNodePtr->probability = probabilities[drawCounter];
 		}
 	}
