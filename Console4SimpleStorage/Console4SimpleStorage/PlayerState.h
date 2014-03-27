@@ -31,8 +31,8 @@ public:
 	PlayerState();
 	~PlayerState();
 	void shuffle();
-private:
 	int countCards();
-	int countCards(const int (&cardPile)[INSUPPLY]);
+	int countCards(const int(&cardPile)[INSUPPLY]);
+private:
 	int pickRandom(const int (&cardPile)[INSUPPLY]);
 };

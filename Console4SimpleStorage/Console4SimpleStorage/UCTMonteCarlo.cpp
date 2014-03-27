@@ -1009,19 +1009,51 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 double UCTMonteCarlo::cardHeuristic(GameState currentState, int playerIndex, int absoluteCardId)
 {
 	double score = 0;
+	PlayerState currentPlayerState = currentState.playerStates[playerIndex];
+	PlayerState enemyPlayerState = currentState.playerStates[playerIndex == 0 ? 1 : 0];
 	switch (absoluteCardId)
 	{
 	case BUREAUCRAT:
+		score -= currentState.turnCounter / 5;
+		score += enemyPlayerState.countCards(ESTATE);
+		score += enemyPlayerState.countCards(DUCHY);
+		score += enemyPlayerState.countCards(PROVINCE);
+		if (GARDENSINGAME)
+			score += currentPlayerState.countCards(GARDENS);
 		break;
 	case FESTIVAL:
+		score -= currentState.turnCounter / 10;
+		score += currentPlayerState.calculateCurrentMoney();
+		if (SMITHYINGAME)
+			score += currentPlayerState.countCards(SMITHY);
+		if (WITCHINGAME)
+			score += currentPlayerState.countCards(WITCH);
+		if (LABORATORYINGAME)
+			score += currentPlayerState.countCards(LABORATORY);
+		if (GARDENSINGAME)
+			score += currentPlayerState.countCards(GARDENS);
 		break;
 	case GARDENS:
+		score += floor( (currentPlayerState.countCards() + currentPlayerState.buys) / 10);
+		score += currentState.turnCounter / 10;
 		break;
 	case LABORATORY:
+		score -= currentState.turnCounter / 10;
+		if (VILLAGEINGAME)
+			score += currentPlayerState.countCards(VILLAGE);
+		if (FESTIVALINGAME)
+			score += currentPlayerState.countCards(FESTIVAL);
+		if (MARKETINGAME)
+			score += currentPlayerState.countCards(MARKET);
 		break;
 	case MARKET:
+		score -= currentState.turnCounter / 10;
+		if (GARDENSINGAME)
+			score += currentPlayerState.countCards(GARDENS);
 		break;
 	case MONEYLENDER:
+		score -= currentState.turnCounter;
+		score += currentPlayerState.countCards(COPPER);
 		break;
 	case REMODEL:
 		break;
