@@ -31,6 +31,7 @@ public:
 	PlayerState();
 	~PlayerState();
 	void shuffle();
+	int countCardType(int absoluteCardId);
 	int countCards();
 	int countCards(const int(&cardPile)[INSUPPLY]);
 private:
