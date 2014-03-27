@@ -1064,8 +1064,33 @@ double UCTMonteCarlo::cardHeuristic(GameState currentState, int playerIndex, int
 	case VILLAGE:
 		break;
 	case WITCH:
-		if (currentState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
-			score = 40;
+		// Add 50 score, simply for being a 5-cost card
+		score += 50;
+
+		// Add 10 score for each +2 actions card
+		int plusTwoActionCards = 0;
+		if (VILLAGEINGAME)
+			plusTwoActionCards += currentPlayerState.countCardType(VILLAGE);
+		if (FESTIVALINGAME)
+			plusTwoActionCards += currentPlayerState.countCardType(FESTIVAL);
+		score += 10 * plusTwoActionCards;
+
+		// Add 5 score for each +1 actions card
+		int plusOneActionCards = 0;
+		if (MARKETINGAME)
+			plusOneActionCards += currentPlayerState.countCardType(MARKET);
+		if (LABORATORYINGAME)
+			plusOneActionCards += currentPlayerState.countCardType(LABORATORY);
+		score += 5 * plusOneActionCards;
+
+		// It is generally a bad idea to buy a Witch, if you have 5 or more.
+		if (currentPlayerState.countCardType(WITCH) >= 5)
+			score -= 100;
+
+		// If there are more than 5 curses, then a Witch can be good.
+		if (currentState.supplyPiles[CardManager::cardIndexer[CURSE]] > 5)
+			score += 40;
+
 		break;
 	case WOODCUTTER:
 		break;

@@ -231,3 +231,13 @@ int PlayerState::flipThiefCards(int& absoluteCardId, int& extraCardId)
 	}
 	return 2;
 }
+
+int PlayerState::countCardType(int absoluteCardId)
+{
+	int cardCount = 0;
+	cardCount += deck[CardManager::cardIndexer[absoluteCardId]];
+	cardCount += hand[CardManager::cardIndexer[absoluteCardId]];
+	cardCount += inPlay[CardManager::cardIndexer[absoluteCardId]];
+	cardCount += discard[CardManager::cardIndexer[absoluteCardId]];
+	return cardCount;
+}
