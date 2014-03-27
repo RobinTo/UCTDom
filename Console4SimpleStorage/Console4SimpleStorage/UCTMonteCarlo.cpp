@@ -177,7 +177,12 @@ void UCTMonteCarlo::propagate(Node* node, double score)
 	node->visited++;
 	node->value = double(node->sum) / double(node->visited);
 	if (node->opt.type == DRAW)
-		node->value *= node->probability;
+	{
+		if (INCLUDESCOREINDRAW)
+			node->value *= node->probability;
+		else
+			node->value = node->probability;
+	}
 	if (!node->isRoot)
 		propagate(node->parentPtr, score);
 }
@@ -984,13 +989,13 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 	{
 		std::vector<Option> buyOptions = getBuyOptions(&gameState, getCurrentMoney(&gameState, playerIndex));
 		cardToReturn.absoluteCardId = -1;
-		highestCost = 0;
+		double highestScore = 0;
 
 		for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
 		{
-			if (CardManager::cardLookup[(*iter).absoluteCardId].cost > highestCost || highestCost == 0 && CardManager::cardLookup[(*iter).absoluteCardId].name != "Curse")
+			if (cardHeuristic(gameState, playerIndex, (*iter).absoluteCardId) > highestScore || highestScore == 0 && CardManager::cardLookup[(*iter).absoluteCardId].name != "Curse")
 			{
-				highestCost = CardManager::cardLookup[(*iter).absoluteCardId].cost;
+				highestScore = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 				cardToReturn.absoluteCardId = (*iter).absoluteCardId;
 				cardToReturn.type = BUY;
 			}
@@ -999,6 +1004,48 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 
 	return cardToReturn;	// -1 if there were no buys or actions available.
 }
+
+
+double UCTMonteCarlo::cardHeuristic(GameState currentState, int playerIndex, int absoluteCardId)
+{
+	double score = 0;
+	switch (absoluteCardId)
+	{
+	case BUREAUCRAT:
+		break;
+	case FESTIVAL:
+		break;
+	case GARDENS:
+		break;
+	case LABORATORY:
+		break;
+	case MARKET:
+		break;
+	case MONEYLENDER:
+		break;
+	case REMODEL:
+		break;
+	case SMITHY:
+		break;
+	case THIEF:
+		break;
+	case VILLAGE:
+		break;
+	case WITCH:
+		if (currentState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
+			score = 40;
+		break;
+	case WOODCUTTER:
+		break;
+	default:
+		break;
+
+	}
+
+
+	return score;
+}
+
 
 // Tree printing
 void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr)
