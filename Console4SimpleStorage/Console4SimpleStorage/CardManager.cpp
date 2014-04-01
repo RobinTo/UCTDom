@@ -14,71 +14,71 @@ void CardManager::initialize()
 	gardens,
 	nullcard;	
 
-	nullcard.cost = -1; nullcard.name = "NoCard"; nullcard.id = -1; nullcard.charId = "z";
+	nullcard.cost = -1; nullcard.name = "NoCard"; nullcard.id = -1; nullcard.charId = "z"; nullcard.cardType = -1;
 
-	copper.cost = 0; copper.name = "Copper"; copper.id = COPPER; copper.charId = "0";
+	copper.cost = 0; copper.name = "Copper"; copper.id = COPPER; copper.charId = "0"; copper.cardType = TREASURECARD;
 
-	silver.cost = 3; silver.name = "Silver"; silver.id = SILVER; silver.charId = "1"; 
+	silver.cost = 3; silver.name = "Silver"; silver.id = SILVER; silver.charId = "1"; silver.cardType = TREASURECARD;
 
-	gold.cost = 6; gold.name = "Gold"; gold.id = GOLD; gold.charId = "2";
+	gold.cost = 6; gold.name = "Gold"; gold.id = GOLD; gold.charId = "2"; gold.cardType = TREASURECARD;
 
-	estate.cost = 2; estate.name = "Estate"; estate.id = ESTATE; estate.charId = "3";
+	estate.cost = 2; estate.name = "Estate"; estate.id = ESTATE; estate.charId = "3"; estate.cardType = VICTORYCARD;
 
-	duchy.cost = 5; duchy.name = "Duchy"; duchy.id = DUCHY; duchy.charId = "4";
+	duchy.cost = 5; duchy.name = "Duchy"; duchy.id = DUCHY; duchy.charId = "4"; duchy.cardType = VICTORYCARD;
 
-	province.cost = 8; province.name = "Province"; province.id = PROVINCE; province.charId = "5";
+	province.cost = 8; province.name = "Province"; province.id = PROVINCE; province.charId = "5"; province.cardType = VICTORYCARD;
 
-	curse.cost = 0; curse.name = "Curse"; curse.id = CURSE; curse.charId = "6";
+	curse.cost = 0; curse.name = "Curse"; curse.id = CURSE; curse.charId = "6"; curse.cardType = CURSECARD;
 
-	thief.cost = 4;	thief.name = "Thief"; thief.id = THIEF; thief.charId = "7";
+	thief.cost = 4;	thief.name = "Thief"; thief.id = THIEF; thief.charId = "7"; thief.cardType = ACTIONCARD;
 
-	militia.cost = 4; militia.name = "Militia"; militia.id = MILITIA; militia.charId = "8";
+	militia.cost = 4; militia.name = "Militia"; militia.id = MILITIA; militia.charId = "8"; militia.cardType = ACTIONCARD;
 
-	spy.cost = 4; spy.name = "Spy"; spy.id = SPY; spy.charId = "9";
+	spy.cost = 4; spy.name = "Spy"; spy.id = SPY; spy.charId = "9"; spy.cardType = ACTIONCARD;
 
-	cellar.cost = 2; cellar.name = "Cellar"; cellar.id = CELLAR; cellar.charId = "a";
+	cellar.cost = 2; cellar.name = "Cellar"; cellar.id = CELLAR; cellar.charId = "a"; cellar.cardType = ACTIONCARD;
 
-	chapel.cost = 2; chapel.name = "Chapel"; chapel.id = CHAPEL; chapel.charId = "b";
+	chapel.cost = 2; chapel.name = "Chapel"; chapel.id = CHAPEL; chapel.charId = "b"; chapel.cardType = ACTIONCARD;
 	 
-	chancellor.cost = 3; chancellor.name = "Chancellor"; chancellor.id = CHANCELLOR;  chancellor.charId = "c";
+	chancellor.cost = 3; chancellor.name = "Chancellor"; chancellor.id = CHANCELLOR;  chancellor.charId = "c"; chancellor.cardType = ACTIONCARD;
 
-	workshop.cost = 3; workshop.name = "Workshop"; workshop.id = WORKSHOP; workshop.charId = "d";
+	workshop.cost = 3; workshop.name = "Workshop"; workshop.id = WORKSHOP; workshop.charId = "d"; workshop.cardType = ACTIONCARD;
 
-	feast.cost = 4; feast.name = "Feast"; feast.id = FEAST; feast.charId = "e";
+	feast.cost = 4; feast.name = "Feast"; feast.id = FEAST; feast.charId = "e"; feast.cardType = ACTIONCARD;
 
-	remodel.cost = 4; remodel.name = "Remodel"; remodel.id = REMODEL; remodel.charId = "f";
+	remodel.cost = 4; remodel.name = "Remodel"; remodel.id = REMODEL; remodel.charId = "f"; remodel.cardType = ACTIONCARD;
 
-	throneRoom.cost = 4; throneRoom.name = "Throne Room"; throneRoom.id = THRONEROOM; throneRoom.charId = "g";
+	throneRoom.cost = 4; throneRoom.name = "Throne Room"; throneRoom.id = THRONEROOM; throneRoom.charId = "g"; throneRoom.cardType = ACTIONCARD;
 
-	library.cost = 5; library.name = "Library"; library.id = LIBRARY; library.charId = "h";
+	library.cost = 5; library.name = "Library"; library.id = LIBRARY; library.charId = "h"; library.cardType = ACTIONCARD;
 
-	mine.cost = 5; mine.name = "Mine"; mine.id = MINE; mine.charId = "i";
+	mine.cost = 5; mine.name = "Mine"; mine.id = MINE; mine.charId = "i"; mine.cardType = ACTIONCARD;
 
-	moat.cost = 2; moat.name = "Moat"; moat.id = MOAT; moat.charId = "j";
+	moat.cost = 2; moat.name = "Moat"; moat.id = MOAT; moat.charId = "j"; moat.cardType = ACTIONCARD;
 
-	councilRoom.cost = 5; councilRoom.name = "Council Room"; councilRoom.id = COUNCILROOM; councilRoom.charId = "k";
+	councilRoom.cost = 5; councilRoom.name = "Council Room"; councilRoom.id = COUNCILROOM; councilRoom.charId = "k"; councilRoom.cardType = ACTIONCARD;
 
-	moneylender.cost = 4; moneylender.name = "Moneylender"; moneylender.id = MONEYLENDER; moneylender.charId = "j";
+	moneylender.cost = 4; moneylender.name = "Moneylender"; moneylender.id = MONEYLENDER; moneylender.charId = "j"; moneylender.cardType = ACTIONCARD;
 
-	adventurer.cost = 6; adventurer.name = "Adventurer"; adventurer.id = ADVENTURER; adventurer.charId = "l";
+	adventurer.cost = 6; adventurer.name = "Adventurer"; adventurer.id = ADVENTURER; adventurer.charId = "l"; adventurer.cardType = ACTIONCARD;
 
-	bureaucrat.cost = 4; bureaucrat.name = "Bureaucrat"; bureaucrat.id = BUREAUCRAT; bureaucrat.charId = "m";
+	bureaucrat.cost = 4; bureaucrat.name = "Bureaucrat"; bureaucrat.id = BUREAUCRAT; bureaucrat.charId = "m"; bureaucrat.cardType = ACTIONCARD;
 
-	witch.cost = 5; witch.name = "Witch"; witch.id = WITCH; witch.charId = "n";
+	witch.cost = 5; witch.name = "Witch"; witch.id = WITCH; witch.charId = "n"; witch.cardType = ACTIONCARD;
 
-	market.cost = 5; market.name = "Market"; market.id = MARKET; market.charId = "o";
+	market.cost = 5; market.name = "Market"; market.id = MARKET; market.charId = "o"; market.cardType = ACTIONCARD;
 
-	laboratory.cost = 5; laboratory.name = "Laboratory"; laboratory.id = LABORATORY; laboratory.charId = "p";
+	laboratory.cost = 5; laboratory.name = "Laboratory"; laboratory.id = LABORATORY; laboratory.charId = "p"; laboratory.cardType = ACTIONCARD;
 
-	festival.cost = 5; festival.name = "Festival"; festival.id = FESTIVAL; festival.charId = "q";
+	festival.cost = 5; festival.name = "Festival"; festival.id = FESTIVAL; festival.charId = "q"; festival.cardType = ACTIONCARD;
 	
-	village.cost = 3; village.name = "Village"; village.id = VILLAGE; village.charId = "r";
+	village.cost = 3; village.name = "Village"; village.id = VILLAGE; village.charId = "r"; village.cardType = ACTIONCARD;
 
-	smithy.cost = 4; smithy.name = "Smithy"; smithy.id = SMITHY; smithy.charId = "s";
+	smithy.cost = 4; smithy.name = "Smithy"; smithy.id = SMITHY; smithy.charId = "s"; smithy.cardType = ACTIONCARD;
 
-	woodcutter.cost = 3; woodcutter.name = "Woodcutter"; woodcutter.id = WOODCUTTER; woodcutter.charId = "t";
+	woodcutter.cost = 3; woodcutter.name = "Woodcutter"; woodcutter.id = WOODCUTTER; woodcutter.charId = "t"; woodcutter.cardType = ACTIONCARD;
 
-	gardens.cost = 4; gardens.name = "Gardens"; gardens.id = GARDENS; gardens.charId = "u";
+	gardens.cost = 4; gardens.name = "Gardens"; gardens.id = GARDENS; gardens.charId = "u"; gardens.cardType = VICTORYCARD;
 
 	cardIndexer[COPPER] = 0;
 	cardIndexer[SILVER] = 1;

@@ -43,12 +43,17 @@
 #define TOTALCARDS	32
 #define INSUPPLY	19
 
+#define TREASURECARD	0
+#define ACTIONCARD		1
+#define	VICTORYCARD		2
+#define CURSECARD		3
 
 struct Card
 {
 	int cost;
-	std::string name;
+	int cardType;
 	int id;
+	std::string name;
 	std::string charId;
 };
 // copper, silver, gold, estate, duchy, province, curse,
