@@ -1015,23 +1015,23 @@ double UCTMonteCarlo::cardHeuristic(GameState currentState, int playerIndex, int
 	{
 	case BUREAUCRAT:
 		score -= currentState.turnCounter / 5;
-		score += enemyPlayerState.countCards(ESTATE);
-		score += enemyPlayerState.countCards(DUCHY);
-		score += enemyPlayerState.countCards(PROVINCE);
+		score += enemyPlayerState.countCardType(ESTATE);
+		score += enemyPlayerState.countCardType(DUCHY);
+		score += enemyPlayerState.countCardType(PROVINCE);
 		if (GARDENSINGAME)
-			score += currentPlayerState.countCards(GARDENS);
+			score += currentPlayerState.countCardType(GARDENS);
 		break;
 	case FESTIVAL:
 		score -= currentState.turnCounter / 10;
 		score += currentPlayerState.calculateCurrentMoney();
 		if (SMITHYINGAME)
-			score += currentPlayerState.countCards(SMITHY);
+			score += currentPlayerState.countCardType(SMITHY);
 		if (WITCHINGAME)
-			score += currentPlayerState.countCards(WITCH);
+			score += currentPlayerState.countCardType(WITCH);
 		if (LABORATORYINGAME)
-			score += currentPlayerState.countCards(LABORATORY);
+			score += currentPlayerState.countCardType(LABORATORY);
 		if (GARDENSINGAME)
-			score += currentPlayerState.countCards(GARDENS);
+			score += currentPlayerState.countCardType(GARDENS);
 		break;
 	case GARDENS:
 		score += floor( (currentPlayerState.countCards() + currentPlayerState.buys) / 10);
@@ -1040,20 +1040,20 @@ double UCTMonteCarlo::cardHeuristic(GameState currentState, int playerIndex, int
 	case LABORATORY:
 		score -= currentState.turnCounter / 10;
 		if (VILLAGEINGAME)
-			score += currentPlayerState.countCards(VILLAGE);
+			score += currentPlayerState.countCardType(VILLAGE);
 		if (FESTIVALINGAME)
-			score += currentPlayerState.countCards(FESTIVAL);
+			score += currentPlayerState.countCardType(FESTIVAL);
 		if (MARKETINGAME)
-			score += currentPlayerState.countCards(MARKET);
+			score += currentPlayerState.countCardType(MARKET);
 		break;
 	case MARKET:
 		score -= currentState.turnCounter / 10;
 		if (GARDENSINGAME)
-			score += currentPlayerState.countCards(GARDENS);
+			score += currentPlayerState.countCardType(GARDENS);
 		break;
 	case MONEYLENDER:
 		score -= currentState.turnCounter;
-		score += currentPlayerState.countCards(COPPER);
+		score += currentPlayerState.countCardType(COPPER);
 		break;
 	case REMODEL:
 		break;
