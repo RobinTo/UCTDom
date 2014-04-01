@@ -5,7 +5,7 @@
 // Dominion
 #define PLAYERS				2
 #define MAXTURNS			40
-#define SUPPLYPILESTOGO		3 + 2 // First number is actual supplypiles to go. Second number is number of zeroes below.
+#define SUPPLYPILESTOGO		5 // (3+2) First number is actual supplypiles to go. Second number is number of zeroes below.
 
 	// Kingdom Cards
 #define BUREAUCRATINGAME	0
@@ -26,3 +26,4 @@
 #define SIMULATIONS			10000
 #define C					0.8
 #define INCLUDESCOREINDRAW	0
+#define EPSILON				10		// Percentage in integer value, so 10 means 0.1, or 10 %

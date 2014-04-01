@@ -202,7 +202,7 @@ void Game::play()
 						gameState.playerStates[players[index].playerStateIndex].actions += 2;
 						break;
 					case MONEYLENDER:
-						if (CardManager::cardIndexer[COPPER] > 0)
+						if (gameState.playerStates[players[index].playerStateIndex].hand[CardManager::cardIndexer[COPPER]] > 0)
 						{
 							gameState.playerStates[players[index].playerStateIndex].hand[CardManager::cardIndexer[COPPER]] --;
 							gameState.trash[CardManager::cardIndexer[COPPER]] ++;

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "PlayerState.h"
 
@@ -18,6 +19,7 @@ public:
 
 	void initialize();
 	bool gameFinished();
+	int earlyMidLateGame();
 
 	GameState();
 	~GameState();

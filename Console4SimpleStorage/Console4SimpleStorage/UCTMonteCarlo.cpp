@@ -970,15 +970,17 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 		{
 			for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
 			{
+				// If has an action card which gives +actions, play it.
+				if (cardToReturn.absoluteCardId == MARKET || cardToReturn.absoluteCardId == LABORATORY || cardToReturn.absoluteCardId == VILLAGE || cardToReturn.absoluteCardId == FESTIVAL)
+					return cardToReturn;
+
+				// TODO: Random card played, if multiple cards cost equal, i.e. Bureaucrat, Smithy, Thief, Removel and Moneylender
 				if (CardManager::cardLookup[(*iter).absoluteCardId].cost > highestCost || highestCost == 0)
 				{
 					highestCost = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 					cardToReturn.type = ACTION;
 					cardToReturn.absoluteCardId = (*iter).absoluteCardId;
 
-					// If has an action card which gives +actions, play it.
-					if (cardToReturn.absoluteCardId == MARKET || cardToReturn.absoluteCardId == LABORATORY || cardToReturn.absoluteCardId == VILLAGE || cardToReturn.absoluteCardId == FESTIVAL)
-						return cardToReturn;
 				}
 			}
 
@@ -988,117 +990,181 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 	if (gameState.playerStates[playerIndex].buys > 0)
 	{
 		std::vector<Option> buyOptions = getBuyOptions(&gameState, getCurrentMoney(&gameState, playerIndex));
-		cardToReturn.absoluteCardId = -1;
+		std::vector<int> bestCardAbsoluteIds;
+
+		int epsilonRandom = rand() % 100;
+		// TODO: Not do epsilon greedy on first visitm due to 1 visit cases.
+		if (epsilonRandom < EPSILON)	// Epsilon...
+		{
+			for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
+			{
+				if (iter->absoluteCardId == CURSE)	// Never buy curse
+					continue;
+				bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+			}
+		}
+		else	// ... Greedy
+		{
+			int highestScore = 0;
+			int earlyMidLate = gameState.earlyMidLateGame();
+			for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
+			{
+				if (iter->absoluteCardId == CURSE)	// Never buy curse
+					continue;
+
+				int currentCardScore = cardBuyHeuristic(gameState, playerIndex, (*iter).absoluteCardId, earlyMidLate);
+				if (currentCardScore > highestScore)
+				{
+					bestCardAbsoluteIds.clear();
+					highestScore = currentCardScore;
+					bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+				}
+				else if (currentCardScore == highestScore)	// If multiple cards have the best value, then pick a random.
+				{
+					bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+				}
+			}
+		}
+		if (bestCardAbsoluteIds.size() == 0) // If there are no cards chosen, then probably curse was the only buy option.
+		{
+			cardToReturn.absoluteCardId = -1;
+			cardToReturn.type = END_TURN;
+		}
+		else
+		{
+			int randomCounter = rand() % bestCardAbsoluteIds.size();
+			cardToReturn.absoluteCardId = bestCardAbsoluteIds[randomCounter];
+			cardToReturn.type = BUY;
+		}
+
+		/*cardToReturn.absoluteCardId = -1;
 		double highestScore = 0;
 
 		for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
 		{
-			if (cardHeuristic(gameState, playerIndex, (*iter).absoluteCardId) > highestScore || highestScore == 0 && CardManager::cardLookup[(*iter).absoluteCardId].name != "Curse")
+			if (cardBuyHeuristic(gameState, playerIndex, (*iter).absoluteCardId) > highestScore || highestScore == 0 && CardManager::cardLookup[(*iter).absoluteCardId].name != "Curse")
 			{
 				highestScore = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 				cardToReturn.absoluteCardId = (*iter).absoluteCardId;
 				cardToReturn.type = BUY;
 			}
-		}
+		}*/
+
+		
 	}
 
 	return cardToReturn;	// -1 if there were no buys or actions available.
 }
 
 
-double UCTMonteCarlo::cardHeuristic(GameState currentState, int playerIndex, int absoluteCardId)
+int UCTMonteCarlo::cardBuyHeuristic(GameState currentState, int playerIndex, int absoluteCardId, int earlyMidLate)
 {
-	double score = 0;
-	PlayerState currentPlayerState = currentState.playerStates[playerIndex];
-	PlayerState enemyPlayerState = currentState.playerStates[playerIndex == 0 ? 1 : 0];
-	switch (absoluteCardId)
-	{
-	case BUREAUCRAT:
-		score -= currentState.turnCounter / 5;
-		score += enemyPlayerState.countCardType(ESTATE);
-		score += enemyPlayerState.countCardType(DUCHY);
-		score += enemyPlayerState.countCardType(PROVINCE);
-		if (GARDENSINGAME)
-			score += currentPlayerState.countCardType(GARDENS);
-		break;
-	case FESTIVAL:
-		score -= currentState.turnCounter / 10;
-		score += currentPlayerState.calculateCurrentMoney();
-		if (SMITHYINGAME)
-			score += currentPlayerState.countCardType(SMITHY);
-		if (WITCHINGAME)
-			score += currentPlayerState.countCardType(WITCH);
-		if (LABORATORYINGAME)
-			score += currentPlayerState.countCardType(LABORATORY);
-		if (GARDENSINGAME)
-			score += currentPlayerState.countCardType(GARDENS);
-		break;
-	case GARDENS:
-		score += floor( (currentPlayerState.countCards() + currentPlayerState.buys) / 10);
-		score += currentState.turnCounter / 10;
-		break;
-	case LABORATORY:
-		score -= currentState.turnCounter / 10;
-		if (VILLAGEINGAME)
-			score += currentPlayerState.countCardType(VILLAGE);
-		if (FESTIVALINGAME)
-			score += currentPlayerState.countCardType(FESTIVAL);
-		if (MARKETINGAME)
-			score += currentPlayerState.countCardType(MARKET);
-		break;
-	case MARKET:
-		score -= currentState.turnCounter / 10;
-		if (GARDENSINGAME)
-			score += currentPlayerState.countCardType(GARDENS);
-		break;
-	case MONEYLENDER:
-		score -= currentState.turnCounter;
-		score += currentPlayerState.countCardType(COPPER);
-		break;
-	case REMODEL:
-		break;
-	case SMITHY:
-		break;
-	case THIEF:
-		break;
-	case VILLAGE:
-		break;
-	case WITCH:
-		// Add 50 score, simply for being a 5-cost card
-		score += 50;
+	//double score = 0;
+	//PlayerState currentPlayerState = currentState.playerStates[playerIndex];
+	//PlayerState enemyPlayerState = currentState.playerStates[playerIndex == 0 ? 1 : 0];
+	//switch (absoluteCardId)
+	//{
+	//case BUREAUCRAT:
+	//	score -= currentState.turnCounter / 5;
+	//	score += enemyPlayerState.countCardType(ESTATE);
+	//	score += enemyPlayerState.countCardType(DUCHY);
+	//	score += enemyPlayerState.countCardType(PROVINCE);
+	//	if (GARDENSINGAME)
+	//		score += currentPlayerState.countCardType(GARDENS);
+	//	break;
+	//case FESTIVAL:
+	//	score -= currentState.turnCounter / 10;
+	//	score += currentPlayerState.calculateCurrentMoney();
+	//	if (SMITHYINGAME)
+	//		score += currentPlayerState.countCardType(SMITHY);
+	//	if (WITCHINGAME)
+	//		score += currentPlayerState.countCardType(WITCH);
+	//	if (LABORATORYINGAME)
+	//		score += currentPlayerState.countCardType(LABORATORY);
+	//	if (GARDENSINGAME)
+	//		score += currentPlayerState.countCardType(GARDENS);
+	//	break;
+	//case GARDENS:
+	//	score += floor( (currentPlayerState.countCards() + currentPlayerState.buys) / 10);
+	//	score += currentState.turnCounter / 10;
+	//	break;
+	//case LABORATORY:
+	//	score -= currentState.turnCounter / 10;
+	//	if (VILLAGEINGAME)
+	//		score += currentPlayerState.countCardType(VILLAGE);
+	//	if (FESTIVALINGAME)
+	//		score += currentPlayerState.countCardType(FESTIVAL);
+	//	if (MARKETINGAME)
+	//		score += currentPlayerState.countCardType(MARKET);
+	//	break;
+	//case MARKET:
+	//	score -= currentState.turnCounter / 10;
+	//	if (GARDENSINGAME)
+	//		score += currentPlayerState.countCardType(GARDENS);
+	//	break;
+	//case MONEYLENDER:
+	//	score -= currentState.turnCounter;
+	//	score += currentPlayerState.countCardType(COPPER);
+	//	break;
+	//case REMODEL:
+	//	break;
+	//case SMITHY:
+	//	break;
+	//case THIEF:
+	//	break;
+	//case VILLAGE:
+	//	break;
+	//case WITCH:
+	//	// Add 50 score, simply for being a 5-cost card
+	//	score += 50;
 
-		// Add 10 score for each +2 actions card
-		int plusTwoActionCards = 0;
-		if (VILLAGEINGAME)
-			plusTwoActionCards += currentPlayerState.countCardType(VILLAGE);
-		if (FESTIVALINGAME)
-			plusTwoActionCards += currentPlayerState.countCardType(FESTIVAL);
-		score += 10 * plusTwoActionCards;
+	//	// Add 10 score for each +2 actions card
+	//	int plusTwoActionCards = 0;
+	//	if (VILLAGEINGAME)
+	//		plusTwoActionCards += currentPlayerState.countCardType(VILLAGE);
+	//	if (FESTIVALINGAME)
+	//		plusTwoActionCards += currentPlayerState.countCardType(FESTIVAL);
+	//	score += 10 * plusTwoActionCards;
 
-		// Add 5 score for each +1 actions card
-		int plusOneActionCards = 0;
-		if (MARKETINGAME)
-			plusOneActionCards += currentPlayerState.countCardType(MARKET);
-		if (LABORATORYINGAME)
-			plusOneActionCards += currentPlayerState.countCardType(LABORATORY);
-		score += 5 * plusOneActionCards;
+	//	// Add 5 score for each +1 actions card
+	//	int plusOneActionCards = 0;
+	//	if (MARKETINGAME)
+	//		plusOneActionCards += currentPlayerState.countCardType(MARKET);
+	//	if (LABORATORYINGAME)
+	//		plusOneActionCards += currentPlayerState.countCardType(LABORATORY);
+	//	score += 5 * plusOneActionCards;
 
-		// It is generally a bad idea to buy a Witch, if you have 5 or more.
-		if (currentPlayerState.countCardType(WITCH) >= 5)
-			score -= 100;
+	//	// It is generally a bad idea to buy a Witch, if you have 5 or more.
+	//	if (currentPlayerState.countCardType(WITCH) >= 5)
+	//		score -= 100;
 
-		// If there are more than 5 curses, then a Witch can be good.
-		if (currentState.supplyPiles[CardManager::cardIndexer[CURSE]] > 5)
-			score += 40;
+	//	// If there are more than 5 curses, then a Witch can be good.
+	//	if (currentState.supplyPiles[CardManager::cardIndexer[CURSE]] > 5)
+	//		score += 40;
 
-		break;
-	case WOODCUTTER:
-		break;
-	default:
-		break;
+	//	break;
+	//case WOODCUTTER:
+	//	break;
+	//default:
+	//	break;
 
-	}
+	//}
+	if (CardManager::cardLookup[absoluteCardId].cardType < 0 || CardManager::cardLookup[absoluteCardId].cardType > 2)
+		std::cout << "ERROR, cardType is wrong!";
 
+
+	int modifiers[3][3]; // First array is early, mid, late. Second array is Treasure, Action, Victory
+	modifiers[0][0] = 6; // Early treasure
+	modifiers[0][1] = 5; // Early action
+	modifiers[0][2] = 1; // Early Victory
+	modifiers[1][0] = 5; // Mid treasure
+	modifiers[1][1] = 5; // Mid action
+	modifiers[1][2] = 4; // Mid Victory
+	modifiers[2][0] = 1; // Late treasure
+	modifiers[2][1] = 1; // Late action
+	modifiers[2][2] = 6; // Late Victory
+
+	int score = modifiers[earlyMidLate][CardManager::cardLookup[absoluteCardId].cardType] * (CardManager::cardLookup[absoluteCardId].cost + 1);
 
 	return score;
 }
