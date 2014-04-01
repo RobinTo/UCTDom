@@ -27,3 +27,4 @@
 #define C					0.8
 #define INCLUDESCOREINDRAW	0
 #define EPSILON				10		// Percentage in integer value, so 10 means 0.1, or 10 %
+#define PLAYPLUSACTIONS		1

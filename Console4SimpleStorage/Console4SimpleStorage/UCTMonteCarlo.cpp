@@ -571,6 +571,25 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	}
 	else
 	{
+		std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
+		if (PLAYPLUSACTIONS && node->currentState.playerStates[currentlyPlaying].actions > 0)
+		{
+			// if there is a card with + actions, then only add this, ignoring other actions and buys
+			for (int i = 0; i < possibleActions.size(); i++)
+			{
+				if (possibleActions[i].absoluteCardId == MARKET || possibleActions[i].absoluteCardId == LABORATORY || possibleActions[i].absoluteCardId == VILLAGE || possibleActions[i].absoluteCardId == FESTIVAL)
+				{
+					Node* newActionNode = requestNewNode();
+					newActionNode->opt = possibleActions.at(i);
+					newActionNode->parentPtr = node;
+					newActionNode->currentState = currentState;
+					newActionNode->playerPlaying = currentlyPlaying;
+					playActionCard(newActionNode->currentState, newActionNode->opt.absoluteCardId, newActionNode->playerPlaying, false);
+					node->childrenPtrs.push_back(newActionNode);
+					return;
+				}
+			}
+		}
 		// Create end turn node to enable doing nothing.
 		Node* endTurnChild = requestNewNode();
 		Option o;
@@ -582,10 +601,10 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		endTurnChild->playerPlaying = currentlyPlaying;
 		node->childrenPtrs.push_back(endTurnChild);
 
+		
 		// Add all possible actions.
 		if (node->currentState.playerStates[currentlyPlaying].actions > 0)
 		{
-			std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
 			for (int i = 0; i < possibleActions.size(); i++)
 			{
 				Node* newActionNode = requestNewNode();
@@ -617,7 +636,6 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 				node->childrenPtrs.push_back(newBuyNode);
 			}
 		}
-	
 	}
 }
 
