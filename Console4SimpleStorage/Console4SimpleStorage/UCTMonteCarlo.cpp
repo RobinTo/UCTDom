@@ -72,7 +72,7 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 		}
 	}
 	if (PRINTTREE)
-		printTree(gameState.turnCounter, UCTPlayer, rootNode);
+		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size());
 	resetNodes();
 	return bestOption;
 }
@@ -155,36 +155,85 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	{
 		if (UCTPlayer == 0)
 		{
-			score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
-			score +=((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? 1 : 0);
+			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
+			if (WINLOSESCORING)
+				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		}
 		else
 		{
-			score = gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
-			score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? 1 : 0);
+			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
+			if (WINLOSESCORING)
+				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		}
 	}
 	else
 		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
 
-	propagate(node, score);
+	propagate(node, score, false);
 
 }
 
-void UCTMonteCarlo::propagate(Node* node, double score)
+void UCTMonteCarlo::propagate(Node* node, double score, bool forceScore)
 {
-	node->sum += score;
-	node->visited++;
-	node->value = double(node->sum) / double(node->visited);
-	if (node->opt.type == DRAW)
+	if (AVERAGEPROPAGATE)
 	{
-		if (INCLUDESCOREINDRAW)
-			node->value *= node->probability;
-		else
-			node->value = node->probability;
+		node->sum += score;
+		node->visited++;
+		node->value = double(node->sum) / double(node->visited);
+		if (node->opt.type == DRAW)
+		{
+			if (INCLUDESCOREINDRAW)
+				node->value *= node->probability;
+			else
+				node->value = node->probability;
+		}
 	}
-	if (!node->isRoot)
-		propagate(node->parentPtr, score);
+	else
+	{
+		/* Explanation
+		If we are calculating the score for a node, that is not a node HAVING DRAW-CHILDREN,
+		then we simply take the SCORE and check whether it is better than what we already have.
+		If it is, then we replace the old score with the new score (optimal and guaranteed path)
+
+		However, if we are calculating the score for a node that HAS draw-children, (either all or none are draw-children),
+		then we calculate the score to be child.value * child.probability / totalAccumulatedProbability.
+		Where the totalAccumulatedProbability is equal to all the addition of all VISITED children's probability.
+		(Visited = 2 or more, since we initialize all to Draw-Nodes to visited = 1).
+		Note that we omit the propagated score value from the last node.
+		After the value is calculated, we propagate this new value, instead of the old score, forcing ancestors to receive it, regardless of old score,
+		so that the ancestor-nodes receive a weighted average of the draws, instead of the best possible node, based on an unlikely draw.
+		The reasoning behind the force is (not midi-clorians) that as more draws are explored, their weighted average is becoming more precise,
+		thus we want to propagate a precise value, rather than the best value.		*/
+
+
+		if (node->childrenPtrs.size() > 0 && node->childrenPtrs[0]->opt.type == DRAW)
+		{
+			double totalAccumulatedProbability = 0;
+			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+			{
+				if ((*child)->visited > 1)
+					totalAccumulatedProbability += (*child)->probability;
+			}
+			double newValue = 0;
+			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+			{
+				if ((*child)->visited > 1)
+					newValue += ((*child)->probability / totalAccumulatedProbability) * (*child)->value;
+			}
+			node->value = newValue;
+			score = newValue;
+			forceScore = true;
+		}
+		else
+		{
+			if (forceScore || score > node->value)
+				node->value = score;
+			forceScore = false;
+		}
+		node->visited++;
+	}
+	if (!node->isRoot)	// As long as root is not reached, we should keep propagating recursively.
+		propagate(node->parentPtr, score, forceScore);
 }
 
 // Returns best child according to UCT.
@@ -194,7 +243,11 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
 	{
-		double value = double(root->childrenPtrs.at(i)->value) + C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));
+		double value = 0;
+		if (root->childrenPtrs.at(i)->opt.type == DRAW) // Do not use value, but probability, for drawnodes.
+			value = double(root->childrenPtrs.at(i)->probability) + C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));	// Can have a different C here if necessary.
+		else
+			value = double(root->childrenPtrs.at(i)->value) + C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));
 
 		if (value >= bestValue || bestValue == 0)
 		{
@@ -572,7 +625,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	else
 	{
 		std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
-		if (PLAYPLUSACTIONS && node->currentState.playerStates[currentlyPlaying].actions > 0)
+		if (PLAYPLUSACTIONSFIRST && node->currentState.playerStates[currentlyPlaying].actions > 0)
 		{
 			// if there is a card with + actions, then only add this, ignoring other actions and buys
 			for (int i = 0; i < possibleActions.size(); i++)
@@ -1189,9 +1242,9 @@ int UCTMonteCarlo::cardBuyHeuristic(GameState currentState, int playerIndex, int
 
 
 // Tree printing
-void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr)
+void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, int moveHistorySize)
 {
-	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "uctTree.gv";
+	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "_" + std::to_string(moveHistorySize) + "uctTree.gv";
 	remove(fileName.c_str());
 	std::ofstream file;
 	file.open(fileName, std::ios::app);

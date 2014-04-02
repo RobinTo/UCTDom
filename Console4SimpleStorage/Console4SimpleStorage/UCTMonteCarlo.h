@@ -22,7 +22,7 @@ private:
 	Node* select(Node* root);
 	void expand(Node* node, int UCTPlayer);
 	void rollout(Node* node, GameState gameState, int UCTPlayer);
-	void propagate(Node* node, double score);
+	void propagate(Node* node, double score, bool forceScore);
 	Node* UCTSelectChild(Node* root);
 	void createAllChildren(Node* node);
 	Node* getRandomNode(std::vector<Node*> nodes);
@@ -40,7 +40,7 @@ private:
 
 	// Tree printing
 	void printNode(Node* nodePtr, std::ofstream& file);
-	void printTree(int turnCounter, int player, Node* rootNodePtr);
+	void printTree(int turnCounter, int player, Node* rootNodePtr, int moveHistorySize);
 
 	// Node allocation
 	std::vector<Node*> emptyNodes;

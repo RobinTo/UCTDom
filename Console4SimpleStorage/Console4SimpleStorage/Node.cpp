@@ -21,7 +21,6 @@ void Node::reset()
 	visited = 0;
 	sum = 0;
 	probability = 0;
-	value = 0;
 	parentPtr = nullptr;
 	playerPlaying = -1;
 	opt.absoluteCardId = -1;
@@ -114,6 +113,9 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 		// Append visited
 		text += " Vis:" + std::to_string(visited);
 
+		// Append value
+		text += " Val:" + std::to_string(value);
+
 		// Append probability
 		text += " Prob:" + std::to_string(probability);
 
@@ -191,6 +193,9 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 		
 		// Append visited
 		text += " Vis:" + std::to_string((*iterator)->visited);
+
+		// Append value
+		text += " Val:" + std::to_string((*iterator)->value);
 
 		// Append probability
 		text += " Prob:" + std::to_string((*iterator)->probability);
