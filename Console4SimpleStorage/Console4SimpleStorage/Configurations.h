@@ -23,8 +23,8 @@
 #define WOODCUTTERINGAME	1
 
 // UCT
-#define NODESTOALLOCATE			20000
-#define SIMULATIONS				100
+#define NODESTOALLOCATE			2000000
+#define SIMULATIONS				10000
 #define C						0.8
 #define PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define WINLOSESCORING			1		// Whether or not to give a node more value for winning and losing

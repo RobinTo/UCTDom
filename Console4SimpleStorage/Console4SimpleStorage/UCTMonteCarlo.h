@@ -22,7 +22,7 @@ private:
 	Node* select(Node* root);
 	void expand(Node* node, int UCTPlayer);
 	void rollout(Node* node, GameState gameState, int UCTPlayer);
-	void propagate(Node* node, double score, bool invalidate);
+	void propagate(Node* node, double score, bool invalidate, int UCTPlayer);
 	Node* UCTSelectChild(Node* root);
 	void createAllChildren(Node* node);
 	Node* getRandomNode(std::vector<Node*> nodes);
