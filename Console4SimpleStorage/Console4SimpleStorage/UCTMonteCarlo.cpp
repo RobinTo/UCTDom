@@ -51,8 +51,8 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 	for (int i = 0; i < SIMULATIONS; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
-		/*if (i > 7 && i < 20)
-			printTree(i, UCTPlayer, rootNode);*/
+		if (PRINTSIMULATIONS)
+			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
 	}
 
 	// Return best option
@@ -72,7 +72,7 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 		}
 	}
 	if (PRINTTREE)
-		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size());
+		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
 	resetNodes();
 	return bestOption;
 }
@@ -173,7 +173,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 
 }
 
-void UCTMonteCarlo::propagate(Node* node, double score, bool forceScore)
+void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate)
 {
 	if (AVERAGEPROPAGATE)
 	{
@@ -222,18 +222,28 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool forceScore)
 			}
 			node->value = newValue;
 			score = newValue;
-			forceScore = true;
+			invalidate = true;
 		}
 		else
 		{
-			if (forceScore || score > node->value)
+			if (invalidate)
+			{
 				node->value = score;
-			forceScore = false;
+				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+				{
+					if ((*child)->value > node->value)
+						node->value = (*child)->value;
+				}
+			}
+			else
+			{
+				node->value = score;
+			}
 		}
 		node->visited++;
 	}
 	if (!node->isRoot)	// As long as root is not reached, we should keep propagating recursively.
-		propagate(node->parentPtr, score, forceScore);
+		propagate(node->parentPtr, score, invalidate);
 }
 
 // Returns best child according to UCT.
@@ -612,11 +622,9 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			Node* newGainNode = requestNewNode();
 			newGainNode->opt = possibleGains.at(i);
 			newGainNode->parentPtr = node;
-			newGainNode->currentState = currentState;
 			newGainNode->playerPlaying = currentlyPlaying;
-			newGainNode->currentState.playerStates[currentlyPlaying].actions = 0;
-
-			newGainNode->currentState.playerStates[currentlyPlaying].hand[CardManager::cardIndexer[newGainNode->opt.absoluteCardId]]++;
+			newGainNode->currentState = currentState;
+			newGainNode->currentState.playerStates[currentlyPlaying].discard[CardManager::cardIndexer[newGainNode->opt.absoluteCardId]]++;
 			newGainNode->currentState.supplyPiles[CardManager::cardIndexer[newGainNode->opt.absoluteCardId]] -= 1;
 
 			node->childrenPtrs.push_back(newGainNode);
@@ -935,7 +943,8 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 			newNodePtr->opt.absoluteCardId = -2;
 			newNodePtr->opt.type = DRAW;
 			newNodePtr->visited = 1;
-			newNodePtr->value = probabilities[drawCounter];
+			//newNodePtr->value = probabilities[drawCounter];
+			newNodePtr->value = -1;
 			newNodePtr->probability = probabilities[drawCounter];
 		}
 	}
@@ -1242,9 +1251,9 @@ int UCTMonteCarlo::cardBuyHeuristic(GameState currentState, int playerIndex, int
 
 
 // Tree printing
-void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, int moveHistorySize)
+void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, int moveHistorySize, int sims)
 {
-	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "_" + std::to_string(moveHistorySize) + "uctTree.gv";
+	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "_" + std::to_string(moveHistorySize) + "_" + std::to_string(sims) + "uctTree.gv";
 	remove(fileName.c_str());
 	std::ofstream file;
 	file.open(fileName, std::ios::app);

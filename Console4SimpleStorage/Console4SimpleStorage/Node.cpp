@@ -46,6 +46,9 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 
 	for (std::vector<Node*>::iterator iterator = childrenPtrs.begin(); iterator != childrenPtrs.end(); ++iterator)
 	{
+		/*if ((*iterator)->visited == 0)
+			continue;*/
+
 		// Append *tchu tchu*
 		text += "\"";
 
@@ -184,7 +187,7 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 */
 		for (int index = 0; index < INSUPPLY; index++)
 		{
-			int cardsOfType = (*iterator)->currentState.playerStates[playerPlaying].hand[index];
+			int cardsOfType = (*iterator)->currentState.playerStates[(*iterator)->playerPlaying].hand[index];
 			if (cardsOfType > 0)
 			{
 				text += " " + CardManager::cardLookupByIndex[index].name + ":" + std::to_string(cardsOfType);

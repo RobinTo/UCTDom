@@ -102,8 +102,8 @@ void Game::initialize()
 	for (int index = 0; index < PLAYERS; index++)
 	{
 		// Set initial deck.
-		gameState.playerStates[index].deck[cardManager.cardIndexer[COPPER]] = 7;
-		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 3;
+		gameState.playerStates[index].deck[cardManager.cardIndexer[COPPER]] = 10;
+		gameState.playerStates[index].deck[cardManager.cardIndexer[ESTATE]] = 10;
 		gameState.playerStates[index].endTurn();
 	}
 
