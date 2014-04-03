@@ -125,6 +125,9 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 		// Append currentplayer
 		text += " Player:" + std::to_string(playerPlaying);
 
+		// Append turnCounter
+		text += " Turn:" + std::to_string(currentState.turnCounter);
+
 		// Append *tchu tchu*
 		text += "\"";
 
@@ -205,6 +208,9 @@ void Node::printSelf(std::ofstream &file) // TODO: Add support for printing each
 
 		// Append currentplayer
 		text += " Player:" + std::to_string((*iterator)->playerPlaying);
+
+		// Append turnCounter
+		text += " Turn:" + std::to_string((*iterator)->currentState.turnCounter);
 
 		// Append *tchu tchu*
 		text += "\";";

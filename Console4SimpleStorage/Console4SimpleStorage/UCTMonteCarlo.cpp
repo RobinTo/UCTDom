@@ -153,7 +153,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
-		if (UCTPlayer == 0)
+		/*if (UCTPlayer == 0)
 		{
 			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
 			if (WINLOSESCORING)
@@ -164,7 +164,10 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
 			if (WINLOSESCORING)
 				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
-		}
+		}*/
+		score = PERCFACTOR*gameState.playerStates[0].calculateVictoryPoints() / 100.;
+		if (WINLOSESCORING)
+			score += ((gameState.playerStates[0].calculateVictoryPoints() < gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 	}
 	else
 		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
@@ -231,7 +234,7 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 			score = newValue;
 			invalidate = true;
 		}
-		else if (UCTPlayer == node->childrenPtrs[0]->playerPlaying)	// Maximize value
+		else if (0 == node->childrenPtrs[0]->playerPlaying)	// Maximize value
 		{
 			/*if (invalidate)
 			{*/
@@ -1301,6 +1304,25 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 	text = "\r\n }";
 	file << text << std::endl;
 	file.close();
+
+
+	std::ofstream file2;
+	file2.open("treeDepth.txt", std::ios::app);
+	
+	int turnsCount[50];
+	for (int i = 0; i < 50; i++)
+		turnsCount[i] = 0;
+
+	for (int i = 0; i < NODESTOALLOCATE; i++)
+	{
+		turnsCount[nodeAllocationPtr[i].currentState.turnCounter]++;
+	}
+
+	file2 << "Handedoutnodes:" + std::to_string(handedOutNodes) << std::endl;
+	for (int i = 0; i < 50; i++)
+		file2 << "Turn" + std::to_string(i) + ": " + std::to_string(turnsCount[i]) << std::endl;
+
+	file2.close();
 }
 void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 {
