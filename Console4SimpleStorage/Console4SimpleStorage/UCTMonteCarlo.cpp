@@ -205,8 +205,11 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 		The reasoning behind the force is (not midi-clorians) that as more draws are explored, their weighted average is becoming more precise,
 		thus we want to propagate a precise value, rather than the best value.		*/
 
-
-		if (node->childrenPtrs.size() > 0 && node->childrenPtrs[0]->opt.type == DRAW)
+		if (node->childrenPtrs.size() == 0)
+		{
+			node->value = score;
+		}
+		else if (node->childrenPtrs[0]->opt.type == DRAW)
 		{
 			double totalAccumulatedProbability = 0;
 			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
@@ -218,29 +221,61 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 			{
 				if ((*child)->visited > 1)
+				{
+					if ((*child)->value < 0)
+						int n = 5;
 					newValue += ((*child)->probability / totalAccumulatedProbability) * (*child)->value;
+				}
 			}
 			node->value = newValue;
 			score = newValue;
 			invalidate = true;
 		}
-		else
+		else if (UCTPlayer == node->childrenPtrs[0]->playerPlaying)	// Maximize value
 		{
-			if (invalidate)
-			{
+			/*if (invalidate)
+			{*/
 				node->value = score;
 				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 				{
-					if ((*child)->value > node->value)
+					if ((*child)->value > node->value && (*child)->visited > 0)
+					{
+						if ((*child)->value < 0)
+							int n = 5;
 						node->value = (*child)->value;
+					}
 				}
-			}
+			/*}
 			else
 			{
+				if (score > node->value)
+					node->value = score;
+
+			}*/
+		}
+		else// Minimize value
+		{
+			/*if (invalidate)
+			{*/
 				node->value = score;
-			}
+				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+				{
+					if ((*child)->value < node->value && (*child)->visited > 0)
+					{
+						if ((*child)->value < 0)
+							int n = 5;
+						node->value = (*child)->value;
+					}
+				}
+			/*}
+			else
+			{
+				if (score < node->value)
+					node->value = score;
+			}*/
 		}
 	}
+
 	if (!node->isRoot)	// As long as root is not reached, we should keep propagating recursively.
 		propagate(node->parentPtr, score, invalidate, UCTPlayer);
 }
