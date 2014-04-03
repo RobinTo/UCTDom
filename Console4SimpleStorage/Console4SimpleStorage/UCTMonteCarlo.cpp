@@ -153,23 +153,23 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
-		if (UCTPlayer == 0)
+		if (currentPlayer == 0)
 		{
-			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
+			score = PERCFACTOR*gameState.playerStates[currentPlayer].calculateVictoryPoints() / 100.;
 			if (WINLOSESCORING)
-				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+				score += ((gameState.playerStates[currentPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		}
 		else
 		{
-			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
+			score = PERCFACTOR*gameState.playerStates[currentPlayer].calculateVictoryPoints() / 100.;
 			if (WINLOSESCORING)
-				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+				score += ((gameState.playerStates[currentPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		}
 	}
 	else
-		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
+		score = gameState.playerStates[currentPlayer].calculateVictoryPoints();
 
-	propagate(node, score, false, UCTPlayer);
+	propagate(node, score, false, currentPlayer);
 
 }
 
