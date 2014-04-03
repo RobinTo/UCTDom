@@ -153,94 +153,91 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
-		if (currentPlayer == 0)
+		if (UCTPlayer == 0)
 		{
-			score = PERCFACTOR*gameState.playerStates[currentPlayer].calculateVictoryPoints() / 100.;
+			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
 			if (WINLOSESCORING)
-				score += ((gameState.playerStates[currentPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		}
 		else
 		{
-			score = PERCFACTOR*gameState.playerStates[currentPlayer].calculateVictoryPoints() / 100.;
+			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
 			if (WINLOSESCORING)
-				score += ((gameState.playerStates[currentPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		}
 	}
 	else
-		score = gameState.playerStates[currentPlayer].calculateVictoryPoints();
+		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
 
-	propagate(node, score, false, currentPlayer);
+	propagate(node, score, false, UCTPlayer);
 
 }
 
 void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCTPlayer)
 {
 	node->visited++;
-	if (node->playerPlaying == UCTPlayer)
+	if (AVERAGEPROPAGATE)
 	{
-		if (AVERAGEPROPAGATE)
+		node->sum += score;
+		node->value = double(node->sum) / double(node->visited);
+		if (node->opt.type == DRAW)
 		{
-			node->sum += score;
-			node->value = double(node->sum) / double(node->visited);
-			if (node->opt.type == DRAW)
+			if (INCLUDESCOREINDRAW)
+				node->value *= node->probability;
+			else
+				node->value = node->probability;
+		}
+	}
+	else
+	{
+		/* Explanation
+		If we are calculating the score for a node, that is not a node HAVING DRAW-CHILDREN,
+		then we simply take the SCORE and check whether it is better than what we already have.
+		If it is, then we replace the old score with the new score (optimal and guaranteed path)
+
+		However, if we are calculating the score for a node that HAS draw-children, (either all or none are draw-children),
+		then we calculate the score to be child.value * child.probability / totalAccumulatedProbability.
+		Where the totalAccumulatedProbability is equal to all the addition of all VISITED children's probability.
+		(Visited = 2 or more, since we initialize all to Draw-Nodes to visited = 1).
+		Note that we omit the propagated score value from the last node.
+		After the value is calculated, we propagate this new value, instead of the old score, forcing ancestors to receive it, regardless of old score,
+		so that the ancestor-nodes receive a weighted average of the draws, instead of the best possible node, based on an unlikely draw.
+		The reasoning behind the force is (not midi-clorians) that as more draws are explored, their weighted average is becoming more precise,
+		thus we want to propagate a precise value, rather than the best value.		*/
+
+
+		if (node->childrenPtrs.size() > 0 && node->childrenPtrs[0]->opt.type == DRAW)
+		{
+			double totalAccumulatedProbability = 0;
+			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 			{
-				if (INCLUDESCOREINDRAW)
-					node->value *= node->probability;
-				else
-					node->value = node->probability;
+				if ((*child)->visited > 1)
+					totalAccumulatedProbability += (*child)->probability;
 			}
+			double newValue = 0;
+			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+			{
+				if ((*child)->visited > 1)
+					newValue += ((*child)->probability / totalAccumulatedProbability) * (*child)->value;
+			}
+			node->value = newValue;
+			score = newValue;
+			invalidate = true;
 		}
 		else
 		{
-			/* Explanation
-			If we are calculating the score for a node, that is not a node HAVING DRAW-CHILDREN,
-			then we simply take the SCORE and check whether it is better than what we already have.
-			If it is, then we replace the old score with the new score (optimal and guaranteed path)
-
-			However, if we are calculating the score for a node that HAS draw-children, (either all or none are draw-children),
-			then we calculate the score to be child.value * child.probability / totalAccumulatedProbability.
-			Where the totalAccumulatedProbability is equal to all the addition of all VISITED children's probability.
-			(Visited = 2 or more, since we initialize all to Draw-Nodes to visited = 1).
-			Note that we omit the propagated score value from the last node.
-			After the value is calculated, we propagate this new value, instead of the old score, forcing ancestors to receive it, regardless of old score,
-			so that the ancestor-nodes receive a weighted average of the draws, instead of the best possible node, based on an unlikely draw.
-			The reasoning behind the force is (not midi-clorians) that as more draws are explored, their weighted average is becoming more precise,
-			thus we want to propagate a precise value, rather than the best value.		*/
-
-
-			if (node->childrenPtrs.size() > 0 && node->childrenPtrs[0]->opt.type == DRAW)
+			if (invalidate)
 			{
-				double totalAccumulatedProbability = 0;
+				node->value = score;
 				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 				{
-					if ((*child)->visited > 1)
-						totalAccumulatedProbability += (*child)->probability;
+					if ((*child)->value > node->value)
+						node->value = (*child)->value;
 				}
-				double newValue = 0;
-				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
-				{
-					if ((*child)->visited > 1)
-						newValue += ((*child)->probability / totalAccumulatedProbability) * (*child)->value;
-				}
-				node->value = newValue;
-				score = newValue;
-				invalidate = true;
 			}
 			else
 			{
-				if (invalidate)
-				{
-					node->value = score;
-					for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
-					{
-						if ((*child)->value > node->value)
-							node->value = (*child)->value;
-					}
-				}
-				else
-				{
-					node->value = score;
-				}
+				node->value = score;
 			}
 		}
 	}
@@ -687,16 +684,19 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, currentMoney);
 			for (int i = 0; i < possibleBuys.size(); i++)
 			{
-				Node* newBuyNode = requestNewNode();
-				newBuyNode->opt = possibleBuys.at(i);
-				newBuyNode->parentPtr = node;
-				newBuyNode->currentState = currentState;
-				newBuyNode->playerPlaying = currentlyPlaying;
-				newBuyNode->currentState.playerStates[currentlyPlaying].actions = 0;
-				// Perform the buy action of this node.
-				newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(newBuyNode->opt.absoluteCardId);
-				newBuyNode->currentState.supplyPiles[CardManager::cardIndexer[newBuyNode->opt.absoluteCardId]] -= 1;
-				node->childrenPtrs.push_back(newBuyNode);
+				if (possibleBuys.at(i).absoluteCardId != CURSE && possibleBuys.at(i).absoluteCardId != COPPER)
+				{
+					Node* newBuyNode = requestNewNode();
+					newBuyNode->opt = possibleBuys.at(i);
+					newBuyNode->parentPtr = node;
+					newBuyNode->currentState = currentState;
+					newBuyNode->playerPlaying = currentlyPlaying;
+					newBuyNode->currentState.playerStates[currentlyPlaying].actions = 0;
+					// Perform the buy action of this node.
+					newBuyNode->currentState.playerStates[currentlyPlaying].buyCard(newBuyNode->opt.absoluteCardId);
+					newBuyNode->currentState.supplyPiles[CardManager::cardIndexer[newBuyNode->opt.absoluteCardId]] -= 1;
+					node->childrenPtrs.push_back(newBuyNode);
+				}
 			}
 		}
 	}
@@ -1075,6 +1075,7 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 		std::vector<int> bestCardAbsoluteIds;
 
 		int epsilonRandom = rand() % 100;
+		// TODO: Completely random playout on epsilon, not just a chance at each buy.
 		// TODO: Not do epsilon greedy on first visitm due to 1 visit cases.
 		if (epsilonRandom < EPSILON)	// Epsilon...
 		{
