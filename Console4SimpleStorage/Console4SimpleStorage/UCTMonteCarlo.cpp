@@ -1313,7 +1313,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 	for (int i = 0; i < 50; i++)
 		turnsCount[i] = 0;
 
-	for (int i = 0; i < NODESTOALLOCATE; i++)
+	for (int i = 0; i < handedOutNodes; i++)
 	{
 		turnsCount[nodeAllocationPtr[i].currentState.turnCounter]++;
 	}
