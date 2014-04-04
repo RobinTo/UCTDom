@@ -160,8 +160,9 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
-		score = gameState.playerStates[0].calculateVictoryPoints() - gameState.playerStates[1].calculateVictoryPoints();
-		//score = ((gameState.playerStates[0].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+		score = PERCFACTOR*(gameState.playerStates[0].calculateVictoryPoints() - gameState.playerStates[1].calculateVictoryPoints()) / 100.;
+		score += ((gameState.playerStates[0].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+		//std::cout << "Score:" << score << std::endl;
 	}
 	else
 		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
@@ -276,6 +277,15 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 // Returns best child according to UCT.
 Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 {
+	if (VISITROOTCHILDRENMIN && root->isRoot)
+	{
+		for (int i = 0; i < root->childrenPtrs.size(); i++)
+		{
+			if (root->childrenPtrs[i]->visited < MINIMUMVISITS)
+				return root->childrenPtrs[i];
+		}
+	}
+
 	double bestValue = 0;
 	Node* bestNode;
 	for (int i = 0; i < root->childrenPtrs.size(); i++)
