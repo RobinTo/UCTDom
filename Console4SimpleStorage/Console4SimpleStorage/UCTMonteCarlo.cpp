@@ -40,6 +40,8 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
 			rootNode->opt.absoluteExtraCardId = lastMove.absoluteExtraCardId;
 		}
+		else if (lastMove.player == UCTPlayer && lastMove.type == ACTION && lastMove.absoluteCardId == MONEYLENDER)
+			rootNode->currentState.playerStates[rootNode->playerPlaying].spentMoney -= 3;
 	}
 
 	createAllChildren(rootNode);
@@ -114,9 +116,14 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 // UCTPlayer is which player we are currently performing UCT for.
 void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 {
+	if (node->opt.type == END_TURN && node->parentPtr->opt.absoluteCardId == SILVER)
+		int n = 0;
 	int currentPlayer = node->playerPlaying;
 	if (node->opt.type == END_TURN)
+	{
+		gameState.playerStates[currentPlayer].endTurn();
 		currentPlayer++;
+	}
 	if (currentPlayer >= gameState.playerStates.size())
 	{
 		gameState.turnCounter++;
@@ -153,21 +160,8 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
-		/*if (UCTPlayer == 0)
-		{
-			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
-			if (WINLOSESCORING)
-				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
-		}
-		else
-		{
-			score = PERCFACTOR*gameState.playerStates[UCTPlayer].calculateVictoryPoints() / 100.;
-			if (WINLOSESCORING)
-				score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() < gameState.playerStates[0].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
-		}*/
-		score = PERCFACTOR*gameState.playerStates[0].calculateVictoryPoints() / 100.;
-		if (WINLOSESCORING)
-			score += ((gameState.playerStates[0].calculateVictoryPoints() < gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+		score = gameState.playerStates[0].calculateVictoryPoints() - gameState.playerStates[1].calculateVictoryPoints();
+		//score = ((gameState.playerStates[0].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 	}
 	else
 		score = gameState.playerStates[UCTPlayer].calculateVictoryPoints();
@@ -179,22 +173,18 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCTPlayer)
 {
 	node->visited++;
-	if (AVERAGEPROPAGATE)
+	if (true)
 	{
-		node->sum += score;
-		node->value = double(node->sum) / double(node->visited);
-		if (node->opt.type == DRAW)
+		if (node->opt.type != DRAW && node->opt.type != THIEFFLIP)
 		{
-			if (INCLUDESCOREINDRAW)
-				node->value *= node->probability;
-			else
-				node->value = node->probability;
+			node->sum += score;
+			node->value = double(node->sum) / double(node->visited);
 		}
 	}
 	else
 	{
 		/* Explanation
-		If we are calculating the score for a node, that is not a node HAVING DRAW-CHILDREN,
+		If we are calculating the score for a node, that is not a node HAVING -CHILDREN,
 		then we simply take the SCORE and check whether it is better than what we already have.
 		If it is, then we replace the old score with the new score (optimal and guaranteed path)
 
@@ -316,7 +306,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		break;
 	case FESTIVAL:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
-		gameState.playerStates[playerIndex].buys += 2;
+		gameState.playerStates[playerIndex].buys += 1;
 		gameState.playerStates[playerIndex].actions += 2;
 		break;
 	case MONEYLENDER:
@@ -330,28 +320,23 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		break;
 	case SMITHY:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
-		if (rollout)
-			gameState.playerStates[playerIndex].drawCards(3);
-		// Do nothing if in the UCT, because draw nodes are created in tree by probability calculating function.
+		gameState.playerStates[playerIndex].drawCards(3);
 		break;
 	case VILLAGE:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].actions += 2;
-		if (rollout)
-			gameState.playerStates[playerIndex].drawCards(1);
+		gameState.playerStates[playerIndex].drawCards(1);
 		break;
 	case MARKET:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].buys += 1;
 		gameState.playerStates[playerIndex].actions += 1;
-		if (rollout)
-			gameState.playerStates[playerIndex].drawCards(1);
+		gameState.playerStates[playerIndex].drawCards(1);
 		break;
 	case LABORATORY:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		gameState.playerStates[playerIndex].actions += 1;
-		if (rollout)
-			gameState.playerStates[playerIndex].drawCards(2);
+		gameState.playerStates[playerIndex].drawCards(2);
 		break;
 	case THIEF:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
@@ -375,10 +360,6 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 				gameState.playerStates[enemyIndex].discard[CardManager::cardIndexer[SILVER]]--;
 			}
 		}
-		else
-		{
-			
-		}
 		break;
 	case WITCH:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
@@ -397,8 +378,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 					tempIndex = 0;
 			}
 		}
-		if (rollout)
-			gameState.playerStates[playerIndex].drawCards(2);
+		gameState.playerStates[playerIndex].drawCards(2);
 		break;
 	case BUREAUCRAT:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
@@ -477,63 +457,8 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	int currentlyPlaying = node->playerPlaying;
 	GameState currentState = node->currentState;
 
-	if (node->opt.type == DRAW && node->parentPtr->opt.type == END_TURN)
-	{
-		currentlyPlaying++;
-		if (currentlyPlaying >= node->currentState.playerStates.size())
-		{
-			currentlyPlaying = 0;
-			currentState.turnCounter++;
-		}
-	}
 
-	if (node->opt.type == END_TURN)
-	{
-		// Clean-up
-		for (int cardIndex = 0; cardIndex < INSUPPLY; cardIndex++)
-		{
-			currentState.playerStates[currentlyPlaying].discard[cardIndex] += (currentState.playerStates[currentlyPlaying].hand[cardIndex]);
-			currentState.playerStates[currentlyPlaying].hand[cardIndex] = 0;
-			currentState.playerStates[currentlyPlaying].discard[cardIndex] += currentState.playerStates[currentlyPlaying].inPlay[cardIndex];
-			currentState.playerStates[currentlyPlaying].inPlay[cardIndex] = 0;
-		}
-		currentState.playerStates[currentlyPlaying].buys = 1;
-		currentState.playerStates[currentlyPlaying].actions = 1;
-		currentState.playerStates[currentlyPlaying].spentMoney = 0;
-
-		createDrawNodes(node, currentState, currentlyPlaying, 5, false);
-
-	}	// If action and a card which wants to create new nodes beneath.
-	else if (node->opt.type == ACTION && (node->opt.absoluteCardId == SMITHY || node->opt.absoluteCardId == VILLAGE || node->opt.absoluteCardId == MARKET || node->opt.absoluteCardId == LABORATORY || node->opt.absoluteCardId == WITCH || node->opt.absoluteCardId == REMODEL || node->opt.absoluteCardId == THIEF))
-	{
-		switch (node->opt.absoluteCardId)
-		{
-		case SMITHY:
-			createDrawNodes(node, currentState, currentlyPlaying, 3, false);
-			break;
-		case VILLAGE:
-			createDrawNodes(node, currentState, currentlyPlaying, 1, false);
-			break;
-		case MARKET:
-			createDrawNodes(node, currentState, currentlyPlaying, 1, false);
-			break;
-		case LABORATORY:
-			createDrawNodes(node, currentState, currentlyPlaying, 2, false);
-			break;
-		case WITCH:
-			createDrawNodes(node, currentState, currentlyPlaying, 2, false);
-			break;
-		case REMODEL:
-			createTrashNodes(node, currentState, currentlyPlaying);
-			break;
-		case THIEF:
-			createDrawNodes(node, currentState, currentlyPlaying == 0 ? 1 : 0, 2, true); // Currently playing set to not self.
-			break;
-		default:
-			break;
-		}
-	}
-	else if (node->flags == THIEFDRAW)
+	if (node->flags == THIEFDRAW)
 	{
 		int enemyPlayer = currentlyPlaying;
 		if (enemyPlayer == 0)
@@ -669,6 +594,35 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	}
 	else
 	{
+		if (node->opt.type == END_TURN)
+		{
+
+			// End turn cleans up and resets buys, actions and spentmoney.
+			currentState.playerStates[currentlyPlaying].endTurn();
+
+			currentlyPlaying++;
+			if (currentlyPlaying >= node->currentState.playerStates.size())
+			{
+				currentlyPlaying = 0;
+				currentState.turnCounter++;
+			}
+		}
+		else if (node->opt.type == ACTION && (node->opt.absoluteCardId == REMODEL || node->opt.absoluteCardId == THIEF))
+		{
+			switch (node->opt.absoluteCardId)
+			{
+			case REMODEL:
+				createTrashNodes(node, currentState, currentlyPlaying);
+				return;
+				break;
+			case THIEF:
+				createDrawNodes(node, currentState, currentlyPlaying == 0 ? 1 : 0, 2, true); // Currently playing set to not self.
+				return;
+			default:
+				break;
+			}
+		}
+
 		std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
 		if (PLAYPLUSACTIONSFIRST && node->currentState.playerStates[currentlyPlaying].actions > 0)
 		{
@@ -1127,13 +1081,12 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 		else	// ... Greedy
 		{
 			int highestScore = 0;
-			int earlyMidLate = gameState.earlyMidLateGame();
 			for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
 			{
 				if (iter->absoluteCardId == CURSE)	// Never buy curse
 					continue;
 
-				int currentCardScore = cardBuyHeuristic(gameState, playerIndex, (*iter).absoluteCardId, earlyMidLate);
+				int currentCardScore = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 				if (currentCardScore > highestScore)
 				{
 					bestCardAbsoluteIds.clear();
@@ -1287,6 +1240,22 @@ int UCTMonteCarlo::cardBuyHeuristic(GameState currentState, int playerIndex, int
 
 	int score = modifiers[earlyMidLate][CardManager::cardLookup[absoluteCardId].cardType] * (CardManager::cardLookup[absoluteCardId].cost + 1);
 
+	if (absoluteCardId == COPPER)
+		score = 1;
+	else if (absoluteCardId == SILVER)
+		score = 3;
+	else if (absoluteCardId == GOLD)
+		score = 6;
+	else if (absoluteCardId == ESTATE)
+		score = 2;
+	else if (absoluteCardId == DUCHY)
+		score = 5;
+	else if (absoluteCardId == PROVINCE)
+		score = 8;
+	else
+	{
+		score = 0;
+	}
 	return score;
 }
 

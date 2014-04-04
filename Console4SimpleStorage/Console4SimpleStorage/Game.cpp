@@ -108,7 +108,7 @@ void Game::initialize()
 	}
 
 	players[0].initialize(0);	// TODO: More dynamic/flexible way of setting playerAI
-	players[1].initialize(2);
+	players[1].initialize(1);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }
