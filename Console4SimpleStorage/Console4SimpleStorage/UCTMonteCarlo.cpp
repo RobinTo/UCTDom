@@ -1302,6 +1302,113 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 		file2 << "Turn" + std::to_string(i) + ": " + std::to_string(turnsCount[i]) << std::endl;
 
 	file2.close();
+
+
+	std::ofstream file3;
+	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(moveHistorySize) + "strategy.gv";
+	remove(fileName.c_str());
+	file3.open(fileName, std::ios::app);
+	std::string text = "digraph strategy{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
+	file3 << text << std::endl;
+	
+	Node* currentNode = rootNodePtr;
+	while (currentNode->childrenPtrs.size() > 0)
+	{
+		text = "";
+
+		// Find best child
+		Node* currentBest = currentNode->childrenPtrs[0];
+		for (std::vector<Node*>::iterator iterator = currentNode->childrenPtrs.begin(); iterator != currentNode->childrenPtrs.end(); ++iterator)
+		{
+			if ((*iterator)->visited > currentBest->visited)
+				currentBest = (*iterator);
+		}
+		
+		// Print self and best child
+
+
+		// Append *tchu tchu*
+		text += "\"";
+
+		// Append id
+		text += std::to_string(currentNode->id);
+
+		// Append self
+		text += " Type:" + std::to_string(currentNode->opt.type);
+		text += CardManager::cardLookup[currentNode->opt.absoluteCardId].name;
+
+		for (int index = 0; index < INSUPPLY; index++)
+		{
+			int cardsOfType = currentNode->currentState.playerStates[currentNode->playerPlaying].hand[index];
+			if (cardsOfType > 0)
+			{
+				text += " " + CardManager::cardLookupByIndex[index].name + ":" + std::to_string(cardsOfType);
+			}
+		}
+
+		// Append visited
+		text += " Vis:" + std::to_string(currentNode->visited);
+
+		// Append value
+		text += " Val:" + std::to_string(currentNode->value);
+
+		// Append currentplayer
+		text += " Player:" + std::to_string(currentNode->playerPlaying);
+
+		// Append turnCounter
+		text += " Turn:" + std::to_string(currentNode->currentState.turnCounter);
+
+		// Append *tchu tchu*
+		text += "\"";
+
+		// Append the arrow
+		text += " -> ";
+
+		// Append *tchu tchu*
+		text += "\"";
+
+		// Append child id
+		text += std::to_string(currentBest->id);
+
+		// Append child text
+		text += " Type:" + std::to_string(currentBest->opt.type);
+		text += CardManager::cardLookup[currentBest->opt.absoluteCardId].name;
+			
+		for (int index = 0; index < INSUPPLY; index++)
+		{
+			int cardsOfType = currentBest->currentState.playerStates[currentBest->playerPlaying].hand[index];
+			if (cardsOfType > 0)
+			{
+				text += " " + CardManager::cardLookupByIndex[index].name + ":" + std::to_string(cardsOfType);
+			}
+		}
+
+		// Append child visited
+		text += " Vis:" + std::to_string(currentBest->visited);
+
+		// Append child value
+		text += " Val:" + std::to_string(currentBest->value);
+
+		// Append child currentplayer
+		text += " Player:" + std::to_string(currentBest->playerPlaying);
+
+		// Append child turnCounter
+		text += " Turn:" + std::to_string(currentBest->currentState.turnCounter);
+
+		// Append *tchu tchu*
+		text += "\";";
+
+		text += "\r\n";
+		
+
+
+		file3 << text << std::endl;
+		currentNode = currentBest;
+	}
+
+	text = "\r\n }";
+	file << text << std::endl;
+	file3.close();
 }
 void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 {

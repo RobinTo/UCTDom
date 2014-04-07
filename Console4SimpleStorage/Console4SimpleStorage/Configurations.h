@@ -1,5 +1,5 @@
 // Testing
-#define GAMES				1000
+#define GAMES				100
 #define PRINTTREE			0	
 #define PRINTSIMULATIONS	0
 
@@ -11,20 +11,20 @@
 	// Kingdom Cards
 #define BUREAUCRATINGAME	0
 #define FESTIVALINGAME		1
-#define GARDENSINGAME		0
+#define GARDENSINGAME		1
 #define LABORATORYINGAME	1
 #define MARKETINGAME		1
 #define MONEYLENDERINGAME	1
 #define REMODELINGAME		1
 #define SMITHYINGAME		1
-#define THIEFINGAME			1
+#define THIEFINGAME			0
 #define VILLAGEINGAME		1
 #define WITCHINGAME			1
 #define WOODCUTTERINGAME	1
 
 // UCT
 #define NODESTOALLOCATE			2000000
-#define SIMULATIONS				400000
+#define SIMULATIONS				10000
 #define C						0.5
 #define PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 //#define WINLOSESCORING		1		// Whether or not to give a node more value for winning and losing
@@ -33,6 +33,6 @@
 #define AVERAGEPROPAGATE		1		// Whether to use 'old' averaging- or the 'new' best-propagation
 #define INCLUDESCOREINDRAW		0		// 'Old-system': Use only proability, or multiply with score, in draw-nodes for their value.
 #define EPSILON					0		// Percentage in integer value, so 10 means 0.1, or 10 %
-#define PLAYPLUSACTIONSFIRST	0
+#define PLAYPLUSACTIONSFIRST	1
 #define VISITROOTCHILDRENMIN	1
 #define MINIMUMVISITS			5
