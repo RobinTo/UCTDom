@@ -9,18 +9,18 @@
 #define SUPPLYPILESTOGO		5 // (3+2) First number is actual supplypiles to go. Second number is number of zeroes below.
 
 	// Kingdom Cards
-#define BUREAUCRATINGAME	0
-#define FESTIVALINGAME		1
-#define GARDENSINGAME		1
-#define LABORATORYINGAME	1
-#define MARKETINGAME		1
-#define MONEYLENDERINGAME	1
-#define REMODELINGAME		1
-#define SMITHYINGAME		1
-#define THIEFINGAME			0
-#define VILLAGEINGAME		1
-#define WITCHINGAME			1
-#define WOODCUTTERINGAME	1
+#define BUREAUCRATINGAME	0	// Cost: 4
+#define FESTIVALINGAME		1	// Cost: 5
+#define GARDENSINGAME		1	// Cost: 4
+#define LABORATORYINGAME	1	// Cost: 5
+#define MARKETINGAME		1	// Cost: 5
+#define MONEYLENDERINGAME	1	// Cost: 4
+#define REMODELINGAME		1	// Cost: 4
+#define SMITHYINGAME		1	// Cost: 4
+#define THIEFINGAME			0	// Cost: 4
+#define VILLAGEINGAME		1	// Cost: 3
+#define WITCHINGAME			1	// Cost: 5
+#define WOODCUTTERINGAME	1	// Cost: 3
 
 // UCT
 #define NODESTOALLOCATE			2000000
