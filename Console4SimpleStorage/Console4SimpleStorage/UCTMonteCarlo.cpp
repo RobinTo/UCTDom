@@ -1,12 +1,7 @@
-#include <iostream>
-#include <array>
 #include "UCTMonteCarlo.h"
 
-
-
-Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+Option UCTMonteCarlo::getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
 	rootNode->isRoot = true;
 	rootNode->visited = 0;
@@ -49,13 +44,19 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 	if (rootNode->childrenPtrs.size() == 1)
 		return rootNode->childrenPtrs.at(0)->opt;
 
-	// Perform UCT
-	for (int i = 0; i < SIMULATIONS; i++)
+
+
+	
+	// For each thread
+		// For how many times each thread should create a game
+	for (int counter = 0; counter < 3; counter++)
 	{
-		expand(select(rootNode), UCTPlayer);
-		if (PRINTSIMULATIONS)
-			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
+		std::vector<Node*> rootChildrenPtrs = doUCT(UCTPlayer, gameState, moveHistory);
+		// Add score to existing nodes
+		
 	}
+
+
 
 	// Return best option
 	Option bestOption;
@@ -73,10 +74,84 @@ Option UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move
 			mostVisited = rootNode->childrenPtrs.at(i)->visited;
 		}
 	}
-	if (PRINTTREE)
-		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
-	resetNodes();
 	return bestOption;
+}
+
+std::vector<Node*> UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+{
+	// Create inital root node and its children.
+	Node* rootNode = requestNewNode();
+	rootNode->isRoot = true;
+	rootNode->visited = 0;
+	rootNode->currentState = gameState;
+	rootNode->playerPlaying = UCTPlayer;
+
+	if (moveHistory.size() > 2)
+	{
+		Move lastMove = moveHistory.back();
+		int size = moveHistory.size();
+		if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL && lastMove.type == ACTION)		// Time to trash a card from remodel.
+		{
+			rootNode->opt.type = ACTION;
+			rootNode->opt.absoluteCardId = REMODEL;
+		}
+		else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL && lastMove.type == TRASH) // Time to gain a card from remodel.
+		{
+			rootNode->flags = REMODELFLAG;
+			rootNode->opt.type = TRASH;
+			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
+		}
+		else if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == THIEF && lastMove.type == ACTION)
+		{
+			rootNode->opt.type = ACTION;
+			rootNode->opt.absoluteCardId = THIEF;
+		}
+		else if (lastMove.player != UCTPlayer && moveHistory[size - 2].absoluteCardId == THIEF && lastMove.type == THIEFFLIP)
+		{
+			rootNode->flags = THIEFDRAW;
+			rootNode->opt.type = THIEFFLIP;
+			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
+			rootNode->opt.absoluteExtraCardId = lastMove.absoluteExtraCardId;
+		}
+		else if (lastMove.player == UCTPlayer && lastMove.type == ACTION && lastMove.absoluteCardId == MONEYLENDER)
+			rootNode->currentState.playerStates[rootNode->playerPlaying].spentMoney -= 3;
+	}
+
+	createAllChildren(rootNode);
+
+	if (rootNode->childrenPtrs.size() == 1)
+		//return rootNode->childrenPtrs.at(0)->opt;
+
+	// Perform UCT
+	for (int i = 0; i < SIMULATIONS; i++)
+	{
+		expand(select(rootNode), UCTPlayer);
+		if (PRINTSIMULATIONS)
+			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
+	}
+
+	//// Return best option
+	//Option bestOption;
+	//int mostVisited = 0;
+	//for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
+	//{
+	//	std::cout << rootNode->childrenPtrs.at(i)->opt.type;
+	//	std::cout << CardManager::cardLookup[rootNode->childrenPtrs.at(i)->opt.absoluteCardId].name;
+	//	std::cout << " visited: " << rootNode->childrenPtrs.at(i)->visited;
+	//	std::cout << " score: " << rootNode->childrenPtrs.at(i)->value << std::endl;
+
+	//	if (rootNode->childrenPtrs.at(i)->visited > mostVisited)
+	//	{
+	//		bestOption = rootNode->childrenPtrs.at(i)->opt;
+	//		mostVisited = rootNode->childrenPtrs.at(i)->visited;
+	//	}
+	//}
+	//if (PRINTTREE)
+	//	printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
+	//resetNodes();
+	//return bestOption;
+
+	return rootNode->childrenPtrs;
 }
 
 Node* UCTMonteCarlo::select(Node* root)
@@ -1305,10 +1380,10 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 
 
 	std::ofstream file3;
-	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(moveHistorySize) + "strategy.gv";
+	fileName = std::to_string(turnCounter) + "_" + std::to_string(moveHistorySize) + "strategy.gv";
 	remove(fileName.c_str());
 	file3.open(fileName, std::ios::app);
-	std::string text = "digraph strategy{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
+	text = "digraph strategy{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
 	file3 << text << std::endl;
 	
 	Node* currentNode = rootNodePtr;
@@ -1407,7 +1482,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 	}
 
 	text = "\r\n }";
-	file << text << std::endl;
+	file3 << text << std::endl;
 	file3.close();
 }
 void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)

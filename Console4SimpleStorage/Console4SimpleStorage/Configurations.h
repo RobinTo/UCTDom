@@ -1,6 +1,6 @@
 // Testing
 #define GAMES				100
-#define PRINTTREE			0	
+#define PRINTTREE			1	
 #define PRINTSIMULATIONS	0
 
 // Dominion

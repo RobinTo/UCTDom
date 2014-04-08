@@ -4,6 +4,8 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <array>
 #include "Node.h"
 #include "Move.h"
 #include "CardManager.h"
@@ -14,8 +16,9 @@ class UCTMonteCarlo
 public:
 	UCTMonteCarlo();
 	~UCTMonteCarlo();
-	Option doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
+	Option getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
 private:
+	std::vector<Node*> doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
 	Node* nodeAllocationPtr;
 	int handedOutNodes;
 	// MC UCT
