@@ -752,7 +752,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 			std::vector<Option> possibleBuys = getBuyOptions(&node->currentState, currentMoney);
 			for (int i = 0; i < possibleBuys.size(); i++)
 			{
-				if (possibleBuys.at(i).absoluteCardId != CURSE && possibleBuys.at(i).absoluteCardId != COPPER)
+				if (possibleBuys.at(i).absoluteCardId != CURSE)
 				{
 					Node* newBuyNode = requestNewNode();
 					newBuyNode->opt = possibleBuys.at(i);

@@ -23,7 +23,7 @@
 #define WOODCUTTERINGAME	1	// Cost: 3
 
 // UCT
-#define NODESTOALLOCATE			2000000
+#define NODESTOALLOCATE			3000000
 #define SIMULATIONS				50000
 #define C						0.5
 #define PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
