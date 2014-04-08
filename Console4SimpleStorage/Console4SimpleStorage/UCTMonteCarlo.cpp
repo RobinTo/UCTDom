@@ -1508,8 +1508,9 @@ Node* UCTMonteCarlo::requestNewNode()
 		std::cout << "No more nodes!" << std::endl;
 	}
 	handedOutNodes++;
+	Node* toReturn = &nodeAllocationPtr[handedOutNodes - 1];
 	mtx.unlock();
-	return &nodeAllocationPtr[handedOutNodes-1];
+	return toReturn;
 }
 void UCTMonteCarlo::resetNodes()
 {
