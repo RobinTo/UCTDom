@@ -6,9 +6,12 @@
 #include <iostream>
 #include <string>
 #include <array>
+#include <thread>
+#include <future>
 #include "Node.h"
 #include "Move.h"
 #include "CardManager.h"
+#include <mutex>
 
 
 class UCTMonteCarlo
@@ -18,7 +21,12 @@ public:
 	~UCTMonteCarlo();
 	Option getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
 private:
-	std::vector<Node*> doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
+	std::mutex mtx;
+	std::mutex returnMtx;
+	std::vector<Node*> threadNodes;
+	void addToReturnVector(std::vector<Node*> nodes);
+	void startThreads(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
+	void doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory);
 	Node* nodeAllocationPtr;
 	int handedOutNodes;
 	// MC UCT
@@ -49,6 +57,7 @@ private:
 	std::vector<Node*> emptyNodes;
 	std::vector<Node*> usedNodes;
 	void resetNodes();
+	void resetMyNodes(Node* rootNode); // Threads only resets own nodes.
 	Node* requestNewNode();
 	unsigned long long choose(unsigned long long n, unsigned long long k);
 

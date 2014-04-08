@@ -14,7 +14,7 @@ Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHist
 {
 	Option option;
 	if (AIType == 0)
-		option = uct.doUCT(playerStateIndex, currentState, moveHistory);
+		option = uct.getNextOption(playerStateIndex, currentState, moveHistory);
 	else if (AIType == 1)
 		option = bmai.getNextOption(currentState, playerStateIndex);
 	else if (AIType == 2)

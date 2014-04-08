@@ -2,82 +2,66 @@
 
 Option UCTMonteCarlo::getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	Node* rootNode = requestNewNode();
-	rootNode->isRoot = true;
-	rootNode->visited = 0;
-	rootNode->currentState = gameState;
-	rootNode->playerPlaying = UCTPlayer;
+	startThreads(UCTPlayer, gameState, moveHistory);
+	std::vector<Node*> concatenatedValue;
 
-	if (moveHistory.size() > 2)
+	for (int i = 0; i < threadNodes.size(); i++)
 	{
-		Move lastMove = moveHistory.back();
-		int size = moveHistory.size();
-		if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == REMODEL && lastMove.type == ACTION)		// Time to trash a card from remodel.
+		bool contained = false;
+		for (int n = 0; n < concatenatedValue.size(); n++)
 		{
-			rootNode->opt.type = ACTION;
-			rootNode->opt.absoluteCardId = REMODEL;
+			if (concatenatedValue.at(n)->opt.type == threadNodes.at(i)->opt.type && concatenatedValue.at(n)->opt.absoluteCardId == threadNodes.at(i)->opt.absoluteCardId)
+			{
+				contained = true;
+				concatenatedValue.at(n)->visited += threadNodes.at(i)->visited;
+			}
 		}
-		else if (lastMove.player == UCTPlayer && moveHistory[size - 2].absoluteCardId == REMODEL && lastMove.type == TRASH) // Time to gain a card from remodel.
+
+		if (!contained)
 		{
-			rootNode->flags = REMODELFLAG;
-			rootNode->opt.type = TRASH;
-			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
+			concatenatedValue.push_back(threadNodes.at(i));
 		}
-		else if (lastMove.player == UCTPlayer && lastMove.absoluteCardId == THIEF && lastMove.type == ACTION)
-		{
-			rootNode->opt.type = ACTION;
-			rootNode->opt.absoluteCardId = THIEF;
-		}
-		else if (lastMove.player != UCTPlayer && moveHistory[size - 2].absoluteCardId == THIEF && lastMove.type == THIEFFLIP)
-		{
-			rootNode->flags = THIEFDRAW;
-			rootNode->opt.type = THIEFFLIP;
-			rootNode->opt.absoluteCardId = lastMove.absoluteCardId;
-			rootNode->opt.absoluteExtraCardId = lastMove.absoluteExtraCardId;
-		}
-		else if (lastMove.player == UCTPlayer && lastMove.type == ACTION && lastMove.absoluteCardId == MONEYLENDER)
-			rootNode->currentState.playerStates[rootNode->playerPlaying].spentMoney -= 3;
 	}
 
-	createAllChildren(rootNode);
-
-	if (rootNode->childrenPtrs.size() == 1)
-		return rootNode->childrenPtrs.at(0)->opt;
-
-
-
-	
-	// For each thread
-		// For how many times each thread should create a game
-	for (int counter = 0; counter < 3; counter++)
-	{
-		std::vector<Node*> rootChildrenPtrs = doUCT(UCTPlayer, gameState, moveHistory);
-		// Add score to existing nodes
-		
-	}
-
-
-
-	// Return best option
+	int mostVisits = 0;
 	Option bestOption;
-	int mostVisited = 0;
-	for (int i = 0; i < rootNode->childrenPtrs.size(); i++)
+	for (int i = 0; i < concatenatedValue.size(); i++)
 	{
-		std::cout << rootNode->childrenPtrs.at(i)->opt.type;
-		std::cout << CardManager::cardLookup[rootNode->childrenPtrs.at(i)->opt.absoluteCardId].name;
-		std::cout << " visited: " << rootNode->childrenPtrs.at(i)->visited;
-		std::cout << " score: " << rootNode->childrenPtrs.at(i)->value << std::endl;
-
-		if (rootNode->childrenPtrs.at(i)->visited > mostVisited)
+		std::cout << concatenatedValue.at(i)->opt.type;
+		std::cout << CardManager::cardLookup[concatenatedValue.at(i)->opt.absoluteCardId].name;
+		std::cout << " visited: " << concatenatedValue.at(i)->visited << std::endl;
+		if (concatenatedValue.at(i)->visited > mostVisits)
 		{
-			bestOption = rootNode->childrenPtrs.at(i)->opt;
-			mostVisited = rootNode->childrenPtrs.at(i)->visited;
+			mostVisits = concatenatedValue.at(i)->visited;
+			bestOption = concatenatedValue.at(i)->opt;
 		}
 	}
+
+	concatenatedValue.clear();
+	threadNodes.clear();
+	resetNodes();
 	return bestOption;
 }
 
-std::vector<Node*> UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+void UCTMonteCarlo::startThreads(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+{
+	std::vector<Node*> nodesFrom1;
+	std::vector<Node*> nodesFrom2;
+	std::vector<Node*> nodesFrom3;
+
+	std::thread t1(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::thread t2(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	std::thread t3(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory);
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	t1.join();
+	t2.join();
+	t3.join();
+}
+
+void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
@@ -120,9 +104,15 @@ std::vector<Node*> UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std:
 	createAllChildren(rootNode);
 
 	if (rootNode->childrenPtrs.size() == 1)
-		//return rootNode->childrenPtrs.at(0)->opt;
+	{
+		std::vector<Node*> temp;
+		temp.push_back(rootNode->childrenPtrs.at(0));
+		temp.at(0)->visited = 99;
+		addToReturnVector(temp);
+		return;
+	}
 
-	// Perform UCT
+
 	for (int i = 0; i < SIMULATIONS; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
@@ -150,8 +140,9 @@ std::vector<Node*> UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std:
 	//	printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
 	//resetNodes();
 	//return bestOption;
-
-	return rootNode->childrenPtrs;
+	
+	// "Return"
+	addToReturnVector(rootNode->childrenPtrs);
 }
 
 Node* UCTMonteCarlo::select(Node* root)
@@ -1511,11 +1502,13 @@ UCTMonteCarlo::~UCTMonteCarlo()
 }
 Node* UCTMonteCarlo::requestNewNode()
 {
+	mtx.lock();
 	if (handedOutNodes >= NODESTOALLOCATE)
 	{
 		std::cout << "No more nodes!" << std::endl;
 	}
 	handedOutNodes++;
+	mtx.unlock();
 	return &nodeAllocationPtr[handedOutNodes-1];
 }
 void UCTMonteCarlo::resetNodes()
@@ -1527,6 +1520,17 @@ void UCTMonteCarlo::resetNodes()
 	handedOutNodes = 0;
 }
 
+void UCTMonteCarlo::resetMyNodes(Node* rootNode)
+{
+	if (rootNode->childrenPtrs.size() > 0)
+	{
+		for (int i = 0; i<rootNode->childrenPtrs.size(); i++)
+		{
+			resetMyNodes(rootNode->childrenPtrs.at(i));
+		}
+	}
+	rootNode->reset();
+}
 unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long long k)
 {
 	if (k > n) {
@@ -1540,7 +1544,15 @@ unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long lon
 	return r;
 }
 
-
+void UCTMonteCarlo::addToReturnVector(std::vector<Node*> nodes)
+{
+	returnMtx.lock();
+	for (int i = 0; i < nodes.size(); i++)
+	{
+		threadNodes.push_back(nodes.at(i));
+	}
+	returnMtx.unlock();
+}
 // TODO: Score on the last turn is wrong, because the UCT simulates on too many turns, after moving of turncounter incrementation.
 // TODO: Bureaucrat cheats!
 // TODO: Visited:1 Cases are weird

@@ -1,6 +1,6 @@
 // Testing
 #define GAMES				100
-#define PRINTTREE			1	
+#define PRINTTREE			0	
 #define PRINTSIMULATIONS	0
 
 // Dominion
@@ -24,7 +24,7 @@
 
 // UCT
 #define NODESTOALLOCATE			2000000
-#define SIMULATIONS				10000
+#define SIMULATIONS				50000
 #define C						0.5
 #define PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 //#define WINLOSESCORING		1		// Whether or not to give a node more value for winning and losing
