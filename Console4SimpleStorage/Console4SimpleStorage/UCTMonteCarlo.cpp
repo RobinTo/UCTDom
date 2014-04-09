@@ -2,7 +2,9 @@
 
 Option UCTMonteCarlo::getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	startThreads(UCTPlayer, gameState, moveHistory);
+	for (int counter = 0; counter < THREADITERATIONS; counter ++)
+		startThreads(UCTPlayer, gameState, moveHistory);
+
 	std::vector<Node*> concatenatedValue;
 
 	for (int i = 0; i < threadNodes.size(); i++)
@@ -45,20 +47,20 @@ Option UCTMonteCarlo::getNextOption(int UCTPlayer, GameState gameState, std::vec
 
 void UCTMonteCarlo::startThreads(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	std::vector<Node*> nodesFrom1;
-	std::vector<Node*> nodesFrom2;
-	std::vector<Node*> nodesFrom3;
+	std::vector<std::thread> threadVector;
+	for (int counter = 0; counter < THREADS; counter++)
+	{
+		threadVector.push_back(std::thread(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-	std::thread t1(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	std::thread t2(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-	std::thread t3(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory);
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	}
 
-	t1.join();
-	t2.join();
-	t3.join();
+	for (int counter = 0; counter < THREADS; counter++)
+	{
+		threadVector[counter].join();
+	}
+
+	threadVector.clear();
 }
 
 void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
