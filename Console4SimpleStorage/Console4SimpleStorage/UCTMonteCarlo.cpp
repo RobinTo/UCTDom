@@ -122,6 +122,11 @@ void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> 
 			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
 	}
 
+	if (PRINTTREE)
+		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
+
+
+
 	//// Return best option
 	//Option bestOption;
 	//int mostVisited = 0;
@@ -228,8 +233,9 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	double score = 0;
 	if (gameState.playerStates.size() == 2)
 	{
-		score = PERCFACTOR*(gameState.playerStates[0].calculateVictoryPoints() - gameState.playerStates[1].calculateVictoryPoints()) / 100.;
-		score += ((gameState.playerStates[0].calculateVictoryPoints() > gameState.playerStates[1].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
+		int otherPlayer = UCTPlayer == 0 ? 1 : 0;
+		score = PERCFACTOR*(gameState.playerStates[UCTPlayer].calculateVictoryPoints() - gameState.playerStates[otherPlayer].calculateVictoryPoints()) / 100.;
+		score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[otherPlayer].calculateVictoryPoints()) ? WINPOINT : LOSEPOINT);
 		//std::cout << "Score:" << score << std::endl;
 	}
 	else
@@ -241,62 +247,66 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 
 void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCTPlayer)
 {
-	node->visited++;
-	if (true)
-	{
-		if (node->opt.type != DRAW && node->opt.type != THIEFFLIP)
-		{
-			node->sum += score;
-			node->value = double(node->sum) / double(node->visited);
-		}
-	}
+	if (!node->isRoot && node->playerPlaying != UCTPlayer)
+		propagate(node->parentPtr, score, invalidate, UCTPlayer);
 	else
 	{
-		/* Explanation
-		If we are calculating the score for a node, that is not a node HAVING -CHILDREN,
-		then we simply take the SCORE and check whether it is better than what we already have.
-		If it is, then we replace the old score with the new score (optimal and guaranteed path)
-
-		However, if we are calculating the score for a node that HAS draw-children, (either all or none are draw-children),
-		then we calculate the score to be child.value * child.probability / totalAccumulatedProbability.
-		Where the totalAccumulatedProbability is equal to all the addition of all VISITED children's probability.
-		(Visited = 2 or more, since we initialize all to Draw-Nodes to visited = 1).
-		Note that we omit the propagated score value from the last node.
-		After the value is calculated, we propagate this new value, instead of the old score, forcing ancestors to receive it, regardless of old score,
-		so that the ancestor-nodes receive a weighted average of the draws, instead of the best possible node, based on an unlikely draw.
-		The reasoning behind the force is (not midi-clorians) that as more draws are explored, their weighted average is becoming more precise,
-		thus we want to propagate a precise value, rather than the best value.		*/
-
-		if (node->childrenPtrs.size() == 0)
+		node->visited++;
+		if (true)
 		{
-			node->value = score;
-		}
-		else if (node->childrenPtrs[0]->opt.type == DRAW)
-		{
-			double totalAccumulatedProbability = 0;
-			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+			if (node->opt.type != DRAW && node->opt.type != THIEFFLIP)
 			{
-				if ((*child)->visited > 1)
-					totalAccumulatedProbability += (*child)->probability;
+				node->sum += score;
+				node->value = double(node->sum) / double(node->visited);
 			}
-			double newValue = 0;
-			for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+		}
+		else
+		{
+			/* Explanation
+			If we are calculating the score for a node, that is not a node HAVING -CHILDREN,
+			then we simply take the SCORE and check whether it is better than what we already have.
+			If it is, then we replace the old score with the new score (optimal and guaranteed path)
+
+			However, if we are calculating the score for a node that HAS draw-children, (either all or none are draw-children),
+			then we calculate the score to be child.value * child.probability / totalAccumulatedProbability.
+			Where the totalAccumulatedProbability is equal to all the addition of all VISITED children's probability.
+			(Visited = 2 or more, since we initialize all to Draw-Nodes to visited = 1).
+			Note that we omit the propagated score value from the last node.
+			After the value is calculated, we propagate this new value, instead of the old score, forcing ancestors to receive it, regardless of old score,
+			so that the ancestor-nodes receive a weighted average of the draws, instead of the best possible node, based on an unlikely draw.
+			The reasoning behind the force is (not midi-clorians) that as more draws are explored, their weighted average is becoming more precise,
+			thus we want to propagate a precise value, rather than the best value.		*/
+
+			if (node->childrenPtrs.size() == 0)
 			{
-				if ((*child)->visited > 1)
+				node->value = score;
+			}
+			else if (node->childrenPtrs[0]->opt.type == DRAW)
+			{
+				double totalAccumulatedProbability = 0;
+				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 				{
-					if ((*child)->value < 0)
-						int n = 5;
-					newValue += ((*child)->probability / totalAccumulatedProbability) * (*child)->value;
+					if ((*child)->visited > 1)
+						totalAccumulatedProbability += (*child)->probability;
 				}
+				double newValue = 0;
+				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
+				{
+					if ((*child)->visited > 1)
+					{
+						if ((*child)->value < 0)
+							int n = 5;
+						newValue += ((*child)->probability / totalAccumulatedProbability) * (*child)->value;
+					}
+				}
+				node->value = newValue;
+				score = newValue;
+				invalidate = true;
 			}
-			node->value = newValue;
-			score = newValue;
-			invalidate = true;
-		}
-		else if (0 == node->childrenPtrs[0]->playerPlaying)	// Maximize value
-		{
-			/*if (invalidate)
-			{*/
+			else if (0 == node->childrenPtrs[0]->playerPlaying)	// Maximize value
+			{
+				/*if (invalidate)
+				{*/
 				node->value = score;
 				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 				{
@@ -307,18 +317,18 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 						node->value = (*child)->value;
 					}
 				}
-			/*}
-			else
-			{
+				/*}
+				else
+				{
 				if (score > node->value)
-					node->value = score;
+				node->value = score;
 
-			}*/
-		}
-		else// Minimize value
-		{
-			/*if (invalidate)
-			{*/
+				}*/
+			}
+			else// Minimize value
+			{
+				/*if (invalidate)
+				{*/
 				node->value = score;
 				for (std::vector<Node*>::iterator child = node->childrenPtrs.begin(); child != node->childrenPtrs.end(); ++child)
 				{
@@ -329,17 +339,18 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 						node->value = (*child)->value;
 					}
 				}
-			/*}
-			else
-			{
+				/*}
+				else
+				{
 				if (score < node->value)
-					node->value = score;
-			}*/
+				node->value = score;
+				}*/
+			}
 		}
-	}
 
-	if (!node->isRoot)	// As long as root is not reached, we should keep propagating recursively.
-		propagate(node->parentPtr, score, invalidate, UCTPlayer);
+		if (!node->isRoot)	// As long as root is not reached, we should keep propagating recursively.
+			propagate(node->parentPtr, score, invalidate, UCTPlayer);
+	}
 }
 
 // Returns best child according to UCT.
@@ -1477,6 +1488,10 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 	text = "\r\n }";
 	file3 << text << std::endl;
 	file3.close();
+
+
+
+
 }
 void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 {
