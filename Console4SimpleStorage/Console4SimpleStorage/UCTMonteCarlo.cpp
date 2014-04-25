@@ -332,7 +332,7 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 // Returns best child according to UCT.
 Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 {
-	if (VISITROOTCHILDRENMIN && root->isRoot)
+	if (root->isRoot)
 	{
 		for (int i = 0; i < root->childrenPtrs.size(); i++)
 		{
