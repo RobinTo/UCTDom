@@ -13,14 +13,12 @@ void Player::initialize(int AIType2)
 Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHistory)
 {
 	Option option;
-	if (AIType == 0)
+	if (AIType == UCTAI)
 		option = uct.getNextOption(playerStateIndex, currentState, moveHistory);
-	else if (AIType == 1)
+	else if (AIType == BIGMONEYAI)
 		option = bmai.getNextOption(currentState, playerStateIndex);
-	else if (AIType == 2)
+	else if (AIType == HUMANPLAYER)
 		option = humanAI.getNextOption(currentState, playerStateIndex, moveHistory);
-
 	
-
 	return option;
 }

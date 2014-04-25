@@ -47,7 +47,6 @@ private:
 	void createDrawNodes(Node* parentNode, GameState& currentState, int currentlyPlaying, int numberOfCards, bool createThiefDraws);
 	void createTrashNodes(Node* parentNode, GameState& currentState, int currentlyPlaying);
 	int getCurrentMoney(GameState* gameState, int playerIndex);
-	int cardBuyHeuristic(GameState currentState, int playerIndex, int absoluteCardId, int earlyMidLate);
 
 	// Tree printing
 	void printNode(Node* nodePtr, std::ofstream& file);

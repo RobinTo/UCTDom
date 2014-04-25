@@ -173,7 +173,7 @@ int PlayerState::pickRandom(const int (&cardPile)[INSUPPLY])
 		if (randomCounter <= 0)
 			return index;
 	}
-	return -1; //Something went wrong
+	return -1;
 }
 
 void PlayerState::shuffle()

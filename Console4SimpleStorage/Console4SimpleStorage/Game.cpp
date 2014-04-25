@@ -20,32 +20,6 @@ void Game::initialize()
 	gameState.initialize();
 	cardManager.initialize();
 
-	std::vector<Card> cardsInGame;
-	if (BUREAUCRATINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[BUREAUCRAT]);
-	if (FESTIVALINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[FESTIVAL]);
-	if (GARDENSINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[GARDENS]);
-	if (LABORATORYINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[LABORATORY]);
-	if (MARKETINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[MARKET]);
-	if (MONEYLENDERINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[MONEYLENDER]);
-	if (REMODELINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[REMODEL]);
-	if (SMITHYINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[SMITHY]);
-	if (THIEFINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[THIEF]);
-	if (VILLAGEINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[VILLAGE]);
-	if (WITCHINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[WITCH]);
-	if (WOODCUTTERINGAME)
-		cardsInGame.push_back(CardManager::cardLookup[WOODCUTTER]);
-
 	// Supply
 	gameState.supplyPiles[CardManager::cardIndexer[COPPER]] = 46;
 	gameState.supplyPiles[CardManager::cardIndexer[SILVER]] = 40;
@@ -54,49 +28,31 @@ void Game::initialize()
 	gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] = 8;
 	gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] = 8;
 	gameState.supplyPiles[CardManager::cardIndexer[CURSE]] = 10;
-	// Initialization to zero
-	gameState.supplyPiles[CardManager::cardIndexer[WOODCUTTER]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[GARDENS]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[FESTIVAL]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[MONEYLENDER]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[SMITHY]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[VILLAGE]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[MARKET]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[LABORATORY]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[WITCH]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[BUREAUCRAT]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[REMODEL]] = 0;
-	gameState.supplyPiles[CardManager::cardIndexer[THIEF]] = 0;
+	if (WOODCUTTERINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[WOODCUTTER]] = 10;
+	if (GARDENSINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[GARDENS]] = 8;
+	if (FESTIVALINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[FESTIVAL]] = 10;
+	if (MONEYLENDERINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[MONEYLENDER]] = 10;
+	if (SMITHYINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[SMITHY]] = 10;
+	if (VILLAGEINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[VILLAGE]] = 10;
+	if (MARKETINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[MARKET]] = 10;
+	if (LABORATORYINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[LABORATORY]] = 10;
+	if (WITCHINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[WITCH]] = 10;
+	if (BUREAUCRATINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[BUREAUCRAT]] = 10;
+	if (REMODELINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[REMODEL]] = 10;
+	if (THIEFINGAME)
+		gameState.supplyPiles[CardManager::cardIndexer[THIEF]] = 10;
 
-
-	for (std::vector<Card>::iterator it = cardsInGame.begin(); it != cardsInGame.end(); ++it)
-	{
-		if (it->id != GARDENS)
-			gameState.supplyPiles[CardManager::cardIndexer[it->id]] = 10;
-		else
-			gameState.supplyPiles[CardManager::cardIndexer[it->id]] = 8;
-	}
-
-
-	// Randomize ten cards for the supply
-	/*std::set<int> cardIndexes;
-	do
-	{
-		int newCard = rand() % 25 + 7;
-		cardIndexes.insert(newCard);
-	} while (cardIndexes.size() < 10);
-
-	int currentIndex = 7;
-	for (std::set<int>::iterator iterator = cardIndexes.begin(); iterator != cardIndexes.end(); ++iterator)
-	{
-		CardManager::cardIndexer[*iterator] = currentIndex;
-		CardManager::cardLookupByIndex[currentIndex] = CardManager::cardLookup[*iterator];
-		if (*iterator == GARDENS)
-			gameState.supplyPiles[currentIndex] = 12;
-		else
-			gameState.supplyPiles[currentIndex] = 10;
-		currentIndex++;
-	}*/
 
 	// Starting deck, hand, and setting stateIndices
 	for (int index = 0; index < PLAYERS; index++)
@@ -107,8 +63,8 @@ void Game::initialize()
 		gameState.playerStates[index].endTurn();
 	}
 
-	players[0].initialize(0);	// TODO: More dynamic/flexible way of setting playerAI
-	players[1].initialize(1);
+	players[0].initialize(UCTAI);
+	players[1].initialize(BIGMONEYAI);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }
@@ -278,8 +234,6 @@ void Game::play()
 						}
 						break;
 					case REMODEL:
-						// Could add some security, that next option must be a trash option (if more cards in hand)
-						// XOR could add that instead of asking getnextoption, we ask, get trashoption.
 						break;
 					case THIEF:
 						// Do the following for all enemy players
@@ -309,7 +263,7 @@ void Game::play()
 					}
 
 				}
-				else if (option.type == THIEFTRASH) // TODO: Support for more than two players
+				else if (option.type == THIEFTRASH) 
 				{
 					int otherPlayer = (index == 0) ? 1 : 0;
 					gameState.trash[CardManager::cardIndexer[option.absoluteCardId]] ++;
@@ -320,7 +274,7 @@ void Game::play()
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
-				else if (option.type == THIEFGAIN) // TODO: Support for more than two players
+				else if (option.type == THIEFGAIN) 
 				{
 					int otherPlayer = (index == 0) ? 1 : 0;
 					gameState.playerStates[players[index].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] ++;

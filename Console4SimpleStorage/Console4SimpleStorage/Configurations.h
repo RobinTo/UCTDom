@@ -27,7 +27,6 @@
 #define SIMULATIONS				100000
 #define C						0.5
 #define PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
-//#define WINLOSESCORING		1		// Whether or not to give a node more value for winning and losing
 #define WINPOINT				1		// How many points to give a node's value for winning
 #define LOSEPOINT				0		// How many points to give a node's value for losing
 #define AVERAGEPROPAGATE		1		// Whether to use 'old' averaging- or the 'new' best-propagation
