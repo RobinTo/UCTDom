@@ -114,12 +114,15 @@ void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> 
 		return;
 	}
 
+	int sims = 0;
 	for (int i = 0; i < SIMULATIONS; i++)
 	{
 		expand(select(rootNode), UCTPlayer);
 		if (PRINTSIMULATIONS)
 			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
+		sims = i;
 	}
+	std::cout << "Sims: " << sims << std::endl;
 
 	if (PRINTTREE)
 		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
@@ -1094,25 +1097,103 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 
 Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex)
 {
-	std::vector<Option>::iterator iter;
-
-	Option cardToReturn;
-	cardToReturn.type = END_TURN;
-	cardToReturn.absoluteCardId = -1;
-	int highestCost = 0;
-
-	if (gameState.playerStates[playerIndex].actions > 0)
+	bool randomPlayout = false;
+	if (PLAYOUTPOLICY == EPSILONGREEDY)
 	{
+		int randomCounter = rand() % 100 + 1;
+		if (EPSILON >= randomCounter)
+			randomPlayout = true;
+	}
+	else if(PLAYOUTPOLICY == RANDOMPLAYOUT)
+	{
+		randomPlayout = true;
+	}
+	else if (PLAYOUTPOLICY == HEURISTICGREEDY)
+	{
+		randomPlayout = false;
+	}
+	else
+	{
+		std::cout << "Error, no playoutpolicy specified";
+		Option o;
+		return o;
+	}
+
+
+	if (randomPlayout)
+	{	
+		// Create all options
+		std::vector<Option> allOptions;
+
+		// Add end turn option
+		Option endTurnOption;
+		endTurnOption.type = END_TURN;
+		endTurnOption.absoluteCardId = -1;
+		allOptions.push_back(endTurnOption);
+
+		// Add all action options
 		std::vector<Option> actionOptions = getActionOptions(&gameState, gameState.playerStates[playerIndex].hand);
-		if (actionOptions.size() > 0)
+		allOptions.insert(allOptions.end(), actionOptions.begin(), actionOptions.end());
+
+		// Add all buy options
+		std::vector<Option> buyOptions = getBuyOptions(&gameState, getCurrentMoney(&gameState, playerIndex));
+		allOptions.insert(allOptions.end(), buyOptions.begin(), buyOptions.end());
+
+		// Choose a random option
+		int randomCounter = rand() % allOptions.size();
+		return allOptions[randomCounter];
+	}
+	else
+	{
+		std::vector<Option>::iterator iter;
+
+		Option cardToReturn;
+		cardToReturn.type = END_TURN;
+		cardToReturn.absoluteCardId = -1;
+		int highestCost = 0;
+
+		if (gameState.playerStates[playerIndex].actions > 0)
 		{
-			int highestScore = 0;
-			std::vector<int> bestCardAbsoluteIds;
-			for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
+			std::vector<Option> actionOptions = getActionOptions(&gameState, gameState.playerStates[playerIndex].hand);
+			if (actionOptions.size() > 0)
 			{
-				// If has an action card which gives +actions, play it.
-				if ((*iter).absoluteCardId == MARKET || (*iter).absoluteCardId == LABORATORY || (*iter).absoluteCardId == VILLAGE || (*iter).absoluteCardId == FESTIVAL)
-					return (*iter);
+				int highestScore = 0;
+				std::vector<int> bestCardAbsoluteIds;
+				for (iter = actionOptions.begin(); iter != actionOptions.end(); iter++)
+				{
+					// If has an action card which gives +actions, play it.
+					if ((*iter).absoluteCardId == MARKET || (*iter).absoluteCardId == LABORATORY || (*iter).absoluteCardId == VILLAGE || (*iter).absoluteCardId == FESTIVAL)
+						return (*iter);
+
+					int currentCardScore = CardManager::cardLookup[(*iter).absoluteCardId].cost;
+					if (currentCardScore > highestScore)
+					{
+						bestCardAbsoluteIds.clear();
+						highestScore = currentCardScore;
+						bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+					}
+					else if (currentCardScore == highestScore)	// If multiple cards have the best value, then pick a random.
+					{
+						bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+					}
+				}
+
+				int randomCounter = rand() % bestCardAbsoluteIds.size();
+				cardToReturn.absoluteCardId = bestCardAbsoluteIds[randomCounter];
+				cardToReturn.type = ACTION;
+				return cardToReturn;	// Return early if there was an action card.
+			}
+		}
+		if (gameState.playerStates[playerIndex].buys > 0)
+		{
+			std::vector<Option> buyOptions = getBuyOptions(&gameState, getCurrentMoney(&gameState, playerIndex));
+			std::vector<int> bestCardAbsoluteIds;
+
+			int highestScore = 0;
+			for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
+			{
+				if (iter->absoluteCardId == CURSE)	// Never buy curse
+					continue;
 
 				int currentCardScore = CardManager::cardLookup[(*iter).absoluteCardId].cost;
 				if (currentCardScore > highestScore)
@@ -1127,50 +1208,21 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 				}
 			}
 
-			int randomCounter = rand() % bestCardAbsoluteIds.size();
-			cardToReturn.absoluteCardId = bestCardAbsoluteIds[randomCounter];
-			cardToReturn.type = ACTION;
-			return cardToReturn;	// Return early if there was an action card.
-		}
-	}
-	if (gameState.playerStates[playerIndex].buys > 0)
-	{
-		std::vector<Option> buyOptions = getBuyOptions(&gameState, getCurrentMoney(&gameState, playerIndex));
-		std::vector<int> bestCardAbsoluteIds;
-		
-		int highestScore = 0;
-		for (iter = buyOptions.begin(); iter != buyOptions.end(); iter++)
-		{
-			if (iter->absoluteCardId == CURSE)	// Never buy curse
-				continue;
-
-			int currentCardScore = CardManager::cardLookup[(*iter).absoluteCardId].cost;
-			if (currentCardScore > highestScore)
+			if (bestCardAbsoluteIds.size() == 0) // If there are no cards chosen, then probably curse was the only buy option.
 			{
-				bestCardAbsoluteIds.clear();
-				highestScore = currentCardScore;
-				bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+				cardToReturn.absoluteCardId = -1;
+				cardToReturn.type = END_TURN;
 			}
-			else if (currentCardScore == highestScore)	// If multiple cards have the best value, then pick a random.
+			else
 			{
-				bestCardAbsoluteIds.push_back((*iter).absoluteCardId);
+				int randomCounter = rand() % bestCardAbsoluteIds.size();
+				cardToReturn.absoluteCardId = bestCardAbsoluteIds[randomCounter];
+				cardToReturn.type = BUY;
 			}
 		}
-		
-		if (bestCardAbsoluteIds.size() == 0) // If there are no cards chosen, then probably curse was the only buy option.
-		{
-			cardToReturn.absoluteCardId = -1;
-			cardToReturn.type = END_TURN;
-		}
-		else
-		{
-			int randomCounter = rand() % bestCardAbsoluteIds.size();
-			cardToReturn.absoluteCardId = bestCardAbsoluteIds[randomCounter];
-			cardToReturn.type = BUY;
-		}
-	}
 
-	return cardToReturn;	// -1 if there were no buys or actions available.
+		return cardToReturn;	// -1 if there were no buys or actions available.
+	}
 }
 
 

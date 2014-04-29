@@ -26,14 +26,18 @@
 #define NODESTOALLOCATE			2000000
 #define SIMULATIONS				100000
 #define C						0.5
-#define PERCFACTOR				0		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
+#define PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define WINPOINT				1		// How many points to give a node's value for winning
 #define LOSEPOINT				0		// How many points to give a node's value for losing
 #define AVERAGEPROPAGATE		1		// Whether to use 'old' averaging- or the 'new' best-propagation
 #define INCLUDESCOREINDRAW		0		// 'Old-system': Use only proability, or multiply with score, in draw-nodes for their value.
-#define EPSILON					0		// Percentage in integer value, so 10 means 0.1, or 10 %
-#define PLAYPLUSACTIONSFIRST	0
+#define PLAYPLUSACTIONSFIRST	1
 #define VISITROOTCHILDRENMIN	1
 #define MINIMUMVISITS			1
 #define THREADITERATIONS		1
 #define THREADS					1
+#define PLAYOUTPOLICY			RANDOMPLAYOUT
+	#define RANDOMPLAYOUT			0
+	#define EPSILONGREEDY			1
+		#define EPSILON					100		// Percentage in integer value, so 10 means 0.1, or 10 %
+	#define HEURISTICGREEDY			2
