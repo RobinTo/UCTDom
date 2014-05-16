@@ -63,8 +63,8 @@ void Game::initialize()
 		gameState.playerStates[index].endTurn();
 	}
 
-	players[0].initialize(UCTAI);
-	players[1].initialize(BIGMONEYAI);
+	players[0].initialize(FIRSTPLAYERAI);
+	players[1].initialize(SECONDPLAYERAI);
 	players[0].playerStateIndex = 0;
 	players[1].playerStateIndex = 1;
 }

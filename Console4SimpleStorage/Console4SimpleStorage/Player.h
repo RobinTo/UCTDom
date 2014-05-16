@@ -4,11 +4,8 @@
 #include "UCTMonteCarlo.h"
 #include "BigMoneyAI.h"
 #include "HumanInputAI.h"
+#include "FlatUCB.h"
 
-
-#define UCTAI		0
-#define BIGMONEYAI	1
-#define HUMANPLAYER	2
 
 
 class Player
@@ -28,4 +25,6 @@ private:
 	UCTMonteCarlo uct;
 	BigMoneyAI bmai;
 	HumanInputAI humanAI;
+	FlatUCB flatUCB;
+
 };

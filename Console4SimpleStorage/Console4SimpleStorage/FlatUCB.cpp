@@ -1,8 +1,8 @@
-#include "UCTMonteCarlo.h"
+#include "FlatUCB.h"
 
-Option UCTMonteCarlo::getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+Option FlatUCB::getNextOption(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
-	for (int counter = 0; counter < UCT_THREADITERATIONS; counter++)
+	for (int counter = 0; counter < UCB_THREADITERATIONS; counter++)
 		startThreads(UCTPlayer, gameState, moveHistory);
 
 	std::vector<Node*> concatenatedValue;
@@ -45,17 +45,17 @@ Option UCTMonteCarlo::getNextOption(int UCTPlayer, GameState gameState, std::vec
 	return bestOption;
 }
 
-void UCTMonteCarlo::startThreads(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+void FlatUCB::startThreads(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
 	std::vector<std::thread> threadVector;
-	for (int counter = 0; counter < UCT_THREADS; counter++)
+	for (int counter = 0; counter < UCB_THREADS; counter++)
 	{
-		threadVector.push_back(std::thread(&UCTMonteCarlo::doUCT, this, UCTPlayer, gameState, moveHistory));
+		threadVector.push_back(std::thread(&FlatUCB::doUCT, this, UCTPlayer, gameState, moveHistory));
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
 	}
 
-	for (int counter = 0; counter < UCT_THREADS; counter++)
+	for (int counter = 0; counter < UCB_THREADS; counter++)
 	{
 		threadVector[counter].join();
 	}
@@ -63,7 +63,7 @@ void UCTMonteCarlo::startThreads(int UCTPlayer, GameState gameState, std::vector
 	threadVector.clear();
 }
 
-void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
+void FlatUCB::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> moveHistory)
 {
 	// Create inital root node and its children.
 	Node* rootNode = requestNewNode();
@@ -115,23 +115,24 @@ void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> 
 	}
 
 	int sims = 0;
-	for (int i = 0; i < UCT_SIMULATIONS; i++)
+	for (int i = 0; i < UCB_SIMULATIONS; i++)
 	{
-		expand(select(rootNode), UCTPlayer);
-		if (UCT_PRINTSIMULATIONS)
+		Node* toRollout = UCTSelectChild(rootNode);
+		rollout(toRollout, toRollout->currentState, UCTPlayer);
+		if (UCB_PRINTSIMULATIONS)
 			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
 		sims = i;
 	}
 	std::cout << "Sims: " << sims << std::endl;
 
-	if (UCT_PRINTTREE)
+	if (UCB_PRINTTREE)
 		printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), -1);
 
 	// "Return"
 	addToReturnVector(rootNode->childrenPtrs);
 }
 
-Node* UCTMonteCarlo::select(Node* root)
+Node* FlatUCB::select(Node* root)
 {
 	Node* currentNode = root;
 
@@ -142,7 +143,7 @@ Node* UCTMonteCarlo::select(Node* root)
 	return currentNode;
 }
 
-void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
+void FlatUCB::expand(Node* node, int UCTPlayer)
 {
 	if (getUntriedChildren(node).size() > 0)
 	{
@@ -158,7 +159,7 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 		}
 		else
 		{
-			createAllChildren(node);
+			//createAllChildren(node);
 			Node* randomNode = getRandomNode(node->childrenPtrs);
 			rollout(randomNode, randomNode->currentState, randomNode->playerPlaying);
 		}
@@ -166,7 +167,7 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 }
 
 // UCTPlayer is which player we are currently performing UCT for.
-void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
+void FlatUCB::rollout(Node* node, GameState gameState, int UCTPlayer)
 {
 	if (node->opt.type == END_TURN && node->parentPtr->opt.absoluteCardId == SILVER)
 		int n = 0;
@@ -213,8 +214,8 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 	if (gameState.playerStates.size() == 2)
 	{
 		int otherPlayer = UCTPlayer == 0 ? 1 : 0;
-		score = UCT_PERCFACTOR*(gameState.playerStates[UCTPlayer].calculateVictoryPoints() - gameState.playerStates[otherPlayer].calculateVictoryPoints()) / 100.;
-		score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[otherPlayer].calculateVictoryPoints()) ? UCT_WINPOINT : UCT_LOSEPOINT);
+		score = UCB_PERCFACTOR*(gameState.playerStates[UCTPlayer].calculateVictoryPoints() - gameState.playerStates[otherPlayer].calculateVictoryPoints()) / 100.;
+		score += ((gameState.playerStates[UCTPlayer].calculateVictoryPoints() > gameState.playerStates[otherPlayer].calculateVictoryPoints()) ? UCB_WINPOINT : UCB_LOSEPOINT);
 		//std::cout << "Score:" << score << std::endl;
 	}
 	else
@@ -224,7 +225,7 @@ void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 
 }
 
-void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCTPlayer)
+void FlatUCB::propagate(Node* node, double score, bool invalidate, int UCTPlayer)
 {
 	if (!node->isRoot && node->playerPlaying != UCTPlayer)
 		propagate(node->parentPtr, score, invalidate, UCTPlayer);
@@ -333,13 +334,13 @@ void UCTMonteCarlo::propagate(Node* node, double score, bool invalidate, int UCT
 }
 
 // Returns best child according to UCT.
-Node* UCTMonteCarlo::UCTSelectChild(Node* root)
+Node* FlatUCB::UCTSelectChild(Node* root)
 {
 	if (root->isRoot)
 	{
 		for (int i = 0; i < root->childrenPtrs.size(); i++)
 		{
-			if (root->childrenPtrs[i]->visited < UCT_MINIMUMVISITS)
+			if (root->childrenPtrs[i]->visited < UCB_MINIMUMVISITS)
 				return root->childrenPtrs[i];
 		}
 	}
@@ -350,9 +351,9 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	{
 		double value = 0;
 		if (root->childrenPtrs.at(i)->opt.type == DRAW) // Do not use value, but probability, for drawnodes.
-			value = double(root->childrenPtrs.at(i)->probability) + UCT_C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));	// Can have a different C here if necessary.
+			value = double(root->childrenPtrs.at(i)->probability) + UCB_C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));	// Can have a different C here if necessary.
 		else
-			value = double(root->childrenPtrs.at(i)->value) + UCT_C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));
+			value = double(root->childrenPtrs.at(i)->value) + UCB_C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));
 
 		if (value >= bestValue || bestValue == 0)
 		{
@@ -364,7 +365,7 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	return bestNode;
 }
 
-void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int playerIndex, bool rollout)
+void FlatUCB::playActionCard(GameState &gameState, int absoluteCardId, int playerIndex, bool rollout)
 {
 	switch (absoluteCardId)
 	{
@@ -415,7 +416,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			int card2Turned = -1;
 			if (playerIndex == 0)
 				enemyIndex = 1;
-			
+
 			gameState.playerStates[enemyIndex].flipThiefCards(card1Turned, card2Turned);
 			if (card1Turned == GOLD || card2Turned == GOLD)
 			{
@@ -433,7 +434,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
 		if (gameState.playerStates.size() > 1)
 		{
-			int tempIndex = (playerIndex == gameState.playerStates.size()-1 ? 0 : playerIndex+1);
+			int tempIndex = (playerIndex == gameState.playerStates.size() - 1 ? 0 : playerIndex + 1);
 			while (tempIndex != playerIndex)
 			{
 				if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
@@ -518,7 +519,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 	}
 }
 
-void UCTMonteCarlo::createAllChildren(Node* node)
+void FlatUCB::createAllChildren(Node* node)
 {
 	// If parent is end turn, end old players turn and increment turn counter.
 
@@ -531,7 +532,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		int enemyPlayer = currentlyPlaying;
 		if (enemyPlayer == 0)
 			currentlyPlaying = 1;	// Currently playing is not the one set as "player" when drawing for thief.
-		
+
 		if (node->opt.absoluteCardId == CardManager::cardLookup[GOLD].id || node->opt.absoluteExtraCardId == CardManager::cardLookup[GOLD].id)
 		{
 			Node* newNode = requestNewNode();
@@ -631,7 +632,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		if (node->childrenPtrs.size() <= 0)
 		{
 			node->flags = NOFLAG;
-			createAllChildren(node);
+			//createAllChildren(node);
 			return;
 		}
 	}
@@ -639,11 +640,11 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	{
 		int cost = CardManager::cardLookup[node->opt.absoluteCardId].cost;
 
-		std::vector<Option> possibleGains = getBuyOptions(&currentState, cost+2);
+		std::vector<Option> possibleGains = getBuyOptions(&currentState, cost + 2);
 		if (possibleGains.size() == 0)
 		{
 			node->flags = NOFLAG;
-			createAllChildren(node);
+			//createAllChildren(node);
 			return;
 		}
 		for (int i = 0; i < possibleGains.size(); i++)
@@ -692,7 +693,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		}
 
 		std::vector<Option> possibleActions = getActionOptions(&node->currentState, node->currentState.playerStates[currentlyPlaying].hand);
-		if (UCT_PLAYPLUSACTIONSFIRST && node->currentState.playerStates[currentlyPlaying].actions > 0)
+		if (UCB_PLAYPLUSACTIONSFIRST && node->currentState.playerStates[currentlyPlaying].actions > 0)
 		{
 			// if there is a card with + actions, then only add this, ignoring other actions and buys
 			for (int i = 0; i < possibleActions.size(); i++)
@@ -721,7 +722,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 		endTurnChild->playerPlaying = currentlyPlaying;
 		node->childrenPtrs.push_back(endTurnChild);
 
-		
+
 		// Add all possible actions.
 		if (node->currentState.playerStates[currentlyPlaying].actions > 0)
 		{
@@ -762,7 +763,7 @@ void UCTMonteCarlo::createAllChildren(Node* node)
 	}
 }
 
-void UCTMonteCarlo::createTrashNodes(Node* parentNode, GameState& currentState, int currentlyPlaying)
+void FlatUCB::createTrashNodes(Node* parentNode, GameState& currentState, int currentlyPlaying)
 {
 	for (int i = 0; i < INSUPPLY; i++)
 	{
@@ -785,14 +786,14 @@ void UCTMonteCarlo::createTrashNodes(Node* parentNode, GameState& currentState, 
 	}
 }
 
-Node* UCTMonteCarlo::getRandomNode(std::vector<Node*> nodes)
+Node* FlatUCB::getRandomNode(std::vector<Node*> nodes)
 {
 	int randomNode = rand() % nodes.size();
 
 	return nodes.at(randomNode);
 }
 
-std::vector<Node*> UCTMonteCarlo::getUntriedChildren(Node* parent)
+std::vector<Node*> FlatUCB::getUntriedChildren(Node* parent)
 {
 	std::vector<Node*> untriedNodes;
 
@@ -805,7 +806,7 @@ std::vector<Node*> UCTMonteCarlo::getUntriedChildren(Node* parent)
 	return untriedNodes;
 }
 
-int UCTMonteCarlo::getCurrentMoney(GameState* gameState, int playerIndex)
+int FlatUCB::getCurrentMoney(GameState* gameState, int playerIndex)
 {
 	int currentMoney = 0;
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]];
@@ -818,7 +819,7 @@ int UCTMonteCarlo::getCurrentMoney(GameState* gameState, int playerIndex)
 	return currentMoney;
 }
 
-std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, int currentMoney)
+std::vector<Option> FlatUCB::getBuyOptions(GameState* gameState, int currentMoney)
 {
 	std::vector<Option> options;
 	for (int i = 0; i < INSUPPLY; i++)
@@ -835,7 +836,7 @@ std::vector<Option> UCTMonteCarlo::getBuyOptions(GameState* gameState, int curre
 	return options;
 }
 
-void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, int currentlyPlaying, int numberOfCards, bool createThiefDraws)
+void FlatUCB::createDrawNodes(Node* parentNode, GameState& currentState, int currentlyPlaying, int numberOfCards, bool createThiefDraws)
 {
 	// Create as many draw nodes as there are combinations of cards, based on numberOfCards to draw, and the current deck.
 	// If there are cards on top, then draw as many of these needed first, before moving on to draw from deck.
@@ -856,7 +857,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 		copyState.playerStates[currentlyPlaying].deck[copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.top()]--;
 		copyState.playerStates[currentlyPlaying].topOfDeckAsIndex.pop();
 	}
-	
+
 
 	// Check for shuffle
 	int cardCounter = 0;
@@ -1011,7 +1012,7 @@ void UCTMonteCarlo::createDrawNodes(Node* parentNode, GameState& currentState, i
 	}
 }
 
-std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY])
+std::vector<Option> FlatUCB::getActionOptions(GameState* gameState, const int(&hand)[INSUPPLY])
 {
 	std::vector<Option> actionOptions;
 	if (hand[CardManager::cardIndexer[WOODCUTTER]] > 0)
@@ -1095,20 +1096,20 @@ std::vector<Option> UCTMonteCarlo::getActionOptions(GameState* gameState, const 
 	return actionOptions;
 }
 
-Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex)
+Option FlatUCB::getCardPlayoutPolicy(GameState& gameState, int playerIndex)
 {
 	bool randomPlayout = false;
-	if (UCT_PLAYOUTPOLICY == UCT_EPSILONGREEDY)
+	if (UCB_PLAYOUTPOLICY == UCB_EPSILONGREEDY)
 	{
 		int randomCounter = rand() % 100 + 1;
-		if (UCT_EPSILON >= randomCounter)
+		if (UCB_EPSILON >= randomCounter)
 			randomPlayout = true;
 	}
-	else if (UCT_PLAYOUTPOLICY == UCT_RANDOMPLAYOUT)
+	else if (UCB_PLAYOUTPOLICY == UCB_RANDOMPLAYOUT)
 	{
 		randomPlayout = true;
 	}
-	else if (UCT_PLAYOUTPOLICY == UCT_HEURISTICGREEDY)
+	else if (UCB_PLAYOUTPOLICY == UCB_HEURISTICGREEDY)
 	{
 		randomPlayout = false;
 	}
@@ -1121,7 +1122,7 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 
 
 	if (randomPlayout)
-	{	
+	{
 		// Create all options
 		std::vector<Option> allOptions;
 
@@ -1227,7 +1228,7 @@ Option UCTMonteCarlo::getCardPlayoutPolicy(GameState& gameState, int playerIndex
 
 
 // Tree printing
-void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, int moveHistorySize, int sims)
+void FlatUCB::printTree(int turnCounter, int player, Node* rootNodePtr, int moveHistorySize, int sims)
 {
 	std::string fileName = std::to_string(turnCounter) + "_" + std::to_string(player) + "_" + std::to_string(moveHistorySize) + "_" + std::to_string(sims) + "uctTree.gv";
 	remove(fileName.c_str());
@@ -1243,7 +1244,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 
 	std::ofstream file2;
 	file2.open("treeDepth.txt", std::ios::app);
-	
+
 	int turnsCount[50];
 	for (int i = 0; i < 50; i++)
 		turnsCount[i] = 0;
@@ -1266,7 +1267,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 	file3.open(fileName, std::ios::app);
 	text = "digraph strategy{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
 	file3 << text << std::endl;
-	
+
 	Node* currentNode = rootNodePtr;
 	while (currentNode->childrenPtrs.size() > 0)
 	{
@@ -1279,7 +1280,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 			if ((*iterator)->visited > currentBest->visited)
 				currentBest = (*iterator);
 		}
-		
+
 		// Print self and best child
 
 
@@ -1329,7 +1330,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 		// Append child text
 		text += " Type:" + std::to_string(currentBest->opt.type);
 		text += CardManager::cardLookup[currentBest->opt.absoluteCardId].name;
-			
+
 		for (int index = 0; index < INSUPPLY; index++)
 		{
 			int cardsOfType = currentBest->currentState.playerStates[currentBest->playerPlaying].hand[index];
@@ -1355,7 +1356,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 		text += "\";";
 
 		text += "\r\n";
-		
+
 
 
 		file3 << text << std::endl;
@@ -1368,7 +1369,7 @@ void UCTMonteCarlo::printTree(int turnCounter, int player, Node* rootNodePtr, in
 
 }
 
-void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
+void FlatUCB::printNode(Node* nodePtr, std::ofstream& file)
 {
 	nodePtr->printSelf(file);
 	for (std::vector<Node*>::iterator it = nodePtr->childrenPtrs.begin(); it != nodePtr->childrenPtrs.end(); ++it)
@@ -1377,25 +1378,25 @@ void UCTMonteCarlo::printNode(Node* nodePtr, std::ofstream& file)
 
 
 // Node allocation
-UCTMonteCarlo::UCTMonteCarlo()
+FlatUCB::FlatUCB()
 {
-	nodeAllocationPtr = new Node[UCT_NODESTOALLOCATE];
+	nodeAllocationPtr = new Node[UCB_NODESTOALLOCATE];
 	handedOutNodes = 0;
-	for (int counter = 0; counter < UCT_NODESTOALLOCATE; counter++)
+	for (int counter = 0; counter < UCB_NODESTOALLOCATE; counter++)
 	{
 		nodeAllocationPtr[counter].id = counter;
 		nodeAllocationPtr[counter].reset();
 	}
 }
-UCTMonteCarlo::~UCTMonteCarlo()
+FlatUCB::~FlatUCB()
 {
 	delete[] nodeAllocationPtr;
 	//std::vector<Node*>().swap(usedNodes);
 }
-Node* UCTMonteCarlo::requestNewNode()
+Node* FlatUCB::requestNewNode()
 {
 	mtx.lock();
-	if (handedOutNodes >= UCT_NODESTOALLOCATE)
+	if (handedOutNodes >= UCB_NODESTOALLOCATE)
 	{
 		std::cout << "No more nodes!" << std::endl;
 	}
@@ -1404,16 +1405,16 @@ Node* UCTMonteCarlo::requestNewNode()
 	mtx.unlock();
 	return toReturn;
 }
-void UCTMonteCarlo::resetNodes()
+void FlatUCB::resetNodes()
 {
-	for (int counter = 0; counter < UCT_NODESTOALLOCATE; counter++)
+	for (int counter = 0; counter < UCB_NODESTOALLOCATE; counter++)
 	{
 		nodeAllocationPtr[counter].reset();
 	}
 	handedOutNodes = 0;
 }
 
-void UCTMonteCarlo::resetMyNodes(Node* rootNode)
+void FlatUCB::resetMyNodes(Node* rootNode)
 {
 	if (rootNode->childrenPtrs.size() > 0)
 	{
@@ -1425,7 +1426,7 @@ void UCTMonteCarlo::resetMyNodes(Node* rootNode)
 	rootNode->reset();
 }
 
-void UCTMonteCarlo::addToReturnVector(std::vector<Node*> nodes)
+void FlatUCB::addToReturnVector(std::vector<Node*> nodes)
 {
 	returnMtx.lock();
 	for (int i = 0; i < nodes.size(); i++)
@@ -1436,7 +1437,7 @@ void UCTMonteCarlo::addToReturnVector(std::vector<Node*> nodes)
 }
 
 
-unsigned long long UCTMonteCarlo::choose(unsigned long long n, unsigned long long k)
+unsigned long long FlatUCB::choose(unsigned long long n, unsigned long long k)
 {
 	if (k > n) {
 		return 0;

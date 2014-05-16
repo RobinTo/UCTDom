@@ -19,6 +19,8 @@ Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHist
 		option = bmai.getNextOption(currentState, playerStateIndex);
 	else if (AIType == HUMANPLAYER)
 		option = humanAI.getNextOption(currentState, playerStateIndex, moveHistory);
+	else if (AIType == FLATUCB)
+		option = flatUCB.getNextOption(playerStateIndex, currentState, moveHistory);
 	
 	return option;
 }

@@ -114,6 +114,7 @@
     <ClInclude Include="BigMoneyAI.h" />
     <ClInclude Include="CardManager.h" />
     <ClInclude Include="Configurations.h" />
+    <ClInclude Include="FlatUCB.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="HumanInputAI.h" />
@@ -127,6 +128,7 @@
   <ItemGroup>
     <ClCompile Include="BigMoneyAI.cpp" />
     <ClCompile Include="CardManager.cpp" />
+    <ClCompile Include="FlatUCB.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="HumanInputAI.cpp" />
