@@ -33,10 +33,10 @@
 #define INCLUDESCOREINDRAW		0		// 'Old-system': Use only proability, or multiply with score, in draw-nodes for their value.
 #define PLAYPLUSACTIONSFIRST	1
 #define VISITROOTCHILDRENMIN	1
-#define MINIMUMVISITS			1
+#define MINIMUMVISITS			20
 #define THREADITERATIONS		1
 #define THREADS					1
-#define PLAYOUTPOLICY			RANDOMPLAYOUT
+#define PLAYOUTPOLICY			HEURISTICGREEDY
 	#define RANDOMPLAYOUT			0
 	#define EPSILONGREEDY			1
 		#define EPSILON					100		// Percentage in integer value, so 10 means 0.1, or 10 %

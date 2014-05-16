@@ -17,6 +17,7 @@ class Node
 {
 public:
 	int id;
+	BruteForce* bfPtr;
 	bool isRoot;
 	bool isBuy;
 	int boughtCard;
@@ -25,6 +26,7 @@ public:
 	std::vector<Node*> children;
 	std::vector<int> tempIDvector;
 
+	Node();
 	Node(BruteForce* bfPtr2, int id2);
 	void doYourThing();
 	void printSelf(std::ofstream& file);
@@ -34,7 +36,6 @@ public:
 
 private:
 	std::vector<std::string> split(std::string s, char delim);
-	BruteForce* bfPtr;
 	template <typename Iterator>
 	inline bool next_combination(const Iterator first, Iterator k, const Iterator last)
 	{

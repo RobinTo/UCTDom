@@ -5,7 +5,15 @@
 
 Node* BruteForce::requestNewNodePtr()
 {
-	if (usedNodePtrs.size() == 0)
+	if (handedOutNodes >= maxNodes)
+	{
+		std::cout << "No more nodes!" << std::endl;
+	}
+	handedOutNodes++;
+	Node* toReturn = &nodeAllocationPtr[handedOutNodes - 1];
+	return toReturn;
+
+	/*if (emptyNodePtrs.size() == 0)
 		std::cout << "No more nodes" << std::endl;
 
 	Node* nodePtr = emptyNodePtrs.back();
@@ -13,21 +21,33 @@ Node* BruteForce::requestNewNodePtr()
 	emptyNodePtrs.pop_back();
 
 
-	return nodePtr;
+	return nodePtr;*/
 }
 
 
 void BruteForce::initialize(int nodes)
 {
+	
 	std::cout << "Initializing, please wait." << std::endl;
-	emptyNodePtrs.reserve(nodes);
-	usedNodePtrs.reserve(nodes);
-
-	//Allocate nodes
-	for (int counter = 1; counter < nodes; counter ++)
+	maxNodes = nodes;
+	nodeAllocationPtr = new Node[nodes];
+	handedOutNodes = 0;
+	for (int counter = 0; counter < nodes; counter++)
 	{
-		emptyNodePtrs.push_back(new Node(this, nodes - counter));
+		nodeAllocationPtr[counter].id = counter;
+		nodeAllocationPtr[counter].bfPtr = this;
 	}
+	
+
+
+	//emptyNodePtrs.reserve(nodes);
+	//usedNodePtrs.reserve(nodes);
+
+	////Allocate nodes
+	//for (int counter = 1; counter < nodes; counter ++)
+	//{
+	//	emptyNodePtrs.push_back(new Node(this, nodes - counter));
+	//}
 	std::cout << "Done initializing" << std::endl;
 }
 
@@ -36,7 +56,9 @@ void BruteForce::createTree(int turns)
 	std::cout << "Creating tree." << std::endl;
 
 	//Create root
-	rootPtr = new Node(this, 0);
+	rootPtr = requestNewNodePtr();
+	rootPtr->id = 0;
+	rootPtr->bfPtr = this;
 	rootPtr->isBuy = true;
 	rootPtr->isRoot = true;
 
@@ -53,7 +75,7 @@ void BruteForce::createTree(int turns)
 	rootPtr->state.supplyPiles[4] = 12;
 	rootPtr->state.supplyPiles[5] = 12;
 
-	usedNodePtrs.push_back(rootPtr);
+	//usedNodePtrs.push_back(rootPtr);
 
 	int depth = turns*2;
 	for (int counter = 0; counter < depth; counter++)
@@ -73,29 +95,35 @@ void BruteForce::createTree(int turns)
 	std::cout << "Done calculating score." << std::endl;
 }
 
-void BruteForce::serializeTree()
-{
-	std::cout << "Serializing nodes." << std::endl;
-	remove("tree.txt");
-	std::ofstream file;
-	file.open("tree.txt");
-	for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)
-	{
-		file << (*it)->serialize() << std::endl;
-	}
-	file.close();
-
-	std::cout << "Done serializing nodes." << std::endl;
-}
+//void BruteForce::serializeTree()
+//{
+//	std::cout << "Serializing nodes." << std::endl;
+//	remove("tree.txt");
+//	std::ofstream file;
+//	file.open("tree.txt");
+//	for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)
+//	{
+//		file << (*it)->serialize() << std::endl;
+//	}
+//	file.close();
+//
+//	std::cout << "Done serializing nodes." << std::endl;
+//}
 
 std::vector<Node*> BruteForce::findLeaves()
 {
 	std::vector<Node*> leafPtrs;
-	for (std::vector<Node*>::iterator iterator = usedNodePtrs.begin(); iterator != usedNodePtrs.end(); ++iterator)
+	for (int counter = 0; counter < handedOutNodes; counter++)
+	{
+		if (nodeAllocationPtr[counter].children.size() == 0)
+			leafPtrs.push_back(&nodeAllocationPtr[counter]);
+	}
+
+	/*for (std::vector<Node*>::iterator iterator = usedNodePtrs.begin(); iterator != usedNodePtrs.end(); ++iterator)
 	{
 		if ((*iterator)->children.size() == 0)
 			leafPtrs.push_back(*iterator);
-	}
+	}*/
 	return leafPtrs;
 }
 
@@ -111,9 +139,14 @@ void BruteForce::printTree(int treeDepth)
 	std::string text = "digraph bruteForce{\r\n size = \"10000000000!, 1000000000\";\r\n ratio = \"expand\";\r\n node[color = lightblue2, style = filled];";
 	
 	file << text << std::endl;
-	for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)
+	/*for (std::vector<Node*>::iterator it = usedNodePtrs.begin(); it != usedNodePtrs.end(); ++it)
 	{
 		(*it)->printSelf(file);
+	}*/
+
+	for (int counter = 0; counter < handedOutNodes; counter++)
+	{
+		nodeAllocationPtr[counter].printSelf(file);
 	}
 
 	text = "\r\n }";
@@ -229,45 +262,45 @@ void BruteForce::printNode(Node* nodePtr, std::ofstream& file)
 		printNode(*it, file);
 }
 
-void BruteForce::loadTree(std::string fileName)
-{
-	std::cout << "Loading tree." << std::endl;
-	std::ifstream file;
-	std::string temp = "";
+//void BruteForce::loadTree(std::string fileName)
+//{
+//	std::cout << "Loading tree." << std::endl;
+//	std::ifstream file;
+//	std::string temp = "";
+//
+//	file.open(fileName);
+//
+//	while (!file.eof())
+//	{
+//		temp = "";
+//		file >> temp;
+//		if (temp == "")
+//			break;
+//		Node* nodePtr = requestNewNodePtr();
+//		nodePtr->deserialize(temp);
+//	}
+//	file.close();
+//
+//	for (int i = 0; i < usedNodePtrs.size(); i++)
+//	{
+//		if (usedNodePtrs.at(i)->isRoot)
+//		{
+//			rootPtr = usedNodePtrs.at(i);
+//		}
+//		for (int c = 0; c < usedNodePtrs.at(i)->tempIDvector.size(); c++)
+//		{
+//			usedNodePtrs.at(i)->children.push_back(getNodeByID(usedNodePtrs.at(i)->tempIDvector.at(c)));
+//		}
+//	}
+//	std::cout << "Done loading tree." << std::endl;
+//}
 
-	file.open(fileName);
-
-	while (!file.eof())
-	{
-		temp = "";
-		file >> temp;
-		if (temp == "")
-			break;
-		Node* nodePtr = requestNewNodePtr();
-		nodePtr->deserialize(temp);
-	}
-	file.close();
-
-	for (int i = 0; i < usedNodePtrs.size(); i++)
-	{
-		if (usedNodePtrs.at(i)->isRoot)
-		{
-			rootPtr = usedNodePtrs.at(i);
-		}
-		for (int c = 0; c < usedNodePtrs.at(i)->tempIDvector.size(); c++)
-		{
-			usedNodePtrs.at(i)->children.push_back(getNodeByID(usedNodePtrs.at(i)->tempIDvector.at(c)));
-		}
-	}
-	std::cout << "Done loading tree." << std::endl;
-}
-
-Node* BruteForce::getNodeByID(int id)
-{
-	for (int i = 0; i < usedNodePtrs.size(); i++)
-	{
-		if (usedNodePtrs.at(i)->id == id)
-			return usedNodePtrs.at(i);
-	}
-	return NULL;
-}
+//Node* BruteForce::getNodeByID(int id)
+//{
+//	for (int i = 0; i < usedNodePtrs.size(); i++)
+//	{
+//		if (usedNodePtrs.at(i)->id == id)
+//			return usedNodePtrs.at(i);
+//	}
+//	return NULL;
+//}

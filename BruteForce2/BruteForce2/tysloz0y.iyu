@@ -175,15 +175,16 @@ void Node::doYourThing()
 
 void Node::printSelf(std::ofstream& file)
 {
-	if (false)
+	// For each child, print "counter self -> child"
+	std::string text = "";
+
+	for (std::vector<Node*>::iterator iterator = children.begin(); iterator != children.end(); ++iterator)
 	{
+		// Append *tchu tchu*
+		text += "\"";
 
-		std::string text = "";
-		text += std::to_string(id) + "[label=\"";
-
-		// Append "Start"
-		if (id == 0)
-			text += "Start";
+		// Append id
+		text += std::to_string(id);
 
 		// Append self
 		if (isBuy)
@@ -205,6 +206,13 @@ void Node::printSelf(std::ofstream& file)
 		}
 		else
 		{
+			/*text += "C:" + std::to_string(state.hand[0]) +
+				", E:" + std::to_string(state.hand[3]) +
+				", S:" + std::to_string(state.hand[1]) +
+				", D:" + std::to_string(state.hand[4]) +
+				", G:" + std::to_string(state.hand[2]) +
+				", P:" + std::to_string(state.hand[5]);*/
+
 			for (int index = 0; index < 6; index++)
 			{
 				std::string cardName;
@@ -234,64 +242,97 @@ void Node::printSelf(std::ofstream& file)
 				}
 			}
 		}
-		text += "\"];";
 
-		text += "\r\n";
+		// Append score
+		text += " Score:" + std::to_string(score);
 
-		for (std::vector<Node*>::iterator iterator = children.begin(); iterator != children.end(); ++iterator)
+		// Append estates
+		int estates = state.deck[3] + state.hand[3] + state.discard[3];
+		text += " Estates: " + std::to_string(estates);
+
+		// Append *tchu tchu*
+		text += "\"";
+
+		// Append the arrow
+		text += " -> ";
+
+		// Append *tchu tchu*
+		text += "\"";
+
+		// Append child id
+		text += std::to_string((*iterator)->id);
+
+		// Append child text
+		if ((*iterator)->isBuy)
 		{
-			text += std::to_string(id) + " -> " + std::to_string((*iterator)->id);
-			text += ";";
-			text += "\r\n";
-		}
-
-		file << text;
-	}
-	else
-	{
-		std::string text = "";
-		
-
-		// Append "Start"
-		if (id == 0)
-		{
-			text += std::to_string(id) + "[label=\"";
-			text += "";
-			text += "\"];";
-			text += std::to_string(id) + "[color = lightblue2]";
+			if ((*iterator)->boughtCard == 0)
+				text += "Copper";
+			else if ((*iterator)->boughtCard == 1)
+				text += "Silver";
+			else if ((*iterator)->boughtCard == 2)
+				text += "Gold";
+			else if ((*iterator)->boughtCard == 3)
+				text += "Estate";
+			else if ((*iterator)->boughtCard == 4)
+				text += "Duchy";
+			else if ((*iterator)->boughtCard == 5)
+				text += "Province";
+			else if ((*iterator)->boughtCard == 6)
+				text += "Nothing";
 		}
 		else
 		{
+			/*text += "C:" + std::to_string((*iterator)->state.hand[0]) +
+				", E:" + std::to_string((*iterator)->state.hand[3]) +
+				", S:" + std::to_string((*iterator)->state.hand[1]) +
+				", D:" + std::to_string((*iterator)->state.hand[4]) +
+				", G:" + std::to_string((*iterator)->state.hand[2]) +
+				", P:" + std::to_string((*iterator)->state.hand[5]);*/
 
-			// Append self
-			if (isBuy)
+
+			for (int index = 0; index < 6; index++)
 			{
-				text += std::to_string(id) + "[label=\"";
-				text += "";
-				text += "\"];";
-				text += std::to_string(id) + "[color = yellow]";
-			}
-			else
-			{
-				text += std::to_string(id) + "[label=\"";
-				text += "";
-				text += "\"];";
-				text += std::to_string(id) + "[color = red]";
+				std::string cardName;
+				switch (index)
+				{
+				case 0: cardName = "Copper";
+					break;
+				case 1: cardName = "Silver";
+					break;
+				case 2: cardName = "Gold";
+					break;
+				case 3: cardName = "Estate";
+					break;
+				case 4: cardName = "Duchy";
+					break;
+				case 5: cardName = "Province";
+					break;
+				default: cardName = "Error";
+					std::cout << "Error printing cardname" << std::endl;
+					break;
+				}
+
+				int cardsOfType = (*iterator)->state.hand[index];
+				if (cardsOfType > 0)
+				{
+					text += cardName + ":" + std::to_string(cardsOfType) + " ";
+				}
 			}
 		}
 
+		// Append score
+		text += " Score:" + std::to_string((*iterator)->score);
+
+		// Append estates
+		estates = (*iterator)->state.deck[3] + (*iterator)->state.hand[3] + (*iterator)->state.discard[3];
+		text += " Estates: " + std::to_string(estates);
+
+		// Append *tchu tchu*
+		text += "\";";
+		
 		text += "\r\n";
-
-		for (std::vector<Node*>::iterator iterator = children.begin(); iterator != children.end(); ++iterator)
-		{
-			text += std::to_string(id) + " -> " + std::to_string((*iterator)->id);
-			text += ";";
-			text += "\r\n";
-		}
-
-		file << text;
 	}
-	
+	file << text;
 }
 
 
