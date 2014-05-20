@@ -811,7 +811,7 @@ int UCTMonteCarlo::getCurrentMoney(GameState* gameState, int playerIndex)
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]];
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[SILVER]] * 2;
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[GOLD]] * 3;
-	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[WOODCUTTER]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[WOODCUTTER]] * WOODCUTTERMONEY;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[FESTIVAL]] * 2;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[MARKET]] * 1;
 	currentMoney -= gameState->playerStates[playerIndex].spentMoney;

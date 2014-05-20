@@ -87,7 +87,7 @@ int PlayerState::calculateCurrentMoney()
 	currentMoney += hand[CardManager::cardIndexer[COPPER]];
 	currentMoney += hand[CardManager::cardIndexer[SILVER]] * 2;
 	currentMoney += hand[CardManager::cardIndexer[GOLD]] * 3;
-	currentMoney += inPlay[CardManager::cardIndexer[WOODCUTTER]] * 2;
+	currentMoney += inPlay[CardManager::cardIndexer[WOODCUTTER]] * WOODCUTTERMONEY;
 	currentMoney += inPlay[CardManager::cardIndexer[FESTIVAL]] * 2;
 	currentMoney += inPlay[CardManager::cardIndexer[MARKET]] * 1;
 
