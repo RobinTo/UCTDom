@@ -5,6 +5,8 @@
 #include "BigMoneyAI.h"
 #include "HumanInputAI.h"
 #include "FlatUCB.h"
+#include "RandomAI.h"
+#include "SingleWitchAI.h"
 
 
 
@@ -26,5 +28,7 @@ private:
 	BigMoneyAI bmai;
 	HumanInputAI humanAI;
 	FlatUCB flatUCB;
+	RandomAI randomAI;
+	SingleWitchAI singleWitch;
 
 };

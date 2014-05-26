@@ -123,6 +123,8 @@
     <ClInclude Include="Option.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerState.h" />
+    <ClInclude Include="RandomAI.h" />
+    <ClInclude Include="SingleWitchAI.h" />
     <ClInclude Include="UCTMonteCarlo.h" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +139,8 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerState.cpp" />
+    <ClCompile Include="RandomAI.cpp" />
+    <ClCompile Include="SingleWitchAI.cpp" />
     <ClCompile Include="UCTMonteCarlo.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

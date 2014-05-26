@@ -34,6 +34,7 @@ public:
 	int countCardType(int absoluteCardId);
 	int countCards();
 	int countCards(const int(&cardPile)[INSUPPLY]);
+	int countCardInDeck(int cardIndex);
 private:
 	int pickRandom(const int (&cardPile)[INSUPPLY]);
 };

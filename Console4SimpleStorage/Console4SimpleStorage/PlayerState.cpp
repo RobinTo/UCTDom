@@ -118,6 +118,16 @@ int PlayerState::countCards() // Counts all cards belonging to the player
 	return cards;
 }
 
+int PlayerState::countCardInDeck(int cardIndex) // Counts all cards belonging to the player
+{
+	int cards = 0;
+	cards += deck[cardIndex];
+	cards += hand[cardIndex];
+	cards += discard[cardIndex];
+	cards += inPlay[cardIndex];
+	return cards;
+}
+
 void PlayerState::drawCards(int cards)
 {
 	// For each card to be drawn

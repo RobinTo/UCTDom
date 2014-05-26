@@ -54,6 +54,12 @@
     <ClInclude Include="FlatUCB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RandomAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleWitchAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -90,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FlatUCB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RandomAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleWitchAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -21,6 +21,10 @@ Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHist
 		option = humanAI.getNextOption(currentState, playerStateIndex, moveHistory);
 	else if (AIType == FLATUCB)
 		option = flatUCB.getNextOption(playerStateIndex, currentState, moveHistory);
+	else if (AIType == RANDOM)
+		option = randomAI.getNextOption(currentState, playerStateIndex);
+	else if (AIType == SINGLEWITCH)
+		option = singleWitch.getNextOption(currentState, playerStateIndex);
 	
 	return option;
 }

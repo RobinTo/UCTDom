@@ -1,5 +1,5 @@
 // Testing
-#define GAMES					1000
+#define GAMES					100
 #define UCT_PRINTTREE			0
 #define UCT_PRINTSIMULATIONS	0
 #define UCB_PRINTTREE			0
@@ -14,13 +14,15 @@
 #define MAXTURNS				999
 #define SUPPLYPILESTOGO			5 // (3+2) First number is actual supplypiles to go. Second number is number of zeroes below.
 #define FIRSTPLAYERAI			FLATUCB
-#define	SECONDPLAYERAI			BIGMONEYAI
+#define	SECONDPLAYERAI			SINGLEWITCH
 
 // AIs
 #define UCTAI					0
 #define BIGMONEYAI				1
 #define HUMANPLAYER				2
 #define FLATUCB					3
+#define RANDOM					4
+#define SINGLEWITCH				5
 
 // Kingdom Cards
 #define BUREAUCRATINGAME	0	// Cost: 4
@@ -37,8 +39,8 @@
 #define WOODCUTTERINGAME	1	// Cost: 3
 
 // UCT
-#define UCT_NODESTOALLOCATE			2000000
-#define UCT_SIMULATIONS				100000
+#define UCT_NODESTOALLOCATE			0
+#define UCT_SIMULATIONS				0
 #define UCT_C						0.7
 #define UCT_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCT_WINPOINT				1		// How many points to give a node's value for winning
@@ -68,9 +70,9 @@
 #define UCB_INCLUDESCOREINDRAW		0		// 'Old-system': Use only proability, or multiply with score, in draw-nodes for their value.
 #define UCB_PLAYPLUSACTIONSFIRST	1
 #define UCB_VISITROOTCHILDRENMIN	1
-#define UCB_MINIMUMVISITS			10
+#define UCB_MINIMUMVISITS			1
 #define UCB_THREADITERATIONS		1
-#define UCB_THREADS					2
+#define UCB_THREADS					1
 #define UCB_PLAYOUTPOLICY			UCB_EPSILONGREEDY
 	#define UCB_RANDOMPLAYOUT			0
 	#define UCB_EPSILONGREEDY			1
