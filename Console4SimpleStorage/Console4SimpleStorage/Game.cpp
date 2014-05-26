@@ -85,16 +85,25 @@ void Game::play()
 			Option option;
 			do
 			{
+				
+
+
 				std::cout << "Player " << index << " with money:" << gameState.playerStates[players[index].playerStateIndex].calculateCurrentMoney() << ", buys:" << gameState.playerStates[players[index].playerStateIndex].buys << ", actions:" << gameState.playerStates[players[index].playerStateIndex].actions << std::endl;
 				std::cout << "Hand: " << gameState.playerStates[players[index].playerStateIndex].printPile( gameState.playerStates[players[index].playerStateIndex].hand);
+				
+				clock_t begin = clock();
 				option = players[index].getNextOption(gameState, moveHistory);
+				clock_t end = clock();
+				double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+				
 				int tempIndex = 0;
 				if (option.type == END_TURN)
 				{
 					gameState.playerStates[players[index].playerStateIndex].endTurn();
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "----Player" + std::to_string(players[index].playerStateIndex) + "-Ended-turn" + std::to_string(gameState.turnCounter) + "------------------";
+					move.moveString = "----Player" + std::to_string(players[index].playerStateIndex) + "-Ended-turn" + std::to_string(gameState.turnCounter) + "------------------" + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
@@ -108,7 +117,7 @@ void Game::play()
 					gameState.supplyPiles[CardManager::cardIndexer[option.absoluteCardId]] -= 1;								// Remove from supply
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + CardManager::cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Bought " + CardManager::cardLookup[move.absoluteCardId].name + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
@@ -121,7 +130,7 @@ void Game::play()
 					gameState.trash[CardManager::cardIndexer[option.absoluteCardId]]++;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + CardManager::cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + CardManager::cardLookup[move.absoluteCardId].name + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
@@ -134,7 +143,7 @@ void Game::play()
 					gameState.supplyPiles[CardManager::cardIndexer[option.absoluteCardId]] --;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Gained " + CardManager::cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Gained " + CardManager::cardLookup[move.absoluteCardId].name + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 
@@ -144,7 +153,7 @@ void Game::play()
 					gameState.playerStates[players[index].playerStateIndex].playCard( option.absoluteCardId);
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name;
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Played " + CardManager::cardLookup[move.absoluteCardId].name + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 
@@ -182,20 +191,27 @@ void Game::play()
 						gameState.playerStates[players[index].playerStateIndex].actions += 1;
 						break;
 					case WITCH:
-						gameState.playerStates[players[index].playerStateIndex].drawCards(2);
-						if (PLAYERS > 1)
+						if (WITCHNERF)
 						{
-							tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
-							while (tempIndex != players[index].playerStateIndex)
+							gameState.playerStates[players[index].playerStateIndex].drawCards(1);
+						}
+						else
+						{
+							gameState.playerStates[players[index].playerStateIndex].drawCards(2);
+							if (PLAYERS > 1)
 							{
-								if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
+								tempIndex = players[index].playerStateIndex == PLAYERS - 1 ? 0 : players[index].playerStateIndex + 1;
+								while (tempIndex != players[index].playerStateIndex)
 								{
-									gameState.playerStates[players[tempIndex].playerStateIndex].discard[CardManager::cardIndexer[CURSE]]++;
-									gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
+									if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
+									{
+										gameState.playerStates[players[tempIndex].playerStateIndex].discard[CardManager::cardIndexer[CURSE]]++;
+										gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
+									}
+									tempIndex++;
+									if (tempIndex >= PLAYERS)
+										tempIndex = 0;
 								}
-								tempIndex++;
-								if (tempIndex >= PLAYERS)
-									tempIndex = 0;
 							}
 						}
 						break;
@@ -251,7 +267,7 @@ void Game::play()
 							}
 
 							thiefMove.type = THIEFFLIP;
-							thiefMove.moveString = "Player" + std::to_string(thiefMove.player) + "-Flipped " + CardManager::cardLookup[thiefMove.absoluteCardId].name + " and " + CardManager::cardLookup[thiefMove.absoluteExtraCardId].name;
+							thiefMove.moveString = "Player" + std::to_string(thiefMove.player) + "-Flipped " + CardManager::cardLookup[thiefMove.absoluteCardId].name + " and " + CardManager::cardLookup[thiefMove.absoluteExtraCardId].name + " Secs: " + std::to_string(elapsed_secs);
 							moveHistory.push_back(thiefMove);
 							std::cout << thiefMove.moveString << std::endl << std::endl;
 						}
@@ -270,7 +286,7 @@ void Game::play()
 					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] --;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + CardManager::cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Trashed " + CardManager::cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer) + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}
@@ -281,7 +297,7 @@ void Game::play()
 					gameState.playerStates[players[otherPlayer].playerStateIndex].discard[CardManager::cardIndexer[option.absoluteCardId]] --;
 
 					Move move(option, players[index].playerStateIndex);
-					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Stole " + CardManager::cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer);
+					move.moveString = "Player" + std::to_string(players[index].playerStateIndex) + "-Stole " + CardManager::cardLookup[move.absoluteCardId].name + " from Player" + std::to_string(otherPlayer) + " Secs: " + std::to_string(elapsed_secs);
 					moveHistory.push_back(move);
 					std::cout << move.moveString << std::endl << std::endl;
 				}

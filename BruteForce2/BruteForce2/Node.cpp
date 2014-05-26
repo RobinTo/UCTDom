@@ -258,8 +258,7 @@ void Node::printSelf(std::ofstream& file)
 			text += std::to_string(id) + "[label=\"";
 			text += "";
 			text += "\"];";
-			text += std::to_string(id) + "[color = lightblue2]";
-			text += std::to_string(id) + "[shape = point]";
+			text += std::to_string(id) + "[fillcolor = lightblue2, shape = point]";
 		}
 		else
 		{
@@ -270,16 +269,14 @@ void Node::printSelf(std::ofstream& file)
 				text += std::to_string(id) + "[label=\"";
 				text += "";
 				text += "\"];";
-				text += std::to_string(id) + "[color = blue]";
-				text += std::to_string(id) + "[shape = ellipse]";
+				text += std::to_string(id) + "[fillcolor = blue, shape = ellipse]";
 			}
 			else
 			{
 				text += std::to_string(id) + "[label=\"";
 				text += "";
 				text += "\"];";
-				text += std::to_string(id) + "[color = red]";
-				text += std::to_string(id) + "[shape = box]";
+				text += std::to_string(id) + "[fillcolor = lightblue2, shape = box]";
 			}
 		}
 

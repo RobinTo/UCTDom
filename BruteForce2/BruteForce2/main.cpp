@@ -8,7 +8,7 @@
 
 int main()
 {
-	int turns = 2;
+	int turns = 1;
 
 	std::cout << "Brute Force Tree" << std::endl;
 	

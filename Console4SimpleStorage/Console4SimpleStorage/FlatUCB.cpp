@@ -169,8 +169,6 @@ void FlatUCB::expand(Node* node, int UCTPlayer)
 // UCTPlayer is which player we are currently performing UCT for.
 void FlatUCB::rollout(Node* node, GameState gameState, int UCTPlayer)
 {
-	if (node->opt.type == END_TURN && node->parentPtr->opt.absoluteCardId == SILVER)
-		int n = 0;
 	int currentPlayer = node->playerPlaying;
 	if (node->opt.type == END_TURN)
 	{
@@ -432,22 +430,29 @@ void FlatUCB::playActionCard(GameState &gameState, int absoluteCardId, int playe
 		break;
 	case WITCH:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
-		if (gameState.playerStates.size() > 1)
+		if (WITCHNERF)
 		{
-			int tempIndex = (playerIndex == gameState.playerStates.size() - 1 ? 0 : playerIndex + 1);
-			while (tempIndex != playerIndex)
-			{
-				if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
-				{
-					gameState.playerStates[tempIndex].discard[CardManager::cardIndexer[CURSE]]++;
-					gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
-				}
-				tempIndex++;
-				if (tempIndex >= gameState.playerStates.size())
-					tempIndex = 0;
-			}
+			gameState.playerStates[playerIndex].drawCards(1);
 		}
-		gameState.playerStates[playerIndex].drawCards(2);
+		else
+		{
+			if (gameState.playerStates.size() > 1)
+			{
+				int tempIndex = (playerIndex == gameState.playerStates.size() - 1 ? 0 : playerIndex + 1);
+				while (tempIndex != playerIndex)
+				{
+					if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
+					{
+						gameState.playerStates[tempIndex].discard[CardManager::cardIndexer[CURSE]]++;
+						gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
+					}
+					tempIndex++;
+					if (tempIndex >= gameState.playerStates.size())
+						tempIndex = 0;
+				}
+			}
+			gameState.playerStates[playerIndex].drawCards(2);
+		}
 		break;
 	case BUREAUCRAT:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
@@ -812,7 +817,7 @@ int FlatUCB::getCurrentMoney(GameState* gameState, int playerIndex)
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]];
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[SILVER]] * 2;
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[GOLD]] * 3;
-	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[WOODCUTTER]] * 2;
+	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[WOODCUTTER]] * WOODCUTTERMONEY;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[FESTIVAL]] * 2;
 	currentMoney += gameState->playerStates[playerIndex].inPlay[CardManager::cardIndexer[MARKET]] * 1;
 	currentMoney -= gameState->playerStates[playerIndex].spentMoney;

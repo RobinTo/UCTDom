@@ -168,8 +168,7 @@ void UCTMonteCarlo::expand(Node* node, int UCTPlayer)
 // UCTPlayer is which player we are currently performing UCT for.
 void UCTMonteCarlo::rollout(Node* node, GameState gameState, int UCTPlayer)
 {
-	if (node->opt.type == END_TURN && node->parentPtr->opt.absoluteCardId == SILVER)
-		int n = 0;
+	
 	int currentPlayer = node->playerPlaying;
 	if (node->opt.type == END_TURN)
 	{
@@ -415,7 +414,7 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 			int card2Turned = -1;
 			if (playerIndex == 0)
 				enemyIndex = 1;
-			
+
 			gameState.playerStates[enemyIndex].flipThiefCards(card1Turned, card2Turned);
 			if (card1Turned == GOLD || card2Turned == GOLD)
 			{
@@ -431,22 +430,29 @@ void UCTMonteCarlo::playActionCard(GameState &gameState, int absoluteCardId, int
 		break;
 	case WITCH:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
-		if (gameState.playerStates.size() > 1)
+		if (WITCHNERF)
 		{
-			int tempIndex = (playerIndex == gameState.playerStates.size()-1 ? 0 : playerIndex+1);
-			while (tempIndex != playerIndex)
-			{
-				if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
-				{
-					gameState.playerStates[tempIndex].discard[CardManager::cardIndexer[CURSE]]++;
-					gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
-				}
-				tempIndex++;
-				if (tempIndex >= gameState.playerStates.size())
-					tempIndex = 0;
-			}
+			gameState.playerStates[playerIndex].drawCards(1);
 		}
-		gameState.playerStates[playerIndex].drawCards(2);
+		else
+		{
+			if (gameState.playerStates.size() > 1)
+			{
+				int tempIndex = (playerIndex == gameState.playerStates.size() - 1 ? 0 : playerIndex + 1);
+				while (tempIndex != playerIndex)
+				{
+					if (gameState.supplyPiles[CardManager::cardIndexer[CURSE]] > 0)
+					{
+						gameState.playerStates[tempIndex].discard[CardManager::cardIndexer[CURSE]]++;
+						gameState.supplyPiles[CardManager::cardIndexer[CURSE]]--;
+					}
+					tempIndex++;
+					if (tempIndex >= gameState.playerStates.size())
+						tempIndex = 0;
+				}
+			}
+			gameState.playerStates[playerIndex].drawCards(2);
+		}
 		break;
 	case BUREAUCRAT:
 		gameState.playerStates[playerIndex].playCard(absoluteCardId);
