@@ -349,9 +349,9 @@ Node* FlatUCB::UCTSelectChild(Node* root)
 	{
 		double value = 0;
 		if (root->childrenPtrs.at(i)->opt.type == DRAW) // Do not use value, but probability, for drawnodes.
-			value = double(root->childrenPtrs.at(i)->probability) + UCB_C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));	// Can have a different C here if necessary.
+			value = double(root->childrenPtrs.at(i)->probability) + UCB_C * sqrt(log(double(root->visited)) / root->childrenPtrs.at(i)->visited);	// Can have a different C here if necessary.
 		else
-			value = double(root->childrenPtrs.at(i)->value) + UCB_C * sqrt(log(double(root->visited) / root->childrenPtrs.at(i)->visited));
+			value = double(root->childrenPtrs.at(i)->value) + UCB_C * sqrt(log(double(root->visited)) / root->childrenPtrs.at(i)->visited);
 
 		if (value >= bestValue || bestValue == 0)
 		{

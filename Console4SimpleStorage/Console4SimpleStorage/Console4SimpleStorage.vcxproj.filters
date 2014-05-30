@@ -60,6 +60,9 @@
     <ClInclude Include="SingleWitchAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DoubleWitchAI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -102,6 +105,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SingleWitchAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DoubleWitchAI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

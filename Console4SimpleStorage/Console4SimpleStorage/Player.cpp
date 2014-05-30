@@ -25,6 +25,8 @@ Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHist
 		option = randomAI.getNextOption(currentState, playerStateIndex);
 	else if (AIType == SINGLEWITCH)
 		option = singleWitch.getNextOption(currentState, playerStateIndex);
+	else if (AIType == DOUBLEWITCH)
+		option = doubleWitch.getNextOption(currentState, playerStateIndex);
 	
 	return option;
 }

@@ -7,6 +7,7 @@
 #include "FlatUCB.h"
 #include "RandomAI.h"
 #include "SingleWitchAI.h"
+#include "DoubleWitchAI.h"
 
 
 
@@ -30,5 +31,6 @@ private:
 	FlatUCB flatUCB;
 	RandomAI randomAI;
 	SingleWitchAI singleWitch;
+	DoubleWitchAI doubleWitch;
 
 };

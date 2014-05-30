@@ -1,15 +1,15 @@
-#include "SingleWitchAI.h"
+#include "DoubleWitchAI.h"
 
-SingleWitchAI::SingleWitchAI()
+DoubleWitchAI::DoubleWitchAI()
 {
 }
 
-SingleWitchAI::~SingleWitchAI()
+DoubleWitchAI::~DoubleWitchAI()
 {
 
 }
 
-Option SingleWitchAI::getNextOption(GameState gameState, int playerIndex)
+Option DoubleWitchAI::getNextOption(GameState gameState, int playerIndex)
 {
 	Option endTurn;
 	endTurn.type = END_TURN;
@@ -27,7 +27,7 @@ Option SingleWitchAI::getNextOption(GameState gameState, int playerIndex)
 		buyOption.type = BUY;
 		if (gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] > 0 && money >= CardManager::cardLookup[PROVINCE].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[GOLD]) > 0)
 			buyOption.absoluteCardId = CardManager::cardLookup[PROVINCE].id;
-		else if (gameState.supplyPiles[CardManager::cardIndexer[WITCH]] > 0 && money >= CardManager::cardLookup[WITCH].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[WITCH]) < 1)
+		else if (gameState.supplyPiles[CardManager::cardIndexer[WITCH]] > 0 && money >= CardManager::cardLookup[WITCH].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[WITCH]) < 2)
 			buyOption.absoluteCardId = CardManager::cardLookup[WITCH].id;
 		else if (gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] > 0 && money >= CardManager::cardLookup[DUCHY].cost && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] < 4)
 			buyOption.absoluteCardId = CardManager::cardLookup[DUCHY].id;
@@ -45,7 +45,7 @@ Option SingleWitchAI::getNextOption(GameState gameState, int playerIndex)
 	return endTurn;
 }
 
-int SingleWitchAI::getCurrentMoney(GameState* gameState, int playerIndex)
+int DoubleWitchAI::getCurrentMoney(GameState* gameState, int playerIndex)
 {
 	int currentMoney = 0;
 	currentMoney += gameState->playerStates[playerIndex].hand[CardManager::cardIndexer[COPPER]];
@@ -58,7 +58,7 @@ int SingleWitchAI::getCurrentMoney(GameState* gameState, int playerIndex)
 	return currentMoney;
 }
 
-std::vector<Option> SingleWitchAI::getBuyOptions(GameState* gameState, int currentMoney, int playerIndex)
+std::vector<Option> DoubleWitchAI::getBuyOptions(GameState* gameState, int currentMoney, int playerIndex)
 {
 	std::vector<Option> options;
 
@@ -79,7 +79,7 @@ std::vector<Option> SingleWitchAI::getBuyOptions(GameState* gameState, int curre
 	return options;
 }
 
-std::vector<Option> SingleWitchAI::getActionOptions(GameState* gameState, int playerIndex)
+std::vector<Option> DoubleWitchAI::getActionOptions(GameState* gameState, int playerIndex)
 {
 	std::vector<Option> options;
 

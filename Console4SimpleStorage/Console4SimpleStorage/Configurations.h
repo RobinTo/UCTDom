@@ -13,7 +13,7 @@
 #define PLAYERS					2
 #define MAXTURNS				999
 #define SUPPLYPILESTOGO			5 // (3+2) First number is actual supplypiles to go. Second number is number of zeroes below.
-#define FIRSTPLAYERAI			UCTAI
+#define FIRSTPLAYERAI			DOUBLEWITCH
 #define	SECONDPLAYERAI			SINGLEWITCH
 
 // AIs
@@ -23,6 +23,7 @@
 #define FLATUCB					3
 #define RANDOM					4
 #define SINGLEWITCH				5
+#define DOUBLEWITCH				6
 
 // Kingdom Cards
 #define BUREAUCRATINGAME	0	// Cost: 4
