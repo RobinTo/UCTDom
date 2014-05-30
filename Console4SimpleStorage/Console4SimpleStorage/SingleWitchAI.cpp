@@ -25,17 +25,17 @@ Option SingleWitchAI::getNextOption(GameState gameState, int playerIndex)
 	{
 		Option buyOption;
 		buyOption.type = BUY;
-		if (money >= CardManager::cardLookup[PROVINCE].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[GOLD]) > 0)
+		if (gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] > 0 && money >= CardManager::cardLookup[PROVINCE].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[GOLD]) > 0)
 			buyOption.absoluteCardId = CardManager::cardLookup[PROVINCE].id;
-		else if (money >= CardManager::cardLookup[WITCH].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[WITCH]) < 1)
+		else if (gameState.supplyPiles[CardManager::cardIndexer[WITCH]] > 0 && money >= CardManager::cardLookup[WITCH].cost && gameState.playerStates[playerIndex].countCardInDeck(CardManager::cardIndexer[WITCH]) < 1)
 			buyOption.absoluteCardId = CardManager::cardLookup[WITCH].id;
-		else if (money >= CardManager::cardLookup[DUCHY].cost && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] < 4)
+		else if (gameState.supplyPiles[CardManager::cardIndexer[DUCHY]] > 0 && money >= CardManager::cardLookup[DUCHY].cost && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] < 4)
 			buyOption.absoluteCardId = CardManager::cardLookup[DUCHY].id;
-		else if (money >= CardManager::cardLookup[ESTATE].cost && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] < 2)
+		else if (gameState.supplyPiles[CardManager::cardIndexer[ESTATE]] > 0 && money >= CardManager::cardLookup[ESTATE].cost && gameState.supplyPiles[CardManager::cardIndexer[PROVINCE]] < 2)
 			buyOption.absoluteCardId = CardManager::cardLookup[ESTATE].id;
-		else if (money >= CardManager::cardLookup[GOLD].cost)
+		else if (gameState.supplyPiles[CardManager::cardIndexer[GOLD]] > 0 && money >= CardManager::cardLookup[GOLD].cost)
 			buyOption.absoluteCardId = CardManager::cardLookup[GOLD].id;
-		else if (money >= CardManager::cardLookup[SILVER].cost)
+		else if (gameState.supplyPiles[CardManager::cardIndexer[SILVER]] > 0 && money >= CardManager::cardLookup[SILVER].cost)
 			buyOption.absoluteCardId = CardManager::cardLookup[SILVER].id;
 
 		return buyOption;

@@ -39,8 +39,8 @@
 #define WOODCUTTERINGAME	1	// Cost: 3
 
 // UCT
-#define UCT_NODESTOALLOCATE			2000000
-#define UCT_SIMULATIONS				100000
+#define UCT_NODESTOALLOCATE			1000000
+#define UCT_SIMULATIONS				5000
 #define UCT_C						0.7
 #define UCT_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCT_WINPOINT				1		// How many points to give a node's value for winning
