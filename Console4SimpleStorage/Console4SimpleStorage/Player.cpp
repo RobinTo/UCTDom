@@ -27,6 +27,8 @@ Option Player::getNextOption(GameState& currentState, std::vector<Move> moveHist
 		option = singleWitch.getNextOption(currentState, playerStateIndex);
 	else if (AIType == DOUBLEWITCH)
 		option = doubleWitch.getNextOption(currentState, playerStateIndex);
+	else if (AIType == FLATUCBMOD)
+		option = flatUCBMod.getNextOption(playerStateIndex, currentState, moveHistory);
 	
 	return option;
 }

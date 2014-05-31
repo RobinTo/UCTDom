@@ -116,6 +116,7 @@
     <ClInclude Include="Configurations.h" />
     <ClInclude Include="DoubleWitchAI.h" />
     <ClInclude Include="FlatUCB.h" />
+    <ClInclude Include="FlatUCBMod.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="HumanInputAI.h" />
@@ -133,6 +134,7 @@
     <ClCompile Include="CardManager.cpp" />
     <ClCompile Include="DoubleWitchAI.cpp" />
     <ClCompile Include="FlatUCB.cpp" />
+    <ClCompile Include="FlatUCBMod.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="HumanInputAI.cpp" />

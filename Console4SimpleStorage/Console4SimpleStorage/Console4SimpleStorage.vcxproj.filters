@@ -63,6 +63,9 @@
     <ClInclude Include="DoubleWitchAI.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FlatUCBMod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -108,6 +111,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DoubleWitchAI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FlatUCBMod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
