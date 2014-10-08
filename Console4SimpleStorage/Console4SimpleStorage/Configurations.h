@@ -1,5 +1,5 @@
 // Testing
-#define GAMES					1
+#define GAMES					100
 #define UCT_PRINTTREE			0
 #define UCT_PRINTSIMULATIONS	0
 #define UCB_PRINTTREE			0
@@ -65,7 +65,7 @@
 
 //FLATUCB
 #define UCB_NODESTOALLOCATE			50
-#define UCB_SIMULATIONS				100
+#define UCB_SIMULATIONS				10000
 #define UCB_C						0.7
 #define UCB_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCB_WINPOINT				1		// How many points to give a node's value for winning
