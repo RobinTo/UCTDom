@@ -31,6 +31,7 @@ int main()
 
 		Game* game = new Game;
 		playGame(*game);
+		game->writeCSVLog("test.csv");
 		game->writeToFile(logFile);
 		game->writeMoveHistoryToFile(moveHistoryFile);
 		delete game;

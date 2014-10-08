@@ -7,7 +7,6 @@
 
 #include "Game.h"
 
-
 Game::Game()
 {
 
@@ -71,6 +70,7 @@ void Game::initialize()
 
 void Game::play()
 {
+	
 	logString = "Turns:";
 
 	while (!gameState.gameFinished())
@@ -304,11 +304,12 @@ void Game::play()
 				
 			} while (option.type != END_TURN);
 			
+
 			logString += std::to_string(static_cast<long long>(gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints()));
 			logString += ":";
 			
 		}
-
+		turnLog.push_back(createLogItem(&gameState));
 		gameState.turnCounter++;
 	}
 
@@ -348,4 +349,67 @@ void Game::writeMoveHistoryToFile(std::string outputFileName)
 		file << "Player " << index << " VP: " << gameState.playerStates[players[index].playerStateIndex].calculateVictoryPoints() << std::endl;
 	}
 	file.close();
+}
+
+void Game::writeCSVLog(std::string outputFileName){
+	std::ofstream file;
+	file.open(outputFileName, std::ios::app);
+	file << "turn, p1Score, p2Score, p1Copper, p1Silver, p1Gold, p1Estate, p1Duchy, p1Province, p1Curse, p1Woodcutter, p1Gardens, p1Festival, p1Moneylender, p1Smithy, p1Village, p1Market, p1Laboratory, p1Witch, p1Remodel, p1Bureaucrat, p1Thief, p2Copper, p2Silver, p2Gold, p2Estate, p2Duchy, p2Province, p2Curse, p2Woodcutter, p2Gardens, p2Festival, p2Moneylender, p2Smithy, p2Village, p2Market, p2Laboratory, p2Witch, p2Remodel, p2Bureaucrat, p2Thief";
+	file << std::endl;
+	for(int i = 0; i < turnLog.size(); i++){
+		file << turnLog.at(i).turn << ", " << turnLog.at(i).p1Score << ", " << turnLog.at(i).p2Score << ", " << turnLog.at(i).p1Copper << ", " << turnLog.at(i).p1Silver << ", " << turnLog.at(i).p1Gold << ", " << turnLog.at(i).p1Estate << ", " << turnLog.at(i).p1Duchy << ", " << turnLog.at(i).p1Province << ", " << turnLog.at(i).p1Curse << ", " << turnLog.at(i).p1Woodcutter << ", " << turnLog.at(i).p1Gardens << ", " << turnLog.at(i).p1Festival << ", " << turnLog.at(i).p1Moneylender << ", " << turnLog.at(i).p1Smithy << ", " << turnLog.at(i).p1Village << ", " << turnLog.at(i).p1Market << ", " << turnLog.at(i).p1Laboratory << ", " << turnLog.at(i).p1Witch << ", " << turnLog.at(i).p1Remodel << ", " << turnLog.at(i).p1Bureaucrat << ", " << turnLog.at(i).p1Thief << ", " << turnLog.at(i).p2Copper << ", " << turnLog.at(i).p2Silver << ", " << turnLog.at(i).p2Gold << ", " << turnLog.at(i).p2Estate << ", " << turnLog.at(i).p2Duchy << ", " << turnLog.at(i).p2Province << ", " << turnLog.at(i).p2Curse << ", " << turnLog.at(i).p2Woodcutter << ", " << turnLog.at(i).p2Gardens << ", " << turnLog.at(i).p2Festival << ", " << turnLog.at(i).p2Moneylender << ", " << turnLog.at(i).p2Smithy << ", " << turnLog.at(i).p2Village << ", " << turnLog.at(i).p2Market << ", " << turnLog.at(i).p2Laboratory << ", " << turnLog.at(i).p2Witch << ", " << turnLog.at(i).p2Remodel << ", " << turnLog.at(i).p2Bureaucrat << ", " << turnLog.at(i).p2Thief;
+		file << std::endl;
+	}
+	file.close();
+}
+
+LogItem Game::createLogItem(GameState* gameState){
+	LogItem l;
+
+	l.turn = gameState->turnCounter;
+
+	l.p1Score = gameState->playerStates.at(0).calculateVictoryPoints();
+	l.p2Score  = gameState->playerStates.at(1).calculateVictoryPoints();
+
+	l.p1Copper = gameState->playerStates.at(0).countCardType(COPPER);
+	l.p1Silver = gameState->playerStates.at(0).countCardType(SILVER);
+	l.p1Gold = gameState->playerStates.at(0).countCardType(GOLD);
+	l.p1Estate = gameState->playerStates.at(0).countCardType(ESTATE);
+	l.p1Duchy = gameState->playerStates.at(0).countCardType(DUCHY);
+	l.p1Province = gameState->playerStates.at(0).countCardType(PROVINCE);
+	l.p1Curse = gameState->playerStates.at(0).countCardType(CURSE);
+	l.p1Woodcutter = gameState->playerStates.at(0).countCardType(WOODCUTTER);
+	l.p1Gardens = gameState->playerStates.at(0).countCardType(GARDENS);
+	l.p1Festival = gameState->playerStates.at(0).countCardType(FESTIVAL);
+	l.p1Moneylender = gameState->playerStates.at(0).countCardType(MONEYLENDER);
+	l.p1Smithy = gameState->playerStates.at(0).countCardType(SMITHY);
+	l.p1Village = gameState->playerStates.at(0).countCardType(VILLAGE);
+	l.p1Market = gameState->playerStates.at(0).countCardType(MARKET);
+	l.p1Laboratory = gameState->playerStates.at(0).countCardType(LABORATORY);
+	l.p1Witch = gameState->playerStates.at(0).countCardType(WITCH);
+	l.p1Remodel = gameState->playerStates.at(0).countCardType(REMODEL);
+	l.p1Bureaucrat = gameState->playerStates.at(0).countCardType(BUREAUCRAT);
+	l.p1Thief = gameState->playerStates.at(0).countCardType(THIEF);
+
+	l.p2Copper = gameState->playerStates.at(1).countCardType(COPPER);
+	l.p2Silver = gameState->playerStates.at(1).countCardType(SILVER);
+	l.p2Gold = gameState->playerStates.at(1).countCardType(GOLD);
+	l.p2Estate = gameState->playerStates.at(1).countCardType(ESTATE);
+	l.p2Duchy = gameState->playerStates.at(1).countCardType(DUCHY);
+	l.p2Province = gameState->playerStates.at(1).countCardType(PROVINCE);
+	l.p2Curse = gameState->playerStates.at(1).countCardType(CURSE);
+	l.p2Woodcutter = gameState->playerStates.at(1).countCardType(WOODCUTTER);
+	l.p2Gardens = gameState->playerStates.at(1).countCardType(GARDENS);
+	l.p2Festival = gameState->playerStates.at(1).countCardType(FESTIVAL);
+	l.p2Moneylender = gameState->playerStates.at(1).countCardType(MONEYLENDER);
+	l.p2Smithy = gameState->playerStates.at(1).countCardType(SMITHY);
+	l.p2Village = gameState->playerStates.at(1).countCardType(VILLAGE);
+	l.p2Market = gameState->playerStates.at(1).countCardType(MARKET);
+	l.p2Laboratory = gameState->playerStates.at(1).countCardType(LABORATORY);
+	l.p2Witch = gameState->playerStates.at(1).countCardType(WITCH);
+	l.p2Remodel = gameState->playerStates.at(1).countCardType(REMODEL);
+	l.p2Bureaucrat = gameState->playerStates.at(1).countCardType(BUREAUCRAT);
+	l.p2Thief = gameState->playerStates.at(1).countCardType(THIEF);
+
+	return l;
 }
