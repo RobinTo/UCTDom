@@ -22,7 +22,15 @@ void writeToFile(Game& game, std::string outputFileName)
 
 int main()
 {	
-	for (int counter = 0; counter < GAMES; counter++)
+	int startLoggingAt = 0;
+	int numberOfGames = 1;
+	int numSims = 0;
+	std::cout << "Enter the log number to start with: " << std::endl;
+	std::cin >> startLoggingAt;
+	std::cout << "Enter the number of games to play: " << std::endl;
+	std::cin >> numberOfGames;
+	std::cout << "Starting simulations...";
+	for (int counter = startLoggingAt; counter < startLoggingAt+numberOfGames; counter++)
 	{
 		std::string logFile = "log" + std::to_string(counter) + ".csv";
 		std::string moveHistoryFile = "moveHistory" + std::to_string(counter) + ".txt";

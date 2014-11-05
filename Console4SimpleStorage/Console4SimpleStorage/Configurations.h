@@ -15,8 +15,8 @@
 #define PLAYERS					2
 #define MAXTURNS				999
 #define SUPPLYPILESTOGO			5 // (3+2) First number is actual supplypiles to go. Second number is number of zeroes below.
-#define FIRSTPLAYERAI			FLATUCB
-#define	SECONDPLAYERAI			SINGLEWITCH
+#define FIRSTPLAYERAI			SINGLEWITCH
+#define	SECONDPLAYERAI			UCTAI
 
 // AIs
 #define UCTAI					0
@@ -43,8 +43,8 @@
 #define WOODCUTTERINGAME	1	// Cost: 3
 
 // UCT
-#define UCT_NODESTOALLOCATE			0
-#define UCT_SIMULATIONS				0
+#define UCT_NODESTOALLOCATE			100000
+#define UCT_SIMULATIONS				10000
 #define UCT_C						0.7
 #define UCT_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCT_WINPOINT				1		// How many points to give a node's value for winning
@@ -65,7 +65,7 @@
 
 //FLATUCB
 #define UCB_NODESTOALLOCATE			50
-#define UCB_SIMULATIONS				10000
+#define UCB_SIMULATIONS				100000
 #define UCB_C						0.7
 #define UCB_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCB_WINPOINT				1		// How many points to give a node's value for winning

@@ -113,6 +113,7 @@ void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> 
 		addToReturnVector(temp);
 		return;
 	}
+	std::vector<std::string> logUCTDetails;
 
 	int sims = 0;
 	for (int i = 0; i < UCT_SIMULATIONS; i++)
