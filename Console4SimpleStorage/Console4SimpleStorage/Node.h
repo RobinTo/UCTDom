@@ -33,5 +33,6 @@ public:
 	~Node();
 	void reset();
 
+	std::string getName();
 	void printSelf(std::ofstream& file);
 };

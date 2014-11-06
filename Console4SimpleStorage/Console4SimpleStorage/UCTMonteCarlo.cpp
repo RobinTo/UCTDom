@@ -114,15 +114,58 @@ void UCTMonteCarlo::doUCT(int UCTPlayer, GameState gameState, std::vector<Move> 
 		return;
 	}
 	std::vector<std::string> logUCTDetails;
+	std::vector<std::string> logUCTDetailsVisited;
+	std::string headline = "simulations,";
+	std::string headline2 = "";
+	if (LOG_UCTDETAILS)
+	{
+
+		for (int i = 0; i < rootNode->childrenPtrs.size(); i++){
+			headline += rootNode->childrenPtrs.at(i)->getName() + ((i == rootNode->childrenPtrs.size() - 1) ? "" : ",");
+		}
+		logUCTDetails.push_back(headline);
+		logUCTDetailsVisited.push_back(headline);
+	}
 
 	int sims = 0;
 	for (int i = 0; i < UCT_SIMULATIONS; i++)
 	{
+		if (LOG_UCTDETAILS)
+		{
+			if (i % 5000 == 0)
+			{
+				headline = std::to_string(i) + ",";
+				headline2 = std::to_string(i) + ",";
+				for (int i = 0; i < rootNode->childrenPtrs.size(); i++){
+					headline += std::to_string(rootNode->childrenPtrs.at(i)->value) + ((i == rootNode->childrenPtrs.size() - 1) ? "" : ",");
+					headline2 += std::to_string(rootNode->childrenPtrs.at(i)->visited) + ((i == rootNode->childrenPtrs.size() - 1) ? "" : ",");
+				}
+				logUCTDetails.push_back(headline);
+				logUCTDetailsVisited.push_back(headline2);
+			}
+		}
+
 		expand(select(rootNode), UCTPlayer);
 		if (UCT_PRINTSIMULATIONS)
 			printTree(gameState.turnCounter, UCTPlayer, rootNode, moveHistory.size(), i);
-		sims = i;
+		sims = i;	
 	}
+
+	if (LOG_UCTDETAILS)
+	{
+		std::ofstream file;
+		file.open("uctdetails" + std::to_string(rootNode->currentState.turnCounter) + ".csv", std::ios::app);
+		for (int i = 0; i < logUCTDetails.size(); i++){
+			file << logUCTDetails.at(i) << std::endl;
+		}
+		file.close();
+		file.open("uctdetails" + std::to_string(rootNode->currentState.turnCounter) + "visited.csv", std::ios::app);
+		for (int i = 0; i < logUCTDetailsVisited.size(); i++){
+			file << logUCTDetailsVisited.at(i) << std::endl;
+		}
+		file.close();
+	}
+
 	std::cout << "Sims: " << sims << std::endl;
 
 	if (UCT_PRINTTREE)
@@ -272,9 +315,9 @@ Node* UCTMonteCarlo::UCTSelectChild(Node* root)
 	{
 		double value = 0;
 		if (root->childrenPtrs.at(i)->opt.type == DRAW) // Do not use value, but probability, for drawnodes.
-			value = double(root->childrenPtrs.at(i)->probability) + UCT_C * sqrt(log(double(root->visited)) / root->childrenPtrs.at(i)->visited);	// Can have a different C here if necessary.
+			value = double(root->childrenPtrs.at(i)->probability) + double(UCT_C) * sqrt(log(double(root->visited)) / double(root->childrenPtrs.at(i)->visited));	// Can have a different C here if necessary.
 		else
-			value = double(root->childrenPtrs.at(i)->value) + UCT_C * sqrt(log(double(root->visited)) / root->childrenPtrs.at(i)->visited);
+			value = double(root->childrenPtrs.at(i)->value) + double(UCT_C) * sqrt(log(double(root->visited)) / double(root->childrenPtrs.at(i)->visited));
 
 		if (value >= bestValue || bestValue == 0)
 		{

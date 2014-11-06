@@ -34,6 +34,10 @@ void Node::setOption(Option o)
 	opt = o;
 }
 
+std::string Node::getName(){
+	return CardManager::cardLookup[opt.absoluteCardId].name;
+}
+
 void Node::printSelf(std::ofstream &file)
 {
 	if (false)

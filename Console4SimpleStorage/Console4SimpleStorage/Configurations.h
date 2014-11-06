@@ -7,6 +7,9 @@
 #define UCBMOD_PRINTTREE		0
 #define UCBMOD_PRINTSIMULATIONS	0
 
+// Logging
+#define LOG_UCTDETAILS			1
+
 // Experimenting
 #define WOODCUTTERMONEY			2 // Normally 2
 #define WITCHNERF				0 // Normally 0
@@ -43,9 +46,9 @@
 #define WOODCUTTERINGAME	1	// Cost: 3
 
 // UCT
-#define UCT_NODESTOALLOCATE			100000
-#define UCT_SIMULATIONS				10000
-#define UCT_C						0.7
+#define UCT_NODESTOALLOCATE			2500000
+#define UCT_SIMULATIONS				500000
+#define UCT_C						100.0
 #define UCT_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCT_WINPOINT				1		// How many points to give a node's value for winning
 #define UCT_LOSEPOINT				0		// How many points to give a node's value for losing
@@ -56,7 +59,7 @@
 #define UCT_MINIMUMVISITS			10
 #define UCT_THREADITERATIONS		1
 #define UCT_THREADS					1
-#define UCT_PLAYOUTPOLICY			UCT_EPSILONGREEDY
+#define UCT_PLAYOUTPOLICY			UCT_RANDOMPLAYOUT
 	#define UCT_RANDOMPLAYOUT			0
 	#define UCT_EPSILONGREEDY			1
 		#define UCT_EPSILON					15		// Percentage in integer value, so 10 means 0.1, or 10 %
@@ -66,7 +69,7 @@
 //FLATUCB
 #define UCB_NODESTOALLOCATE			50
 #define UCB_SIMULATIONS				100000
-#define UCB_C						0.7
+#define UCB_C						100.0
 #define UCB_PERCFACTOR				1		// The factor we multiply the percentage of score with, to play a part in calculating a node's value.
 #define UCB_WINPOINT				1		// How many points to give a node's value for winning
 #define UCB_LOSEPOINT				0		// How many points to give a node's value for losing
